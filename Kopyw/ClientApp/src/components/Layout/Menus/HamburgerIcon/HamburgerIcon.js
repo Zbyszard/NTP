@@ -1,0 +1,28 @@
+import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
+import './HamburgerIcon.css';
+
+const HamburgerIcon = props => {
+
+    let btnClass = "hamburger hamburger--squeeze";
+    if (props.isActive)
+        btnClass += " is-active"
+
+    return (
+        <div className={props.containerClass}>
+            <button className={btnClass} type="button">
+                <span className="hamburger-box">
+                    <span className="hamburger-inner"></span>
+                </span>
+            </button>
+        </div>
+
+    );
+}
+
+HamburgerIcon.propTypes = {
+    isActive: PropTypes.bool.isRequired,
+    containerClass: PropTypes.string.isRequired
+}
+
+export default HamburgerIcon;
