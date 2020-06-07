@@ -10,3 +10,7 @@ a{
     color: inherit;
     text-decoration: none;
 }
+
+a:hover {
+    color: rgb(110, 180, 255);
+}

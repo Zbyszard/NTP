@@ -3,17 +3,21 @@ import PropTypes from 'prop-types';
 import classes from './Backdrop.module.css';
 
 const Backdrop = props => {
-
+    let backdropClasses = [classes.backdrop];
+    if (!props.isActive)
+        backdropClasses.push(classes.hidden);
+    let backdropClassList = backdropClasses.join(' ');
     return (
-        <div className={classes.backdrop}
-            onClick={props.onclick()}
-            style={{zIndex: props.zIndex}} />
+        <div className={backdropClassList}
+            onClick={props.clickHandler}
+            style={{ zIndex: props.zIndex }} />
     );
 }
 
 Backdrop.propTypes = {
-    onclick: PropTypes.func,
-    zIndex: PropTypes.number
+    clickHandler: PropTypes.func,
+    zIndex: PropTypes.number.isRequired,
+    isActive: PropTypes.bool.isRequired
 }
 
 export default Backdrop;

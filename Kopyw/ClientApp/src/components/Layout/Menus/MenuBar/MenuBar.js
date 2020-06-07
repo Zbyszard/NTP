@@ -7,8 +7,8 @@ const MenuBar = props => {
     return (
         <div className={classes.topBar}>
             <HamburgerIcon
-                containerClass={classes.menuIcon}
-                isActive={props.sideMenuActive} />
+                containerClass={classes.menuIcon} isActive={false}
+                clickHandler={props.menuIconClickHandler} />
             <ul className={classes.menuList}>
                 {props.children}
             </ul>
@@ -17,7 +17,8 @@ const MenuBar = props => {
 }
 
 MenuBar.propTypes = {
-    sideMenuActive: PropTypes.bool.isRequired
+    isActive: PropTypes.bool.isRequired,
+    menuIconClickHandler: PropTypes.func
 }
 
 export default MenuBar; 

@@ -1,5 +1,11 @@
 .backdrop {
     background-color: black;
-    opacity: 0.5;
+    
+    display: block;
+    opacity: 0.4;
     height: 100vh;
+}
+
+.hidden {
+    display: none;
 }

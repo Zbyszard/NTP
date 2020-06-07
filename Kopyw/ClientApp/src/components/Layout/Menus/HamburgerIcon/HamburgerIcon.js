@@ -10,7 +10,8 @@ const HamburgerIcon = props => {
 
     return (
         <div className={props.containerClass}>
-            <button className={btnClass} type="button">
+            <button className={btnClass} type="button"
+                onClick={props.clickHandler}>
                 <span className="hamburger-box">
                     <span className="hamburger-inner"></span>
                 </span>
@@ -21,8 +22,9 @@ const HamburgerIcon = props => {
 }
 
 HamburgerIcon.propTypes = {
-    isActive: PropTypes.bool.isRequired,
-    containerClass: PropTypes.string.isRequired
+    isActive: PropTypes.bool,
+    containerClass: PropTypes.string.isRequired,
+    clickHandler: PropTypes.func
 }
 
 export default HamburgerIcon;
