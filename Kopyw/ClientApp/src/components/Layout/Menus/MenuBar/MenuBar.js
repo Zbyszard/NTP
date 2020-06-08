@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import HamburgerIcon from "../HamburgerIcon/HamburgerIcon";
+import SearchBar from "./Search";
 import classes from '../Menu.module.css';
 
 const MenuBar = props => {
@@ -9,6 +10,7 @@ const MenuBar = props => {
             <HamburgerIcon
                 containerClass={classes.menuIcon} isActive={false}
                 clickHandler={props.menuIconClickHandler} />
+            <SearchBar />
             <ul className={classes.menuList}>
                 {props.children}
             </ul>
@@ -17,7 +19,6 @@ const MenuBar = props => {
 }
 
 MenuBar.propTypes = {
-    isActive: PropTypes.bool.isRequired,
     menuIconClickHandler: PropTypes.func
 }
 

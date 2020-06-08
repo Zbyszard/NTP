@@ -9,11 +9,7 @@ class Layout extends Component {
       <>
         <NavMenu />
         {this.props.children}
-        {/* wyjebać i zrobić swój container
-        /*<Container>
-          
-        </Container>
-        */}
+        
       </>
     );
   }
