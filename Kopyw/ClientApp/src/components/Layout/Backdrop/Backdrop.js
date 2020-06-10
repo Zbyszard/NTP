@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classes from './Backdrop.module.css';
 
 const Backdrop = props => {
+
     let backdropClasses = [classes.backdrop];
     if (!props.isActive)
         backdropClasses.push(classes.hidden);
@@ -16,7 +17,7 @@ const Backdrop = props => {
 
 Backdrop.propTypes = {
     clickHandler: PropTypes.func,
-    zIndex: PropTypes.number.isRequired,
+    zIndex: PropTypes.number,
     isActive: PropTypes.bool.isRequired
 }
 

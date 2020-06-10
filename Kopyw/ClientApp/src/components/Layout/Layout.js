@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
-import NavMenu  from './Menus/NavMenu';
+import NavMenu from './Menus/NavMenu';
+import PageContainer from './PageContainer';
 
 class Layout extends Component {
   static displayName = Layout.name;
 
-  render () {
+  render() {
     return (
       <>
         <NavMenu />
-        {this.props.children}
-        
+        <PageContainer>
+          {this.props.children}
+        </PageContainer>
       </>
     );
   }

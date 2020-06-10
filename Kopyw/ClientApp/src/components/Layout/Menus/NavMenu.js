@@ -14,10 +14,11 @@ class NavMenu extends Component {
       showSideMenu: false
     };
 
-    let navItems = [{ url: "/", name: "New" },
+    let navItems = [
+    { url: "/", name: "Observed" },
+    { url: "/new", name: "New posts" },
     { url: "/top", name: "Top" },
-    { url: "/me", name: "Your profile" },
-    { url: "/messages", name: "Messages" }];
+    { url: "/me", name: "Your profile" }];
     this.initSideMenu(navItems);
     this.initTopMenu(navItems);
   }

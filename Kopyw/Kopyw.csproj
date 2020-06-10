@@ -27,6 +27,25 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20200609212502_AddPostsComments.cs" />
+    <Compile Remove="Data\Migrations\20200609212502_AddPostsComments.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200610182404_AddModels.cs" />
+    <Compile Remove="Data\Migrations\20200610182404_AddModels.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200610183733_AddModels.cs" />
+    <Compile Remove="Data\Migrations\20200610183733_AddModels.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200610183928_AddModels.cs" />
+    <Compile Remove="Data\Migrations\20200610183928_AddModels.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200610191313_AddModelsa.cs" />
+    <Compile Remove="Data\Migrations\20200610191313_AddModelsa.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\DataAccess\Interfaces\" />
+    <Folder Include="Services\DTO\Interfaces\" />
+    <Folder Include="Services\DTO\" />
+  </ItemGroup>
+
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">

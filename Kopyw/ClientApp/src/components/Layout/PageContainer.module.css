@@ -1,0 +1,7 @@
+.pageContainer {
+    box-sizing: border-box;
+    margin-top: 50px;
+    width: 100%;
+    min-height: calc(100vh - 50px);
+    padding: 0 10px;
+}

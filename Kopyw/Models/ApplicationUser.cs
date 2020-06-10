@@ -8,5 +8,11 @@ namespace Kopyw.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public List<Comment> Comments { get; set; }
+        public List<CommentVote> CommentVotes { get; set; }
+        public List<Post> Posts { get; set; }
+        public List<PostVote> PostVotes { get; set; }
+        public List<Follow> FollowedBy { get; set; }
+        public List<Follow> Follows { get; set; }
     }
 }
