@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -38,12 +38,6 @@
     <Compile Remove="Data\Migrations\20200610183928_AddModels.Designer.cs" />
     <Compile Remove="Data\Migrations\20200610191313_AddModelsa.cs" />
     <Compile Remove="Data\Migrations\20200610191313_AddModelsa.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\DataAccess\Interfaces\" />
-    <Folder Include="Services\DTO\Interfaces\" />
-    <Folder Include="Services\DTO\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

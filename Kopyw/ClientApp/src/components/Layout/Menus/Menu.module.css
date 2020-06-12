@@ -151,6 +151,7 @@ li a:hover, li a:focus, li a:active {
     }
     .searchBar {
         margin-right: auto;
+        transition: none;
         transform: none;
         max-width: 300px;
     }

@@ -11,6 +11,8 @@ using Kopyw.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Kopyw.Services.DTOs.Interfaces;
+using Kopyw.Services.DTOs;
 
 namespace Kopyw
 {
@@ -33,6 +35,8 @@ namespace Kopyw
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddScoped<IPostDTOManager, PostDTOManager>();
+
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
@@ -41,6 +45,7 @@ namespace Kopyw
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
 
 
             // In production, the React files will be served from this directory
