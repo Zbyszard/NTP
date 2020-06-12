@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Post from './Post/Post';
-import classes from './PostContainer.module.css';
+import classes from './PostList.module.css';
 
 const tempPosts = [{
     Id: 1,

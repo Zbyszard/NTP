@@ -7,7 +7,7 @@ class Post extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            comments = []
+            comments: []
         };
     }
     render() {
@@ -15,16 +15,16 @@ class Post extends Component {
             <div className={classes.post}>
                 <h2 className={classes.author}>
                     <Link>
-                        {props.author}
+                        {this.props.author}
                     </Link>
                 </h2>
                 <h1 className={classes.title}>
                     <Link>
-                        {props.title}
+                        {this.props.title}
                     </Link>
                 </h1>
                 <p className={classes.text}>
-                    {props.text}
+                    {this.props.text}
                 </p>
             </div>
         );
