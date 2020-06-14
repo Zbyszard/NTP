@@ -8,12 +8,12 @@ namespace Kopyw.Services.DTOs.Interfaces
 {
     public interface IPostDTOManager
     {
-        public PostDTO Add(PostDTO newPost);
-        public PostDTO Get(long id);
-        public List<PostDTO> GetRange(int count, int offset, string sort);
-        public List<PostDTO> GetUserPosts(string userName, int count, int offset, string sort);
-        public List<PostDTO> GetFollowedPosts(string followedUserName, int count, int offset, string sort);
-        public PostDTO Update(PostDTO post);
-        public PostDTO Delete(long id);
+        public Task<PostDTO> Add(PostDTO newPost);
+        public Task<PostDTO> Get(long id, string loggedUserId);
+        public Task<List<PostDTO>> GetRange(int count, int offset, string sort, string loggedUserId);
+        public Task<List<PostDTO>> GetUserPosts(string userName, int count, int offset, string sort);
+        public Task<List<PostDTO>> GetFollowedPosts(string followedUserName, int count, int offset, string sort, string loggedUserId);
+        public Task<PostDTO> Update(PostDTO post);
+        public Task<PostDTO> Delete(long id);
     }
 }

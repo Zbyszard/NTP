@@ -8,12 +8,12 @@ namespace Kopyw.Services.DataAccess.Interfaces
 {
     public interface IPostManager
     {
-        public Post Add(Post newPost);
-        public Post Get(long id);
-        public List<Post> GetRange(int count, int offset, string sort);
-        public List<Post> GetUserPosts(string userName, int count, int offset, string sort);
-        public List<Post> GetFollowedPosts(string followedUserName, int count, int offset, string sort);
-        public Post Update(Post post);
-        public Post Delete(long id);
+        public Task<Post> Add(Post newPost);
+        public Task<Post> Get(long id);
+        public Task<List<Post>> GetRange(int count, int offset, string sort);
+        public Task<List<Post>> GetUserPosts(string userName, int count, int offset, string sort);
+        public Task<List<Post>> GetFollowedPosts(string followedUserName, int count, int offset, string sort);
+        public Task<Post> Update(Post post);
+        public Task<Post> Delete(long id);
     }
 }

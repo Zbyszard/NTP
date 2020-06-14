@@ -8,10 +8,10 @@ namespace Kopyw.Services.DTOs.Interfaces
 {
     public interface ICommentDTOManager
     {
-        public CommentDTO Add(CommentDTO newComment);
-        //public CommentDTO Get(long id);
-        public List<CommentDTO> GetRange(int count, int offset, string sort);
-        public CommentDTO Update(CommentDTO Comment);
-        public CommentDTO Delete(long id);
+        public Task<CommentDTO> Add(CommentDTO newComment);
+        //public Task<CommentDTO> Get(long id);
+        public Task<List<CommentDTO>> GetRange(int count, int offset, string sort);
+        public Task<CommentDTO> Update(CommentDTO Comment);
+        public Task<CommentDTO> Delete(long id);
     }
 }

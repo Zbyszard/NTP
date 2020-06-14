@@ -38,7 +38,8 @@ Post.propTypes = {
     text: PropTypes.string.isRequired,
     score: PropTypes.number.isRequired,
     commentCount: PropTypes.number.isRequired,
-    userVote: PropTypes.bool
+    userVote: PropTypes.bool,
+    userAuthenticated: PropTypes.bool
 }
 
 export default Post;

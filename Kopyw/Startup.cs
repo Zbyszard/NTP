@@ -13,6 +13,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Kopyw.Services.DTOs.Interfaces;
 using Kopyw.Services.DTOs;
+using Kopyw.Services.DataAccess;
+using Kopyw.Services.DataAccess.Interfaces;
+using Kopyw.Services;
 
 namespace Kopyw
 {
@@ -32,11 +35,16 @@ namespace Kopyw
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.User.RequireUniqueEmail = true;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddScoped<UserFinder, UserFinder>();
             services.AddScoped<IPostDTOManager, PostDTOManager>();
-
+            services.AddScoped<IPostManager, PostManager>();
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 

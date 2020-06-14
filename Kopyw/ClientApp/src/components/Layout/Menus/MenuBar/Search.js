@@ -33,7 +33,7 @@ class Search extends Component {
                     value={this.state.searchString}
                     onChange={this.inputChangeHandler}
                     type="text"
-                    placeholder="What are you looking for?"
+                    placeholder="Looking for..."
                     ref={this.inputRef}
                     onBlur={this.disableSearch} />
                 <div className={iconClassList}

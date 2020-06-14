@@ -55,7 +55,7 @@ const tempPosts = [{
     UserVote: true
 }];
 
-class PostContainer extends Component {
+class PostList extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -75,15 +75,15 @@ class PostContainer extends Component {
                 commentCount={p.CommentCount}
                 userVote={p.UserVote} />);
         return (
-            <div className={classes.postContainer}>
+            <div className={classes.postList}>
                 {content}
             </div>
         );
     }
 }
 
-PostContainer.propTypes = {
+PostList.propTypes = {
     getUrl: PropTypes.string.isRequired
 }
 
-export default PostContainer;
+export default PostList;

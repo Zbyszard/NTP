@@ -8,8 +8,8 @@ namespace Kopyw.Services.DataAccess.Interfaces
 {
     public interface IFollowManager
     {
-        public Follow Add(Follow newFollow);
-        public Follow Update(Follow follow);
-        public Follow Delete(Follow follow);
+        public Task<Follow> Add(Follow newFollow);
+        public Task<Follow> Update(Follow follow);
+        public Task<Follow> Delete(Follow follow);
     }
 }

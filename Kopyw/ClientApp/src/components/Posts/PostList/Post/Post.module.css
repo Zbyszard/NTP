@@ -23,9 +23,3 @@
     margin-top: 10px;
     font-size: 0.9rem;
 }
-
-@media screen and (min-width: 700px) {
-    .post {
-        max-width: 700px;
-    }
-}
