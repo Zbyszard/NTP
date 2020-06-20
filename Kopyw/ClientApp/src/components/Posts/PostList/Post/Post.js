@@ -11,21 +11,27 @@ class Post extends Component {
         };
     }
     render() {
+        const plus1 = this.props.showPlus ? <button className={classes.plus}>+1</button> : null;
         return (
             <div className={classes.post}>
                 <h2 className={classes.author}>
-                    <Link>
+                    <Link to={`/user/${this.props.author}`}>
                         {this.props.author}
                     </Link>
                 </h2>
                 <h1 className={classes.title}>
-                    <Link>
+                    <Link to={`/post/${this.props.id}`}>
                         {this.props.title}
                     </Link>
                 </h1>
                 <p className={classes.text}>
                     {this.props.text}
                 </p>
+                <div className={classes.actionSection}>
+                    <span className={classes.score}>+{this.props.commentCount}</span>
+                    {plus1}
+                    <span className={classes.commentCount}>{this.props.commentCount} comments</span>
+                </div>
             </div>
         );
     }

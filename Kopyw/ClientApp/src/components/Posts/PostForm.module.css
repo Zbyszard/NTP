@@ -60,9 +60,6 @@ input[type="submit"] {
 }
 
 @media screen and (min-width: 700px) {
-    .container {
-        max-width: 700px;
-    }
     input[type="submit"] {
         padding: 2px 5px;
         margin-left: auto;

@@ -65,7 +65,7 @@ class PostForm extends Component {
             Text: this.state.text
         };
         let token = await authService.getAccessToken();
-        let response = await axios.post("/api/post", newPost, {
+        let response = await axios.post("/post", newPost, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

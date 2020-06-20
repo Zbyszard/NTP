@@ -15,10 +15,10 @@ class NavMenu extends Component {
     };
 
     let navItems = [
-    { url: "/", name: "Observed" },
-    { url: "/new", name: "New posts" },
-    { url: "/top", name: "Top" },
-    { url: "/me", name: "Your profile" }];
+      { url: "/", name: "New posts" },
+      { url: "/observed", name: "Observed" },
+      /*{ url: "/top", name: "Top" },*/
+      { url: "/me", name: "Your posts" }];
     this.initSideMenu(navItems);
     this.initTopMenu(navItems);
   }

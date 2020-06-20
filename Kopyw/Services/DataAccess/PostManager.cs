@@ -30,34 +30,31 @@ namespace Kopyw.Services.DataAccess
             return newPost;
         }
 
-        public async Task<Post> Delete(long id)
+        public async Task<bool?> Delete(long id, string loggedUserId)
         {
-            throw new NotImplementedException();
+            var post = await (from p in db.Posts
+                              where p.Id == id
+                              select p).FirstOrDefaultAsync();
+            if (post == null)
+                return null;
+            if (post.AuthorId != loggedUserId)
+                return false;
+            db.Entry(post).State = EntityState.Deleted;
+            await db.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<Post> Get(long id)
         {
-            throw new NotImplementedException();
+            var post = await db.Posts.Select(p => p).Where(p => p.Id == id).FirstOrDefaultAsync();
+            return post;
         }
 
-        public async Task<List<Post>> GetFollowedPosts(string followedUserName, int count, int offset, string sort)
+        public async Task Update(Post post)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Post>> GetRange(int count, int offset, string sort)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<List<Post>> GetUserPosts(string userName, int count, int offset, string sort)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Post> Update(Post post)
-        {
-            throw new NotImplementedException();
+            db.Entry(post).State = EntityState.Modified;
+            await db.SaveChangesAsync();
         }
     }
 }

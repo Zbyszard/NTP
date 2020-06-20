@@ -1,13 +1,14 @@
 .post {
     box-sizing: border-box;
     width: 100%;
+    background-color: rgb(50, 50, 50);
     word-wrap: break-word;
     border: 1px solid black;
     margin-bottom: 10px;
     padding: 10px;
 }
 
-.title,.author,.text {
+.title, .author, .text {
     margin: 0;
 }
 
@@ -22,4 +23,41 @@
 .text {
     margin-top: 10px;
     font-size: 0.9rem;
+}
+
+.actionSection {
+    padding-top: 10px;
+    margin-top: 5px;
+    border-top: 1px solid rgb(30, 30, 30);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.score {
+    font-size: 1.5rem;
+}
+
+.plus {
+    margin-left: 15px;
+    background-color: transparent;
+    border: none;
+    border-radius: 100%;
+    font-size: 1rem;
+    font-family: inherit;
+    padding: 3px;
+    color: rgb(170, 255, 140);
+    transition-duration: 0.1s;
+    transition-timing-function: ease-in-out;
+    cursor: pointer;
+}
+
+.plus:active, .plus:hover, .active {
+    background-color: rgb(120, 255, 70);
+    color: black;
+}
+
+.commentCount {
+    margin-left: auto;
+    font-size: 0.8rem;
 }

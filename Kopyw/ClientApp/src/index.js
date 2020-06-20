@@ -1,13 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import authService from './components/api-authorization/AuthorizeService';
+import axios from 'axios';
 import App from './App';
 //import registerServiceWorker from './registerServiceWorker';
 
+axios.defaults.baseURL = "/api";
+axios.interceptors.request.use(async reqConfig => {
+  const token = await authService.getAccessToken();
+  reqConfig.headers.Authorization = `Bearer ${token}`;
+  return reqConfig;
+}, error => Promise.reject(error));
+
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
-
-
 
 ReactDOM.render(
   <BrowserRouter basename={baseUrl}>

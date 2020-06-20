@@ -10,10 +10,7 @@ namespace Kopyw.Services.DataAccess.Interfaces
     {
         public Task<Post> Add(Post newPost);
         public Task<Post> Get(long id);
-        public Task<List<Post>> GetRange(int count, int offset, string sort);
-        public Task<List<Post>> GetUserPosts(string userName, int count, int offset, string sort);
-        public Task<List<Post>> GetFollowedPosts(string followedUserName, int count, int offset, string sort);
-        public Task<Post> Update(Post post);
-        public Task<Post> Delete(long id);
+        public Task Update(Post post);
+        public Task<bool?> Delete(long id, string loggedUserId);
     }
 }

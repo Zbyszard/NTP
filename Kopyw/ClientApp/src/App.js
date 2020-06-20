@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router';
+import { Route, Switch } from 'react-router';
 import Layout from './components/Layout/Layout';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import authService from './components/api-authorization/AuthorizeService'
@@ -15,25 +15,34 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      authorizationState: false
+      authorizationState: {
+        authorized: false,
+        userName: ''
+      }
     };
     authService.getUser().then(user => this.setState(
       {
-        authorizationState: { authorized: !!user }
+        authorizationState: {
+          authorized: !!user,
+          userName: user && user.name
+        }
       }));
   }
 
 
   render() {
-    let auth = this.authorized;
+    let userRoute;
     return (
       <AuthContext.Provider value={this.state.authorizationState}>
         <Layout>
           <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
           <AuthorizedRender>
-            <Route path="/new" component={PostForm} />
+            <Route exact path="/" component={PostForm} />
+            <Route key={3} exact path="/me" render={props => <PostList {...props} getUrl={`/post/user/${this.state.authorizationState.userName}`} />} />
           </AuthorizedRender>
-          <Route path="/new" render={props => <PostList {...props} getUrl="" />} />
+            <Route key={1} exact path="/" render={props => <PostList {...props} getUrl="/post/new" />} />
+            <Route key={2} exact path="/observed" render={props => <PostList {...props} getUrl="/post/observed" />} />
+            <Route key={4} exact path="/user/:username" render={props => <PostList {...props} getUrl="/post/user" />} />
         </Layout>
       </AuthContext.Provider>
     );
