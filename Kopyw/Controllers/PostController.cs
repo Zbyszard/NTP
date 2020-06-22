@@ -60,7 +60,10 @@ namespace Kopyw.Controllers
             switch(type)
             {
                 case "new":
-                    list = await postDTOManager.GetRange(count, page, user?.Id, sort, sortDir);
+                    list = await postDTOManager.GetRange(count, page, user?.Id, "time", sortDir);
+                    break;
+                case "score":
+                    list = await postDTOManager.GetRange(count, page, user?.Id, "score", sortDir);
                     break;
                 case "observed":
                 case "followed":
@@ -90,7 +93,7 @@ namespace Kopyw.Controllers
                 return BadRequest();
             return CreatedAtAction(nameof(Get), new { id = added.Id }, added);
         }
-        [Route("edit")]
+        [Authorize]
         [HttpPut]
         public async Task<ActionResult> Edit(PostDTO post)
         {
@@ -115,6 +118,30 @@ namespace Kopyw.Controllers
             if (result == null)
                 return NotFound();
             return BadRequest();
+        }
+        [Route("vote")]
+        [Authorize]
+        [HttpPost]
+        public async Task<ActionResult<PostVoteDTO>> AddVote(PostVoteDTO newVote)
+        {
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            newVote.UserId = user.Id;
+            newVote = await postDTOManager.AddVote(newVote);
+            if (newVote != null)
+                return Ok();
+            return NotFound();
+        }
+        [Route("vote/{id}")]
+        [Authorize]
+        [HttpDelete]
+        public async Task<ActionResult<PostVoteDTO>> DeleteVote(long id)
+        {
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            var vote = new PostVoteDTO { PostId = id, UserId = user.Id };
+            vote = await postDTOManager.DeleteVote(vote);
+            if (vote != null)
+                return Ok();
+            return NotFound();
         }
     }
 }

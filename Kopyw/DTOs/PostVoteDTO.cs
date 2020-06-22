@@ -8,6 +8,7 @@ namespace Kopyw.DTOs
     public class PostVoteDTO
     {
         public long PostId { get; set; }
-        public bool Value { get; set; }
+        public string UserId { get; set; }
+        public int Score { get; set; }
     }
 }

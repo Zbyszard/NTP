@@ -8,7 +8,7 @@
     padding: 10px;
 }
 
-.title, .author, .text {
+.title, .author, .text, .time {
     margin: 0;
 }
 
@@ -18,11 +18,17 @@
 
 .author {
     font-size: 0.8rem;
+    font-weight: bold;
 }
 
 .text {
     margin-top: 10px;
     font-size: 0.9rem;
+}
+
+.time {
+    color: rgb(170, 170, 170);
+    font-size: 0.7rem;
 }
 
 .actionSection {
@@ -43,7 +49,7 @@
     background-color: transparent;
     border: none;
     border-radius: 100%;
-    font-size: 1rem;
+    font-size: inherit;
     font-family: inherit;
     padding: 3px;
     color: rgb(170, 255, 140);
@@ -59,5 +65,14 @@
 
 .commentCount {
     margin-left: auto;
-    font-size: 0.8rem;
+    background-color: transparent;
+    border: none;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+.commentCount:hover, .commentCount:active {
+    color: rgb(170, 170, 170);
 }

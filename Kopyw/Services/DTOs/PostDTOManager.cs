@@ -63,7 +63,7 @@ namespace Kopyw.Services.DTOs
                                       select pv).Count(),
                              UserVote = loggedUserId != null &&
                                        (from uv in db.PostVotes
-                                        where uv.UserId == loggedUserId
+                                        where uv.UserId == loggedUserId && uv.PostId == p.Id
                                         select uv).Count() == 1
                          });
             
@@ -71,6 +71,8 @@ namespace Kopyw.Services.DTOs
         }
         private IQueryable<PostDTO> Sort(IQueryable<PostDTO> query, string type = null, string dir = null)
         {
+            if (type == null || dir == null)
+                return query;
             if (type.Equals("score") && dir.Equals("desc"))
                 query = query.Select(p => p).OrderByDescending(p => p.Score);
             else if (type.Equals("score"))
@@ -83,28 +85,6 @@ namespace Kopyw.Services.DTOs
         }
         public async Task<PostDTO> Get(long id, string loggedUserId)
         {
-            //var post = await (from p in db.Posts
-            //                  join u in db.Users on p.AuthorId equals u.Id
-            //                  where p.Id == id
-            //                  select new PostDTO
-            //                  {
-            //                      AuthorId = p.AuthorId,
-            //                      AuthorName = u.UserName,
-            //                      Id = p.Id,
-            //                      Text = p.Text,
-            //                      Title = p.Title,
-            //                      PostTime = p.PostTime,
-            //                      CommentCount = (from c in db.Comments
-            //                                      where c.PostId == p.Id
-            //                                      select c).Count(),
-            //                      Score = (from pv in db.PostVotes
-            //                               where pv.PostId == p.Id
-            //                               select pv).Count(),
-            //                      UserVote = loggedUserId != null &&
-            //                                (from uv in db.PostVotes
-            //                                 where uv.UserId == loggedUserId
-            //                                 select uv).Count() == 1
-            //                  }).SingleOrDefaultAsync();
             var post = await PostDTOQuery(loggedUserId).Where(p => p.Id == id).SingleOrDefaultAsync();
             return post;
         }
@@ -141,7 +121,7 @@ namespace Kopyw.Services.DTOs
                                           select pv).Count(),
                                  UserVote = loggedUserId != null &&
                                            (from uv in db.PostVotes
-                                            where uv.UserId == loggedUserId
+                                            where uv.UserId == loggedUserId && uv.PostId == p.Id
                                             select uv).Count() == 1
                              });
             var posts = await Sort(postQuery, sort, sortDir).Skip((page - 1) * count).Take(count).ToListAsync();
@@ -195,8 +175,25 @@ namespace Kopyw.Services.DTOs
                 return false;
             p.Text = post.Text;
             p.Title = post.Title;
-            await postManager.Update(p);
-            return true;
+            if(await postManager.Update(p) == 1)
+                return true;
+            else
+                return null;
+        }
+
+        public async Task<PostVoteDTO> AddVote(PostVoteDTO newVoteDTO)
+        {
+            var newVote = new PostVote { PostId = newVoteDTO.PostId, UserId = newVoteDTO.UserId };
+            if (await postManager.AddVote(newVote) == null)
+                return null;
+            return newVoteDTO;
+        }
+        public async Task<PostVoteDTO> DeleteVote(PostVoteDTO voteDTO)
+        {
+            var vote = new PostVote { PostId = voteDTO.PostId, UserId = voteDTO.UserId };
+            if (await postManager.DeleteVote(vote) == null)
+                return null;
+            return voteDTO;
         }
     }
 }

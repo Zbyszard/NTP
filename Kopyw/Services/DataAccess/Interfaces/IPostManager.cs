@@ -10,7 +10,9 @@ namespace Kopyw.Services.DataAccess.Interfaces
     {
         public Task<Post> Add(Post newPost);
         public Task<Post> Get(long id);
-        public Task Update(Post post);
+        public Task<int> Update(Post post);
         public Task<bool?> Delete(long id, string loggedUserId);
+        public Task<PostVote> AddVote(PostVote newVote);
+        public Task<PostVote> DeleteVote(PostVote vote);
     }
 }

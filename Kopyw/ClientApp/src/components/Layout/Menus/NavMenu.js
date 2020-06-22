@@ -4,6 +4,7 @@ import { LoginMenu } from '../../api-authorization/LoginMenu';
 import MenuBar from './MenuBar/MenuBar';
 import SideMenu from './SideMenu/SideMenu';
 import NavItem from './NavItem';
+import AuthorizedRender from '../../api-authorization/AuthorizedRender';
 
 class NavMenu extends Component {
   static displayName = NavMenu.name;
@@ -13,51 +14,44 @@ class NavMenu extends Component {
     this.state = {
       showSideMenu: false
     };
-
-    let navItems = [
-      { url: "/", name: "New posts" },
-      { url: "/observed", name: "Observed" },
-      /*{ url: "/top", name: "Top" },*/
-      { url: "/me", name: "Your posts" }];
-    this.initSideMenu(navItems);
-    this.initTopMenu(navItems);
   }
 
   render() {
+    const navItems =
+      <>
+        <NavItem>
+          <Link to="/">New posts</Link>
+        </NavItem>
+        <NavItem>
+          <Link to="/top">Top</Link>
+        </NavItem>
+        <AuthorizedRender>
+          <NavItem>
+            <Link to="/observed">Observed</Link>
+          </NavItem>
+          <NavItem>
+            <Link to="/me">Your posts</Link>
+          </NavItem>
+        </AuthorizedRender>
+        <LoginMenu />
+      </>;
     return (
       <header>
         <MenuBar sideMenuActive={this.state.showSideMenu}
           menuIconClickHandler={this.toggleSideMenu}>
-          {this.topBarMenuItems}
+          {navItems}
         </MenuBar>
         <SideMenu isActive={this.state.showSideMenu}
           toggleHandler={this.toggleSideMenu}>
-          {this.sideMenuItems}
+          {navItems}
         </SideMenu>
       </header>
     );
   }
 
   toggleSideMenu = () => {
-    this.setState(state => { return { showSideMenu: !state.showSideMenu }; });
-  }
-
-  initTopMenu = menuItems => {
-    this.topBarMenuItems = menuItems.map((item, i) => (
-      <NavItem key={i}>
-        <Link to={item.url}>{item.name}</Link>
-      </NavItem>)
-    );
-    this.topBarMenuItems.push(<LoginMenu key="login" />);
-  }
-
-  initSideMenu = menuItems => {
-    this.sideMenuItems = menuItems.map((item, i) => (
-      <NavItem key={i} clickHandler={this.toggleSideMenu}>
-        <Link to={item.url}>{item.name}</Link>
-      </NavItem>)
-    );
-    this.sideMenuItems.push(<LoginMenu key="login" />);
+    if (this.state.showSideMenu)
+      this.setState(state => { return { showSideMenu: !state.showSideMenu }; });
   }
 
 }

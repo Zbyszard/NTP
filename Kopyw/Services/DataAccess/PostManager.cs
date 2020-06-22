@@ -1,10 +1,13 @@
-﻿using Kopyw.Data;
+﻿using IdentityServer4.Extensions;
+using Kopyw.Data;
 using Kopyw.Models;
 using Kopyw.Services.DataAccess.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kopyw.Services.DataAccess
@@ -51,10 +54,37 @@ namespace Kopyw.Services.DataAccess
             return post;
         }
 
-        public async Task Update(Post post)
+        public async Task<int> Update(Post post)
         {
             db.Entry(post).State = EntityState.Modified;
-            await db.SaveChangesAsync();
+            return await db.SaveChangesAsync();
+        }
+
+        public async Task<PostVote> AddVote(PostVote newVote)
+        {
+            var pv = await db.PostVotes.Where(p => p.PostId == newVote.PostId &&
+                p.UserId == newVote.UserId).FirstOrDefaultAsync();
+            var isSelfVote = await (from p in db.Posts
+                                    where p.Id == newVote.PostId && p.AuthorId == newVote.UserId
+                                    select p).CountAsync() == 1;
+            if(pv == null && newVote.PostId != 0 && !newVote.UserId.IsNullOrEmpty() && !isSelfVote)
+            {
+                db.PostVotes.Add(newVote);
+                await db.SaveChangesAsync();
+                return newVote;
+            }
+            return null;
+        }
+        public async Task<PostVote> DeleteVote(PostVote vote)
+        {
+            var pv = await db.PostVotes.Where(p => p.PostId == vote.PostId &&
+                p.UserId == vote.UserId).FirstOrDefaultAsync();
+            if (pv == null)
+                return null;
+            db.Entry(pv).State = EntityState.Deleted;
+            if (await db.SaveChangesAsync() != 1)
+                return null;
+            return pv;
         }
     }
 }

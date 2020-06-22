@@ -1,16 +1,14 @@
 import React, { Component } from 'react';
-import authService from '../api-authorization/AuthorizeService';
-import axios from 'axios';
-import classes from './PostForm.module.css';
+import PropTypes from 'prop-types';
+import classes from './CommentForm.module.css';
 
-class PostForm extends Component {
+class CommentForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: "",
             text: "",
             validationMessages: []
-        }
+        };
     }
 
     render() {
@@ -19,17 +17,11 @@ class PostForm extends Component {
         return (
             <div className={classes.container}>
                 <form onSubmit={this.submitHandler}>
-                    <input className={classes.title}
-                        value={this.state.title}
-                        onChange={this.changeHandler}
-                        name="title"
-                        placeholder="Title"
-                        onKeyDown={this.preventEnter} />
                     <textarea className={classes.text}
                         value={this.state.text}
                         onChange={this.changeHandler}
                         name="text"
-                        placeholder="Write something" />
+                        placeholder="Your comment" />
                     {!messages ? null :
                         <ul className={classes.validationMessages}>{messages}</ul>}
                     <input type="submit" value="Send" />
@@ -38,52 +30,33 @@ class PostForm extends Component {
         );
     }
 
-    preventEnter = e => {
-        if (e.key === "Enter")
-            e.preventDefault();
-    }
-
     changeHandler = e => {
         const value = e.target.value;
-        const name = e.target.name;
         this.setState({
-            [name]: value,
+            text: value,
             validationMessages: []
         });
     }
 
     submitHandler = e => {
         e.preventDefault();
-        if (!this.validateFields())
+        if (!this.validate())
             return;
-        this.sendNewPost();
+        this.sendComment();
     }
 
-    sendNewPost = () => {
-        const newPost = {
-            Title: this.state.title,
-            Text: this.state.text
-        };
-        axios.post("/post", newPost).then(r => {
-            this.setState({ title: "", text: "" });
-        });
-
+    sendComment = () => {
+        throw new Error("send comment not implemented");
     }
 
-    validateFields = () => {
+    validate = () => {
         let isOk = true;
         let messages = [];
         let regex = /\s/g;
-        let text = this.state.title;
-        text = text.replace(regex, '');
-        if (!text) {
-            messages.push("Title cannot be empty");
-            isOk = false;
-        }
-        text = this.state.text;
+        let text = this.state.text;
         text = text.replace(regex, '');
         if (text.length < 5) {
-            messages.push("Your post needs to be at least 5 characters long");
+            messages.push("Your comment needs to be at least 5 characters long");
             isOk = false;
         }
         this.setState({ validationMessages: messages });
@@ -91,4 +64,8 @@ class PostForm extends Component {
     }
 }
 
-export default PostForm;
+CommentForm.propTypes = {
+    comments: PropTypes.arrayOf(PropTypes.object)
+}
+
+export default CommentForm;

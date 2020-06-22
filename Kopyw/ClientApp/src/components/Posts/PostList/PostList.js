@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import AuthContext from '../../../AuthContext';
+import AuthContext from '../../api-authorization/AuthContext';
 import PropTypes from 'prop-types';
 import Post from './Post/Post';
 import axios from 'axios';
@@ -53,11 +53,12 @@ class PostList extends Component {
                         <Post id={p.id} key={p.id}
                             author={p.authorName}
                             title={p.title}
+                            postTime={new Date(p.postTime)}
                             text={p.text}
                             score={p.score}
                             commentCount={p.commentCount}
                             userVote={p.userVote}
-                            showPlus={context.userName !== p.authorName} />
+                            showPlus={context.authorized && context.userName !== p.authorName} />
                     }
                 </AuthContext.Consumer>);
         return (

@@ -1,0 +1,79 @@
+.comment {
+    box-sizing: border-box;
+    background-color: rgb(40, 40, 40);
+    padding: 5px;
+    border: 1px solid black;
+    border-bottom: none;
+}
+
+.comment:last-child {
+    border-bottom: 1px solid black;
+}
+
+.commentHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.commentHeader > * {
+    margin-right: 5px;
+}
+
+.author {
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.time {
+    color: rgb(170, 170, 170);
+    font-size: 0.7rem;
+}
+
+.score {
+    margin-left: 10px;
+    font-size: 0.8rem;
+    min-width: 30px;
+    text-align: right;
+}
+
+.toLeft {
+    margin-left: auto;
+}
+
+.plus, .minus {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    font-family: inherit;
+    background-color: transparent;
+    border: none;
+    border-radius: 100%;
+    cursor: pointer;
+    transition-duration: 0.1s;
+    transition-timing-function: ease-in-out;
+}
+
+.plus {
+    margin-left: auto;
+    color: rgb(170, 255, 140);
+}
+
+.minus {
+    color: rgb(255, 140, 140);
+}
+
+.minus:hover, .minus:active, .minusActive {
+    background-color: rgb(255, 70, 70);
+    color: black;
+}
+
+.plus:hover, .plus:active, .plusActive {
+    background-color: rgb(120, 255, 70);
+    color: black;
+}
+
+.text {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}

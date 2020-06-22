@@ -44,6 +44,7 @@ namespace Kopyw
 
             services.AddScoped<UserFinder, UserFinder>();
             services.AddScoped<IPostDTOManager, PostDTOManager>();
+            services.AddScoped<ICommentDTOManager, CommentDTOManager>();
             services.AddScoped<IPostManager, PostManager>();
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();

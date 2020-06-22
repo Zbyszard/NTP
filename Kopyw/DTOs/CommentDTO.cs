@@ -12,6 +12,7 @@ namespace Kopyw.DTOs
         public long Id { get; set; }
         public string AuthorName { get; set; }
         public string Text { get; set; }
+        public DateTime PostTime { get; set; }
         public int Score { get; set; }
         public int UserVote { get; set; }
     }
