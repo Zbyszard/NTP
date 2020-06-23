@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import { Route } from 'react-router-dom';
 import AuthContext from '../../api-authorization/AuthContext';
+import AuthorizedRender from '../../api-authorization/AuthorizedRender';
 import PropTypes from 'prop-types';
 import Post from './Post/Post';
+import PostForm from '../PostForm';
 import axios from 'axios';
 import classes from './PostList.module.css';
 
@@ -39,6 +42,12 @@ class PostList extends Component {
             });
     }
 
+    postAddedCallback = post => {
+        this.setState(state => {
+            return { posts: [post, ...state.posts] };
+        });
+    }
+
     render() {
         let content;
         if (this.state.isLoading)
@@ -61,9 +70,14 @@ class PostList extends Component {
                     }
                 </AuthContext.Consumer>);
         return (
-            <div className={classes.postList}>
-                {content}
-            </div>
+            <>
+                <AuthorizedRender>
+                    <Route exact path="/" render={props => <PostForm {...props} onPost={this.postAddedCallback}/>} />
+                </AuthorizedRender>
+                <div className={classes.postList}>
+                    {content}
+                </div>
+            </>
         );
     }
 }

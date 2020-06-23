@@ -53,10 +53,33 @@ namespace Kopyw.Controllers
         [HttpGet]
         public async Task<ActionResult<List<CommentDTO>>> GetRange(long postId)
         {
-            var comments = await commentDTOManager.GetRange(postId);
-            if (comments.Count == 0)
-                return NotFound();
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            var comments = await commentDTOManager.GetRange(postId, user?.Id);
             return Ok(comments);
+        }
+        [Authorize]
+        [Route("vote")]
+        [HttpPost]
+        public async Task<ActionResult<CommentVoteDTO>> Vote(CommentVoteDTO vote)
+        {
+            if (vote.Value == 0)
+                return BadRequest();
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            vote.UserId = user.Id;
+            vote = await commentDTOManager.Vote(vote);
+            return vote;
+        }
+        [Authorize]
+        [Route("vote/{commentId}")]
+        [HttpDelete]
+        public async Task<ActionResult<CommentVoteDTO>> DeleteVote(long commentId)
+        {
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            var vote = new CommentVoteDTO { CommentId = commentId, UserId = user.Id };
+            var deleted = await commentDTOManager.DeleteVote(vote);
+            if (deleted == null)
+                return NotFound();
+            return deleted;
         }
     }
 }

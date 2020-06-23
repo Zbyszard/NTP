@@ -8,6 +8,7 @@ namespace Kopyw.DTOs
     public class CommentVoteDTO
     {
         public long CommentId { get; set; }
+        public string UserId { get; set; }
         public int Value { get; set; }
     }
 }

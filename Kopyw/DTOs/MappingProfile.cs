@@ -25,6 +25,15 @@ namespace Kopyw.DTOs
                 .ForMember(d => d.PostId, o => o.MapFrom(s => s.PostId))
                 .ForMember(d => d.AuthorId, o => o.MapFrom(s => s.AuthorId))
                 .ForMember(d => d.Text, o => o.MapFrom(s => s.Text));
+
+            CreateMap<CommentVote, CommentVoteDTO>()
+                .ForMember(d => d.CommentId, o => o.MapFrom(s => s.CommentId))
+                .ForMember(d => d.UserId, o => o.MapFrom(s => s.UserId))
+                .ForMember(d => d.Value, o => o.MapFrom(s => s.Value));
+            CreateMap<CommentVoteDTO, CommentVote>()
+                .ForMember(d => d.CommentId, o => o.MapFrom(s => s.CommentId))
+                .ForMember(d => d.UserId, o => o.MapFrom(s => s.UserId))
+                .ForMember(d => d.Value, o => o.MapFrom(s => s.Value));
         }
     }
 }

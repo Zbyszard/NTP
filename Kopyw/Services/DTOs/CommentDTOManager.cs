@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Kopyw.Data;
 using Kopyw.DTOs;
 using Kopyw.Models;
 using Kopyw.Services.DataAccess;
@@ -20,6 +21,7 @@ namespace Kopyw.Services.DTOs.Interfaces
             this.commentManager = commentManager;
             this.mapper = mapper;
         }
+
         public async Task<CommentDTO> Add(CommentDTO newComment)
         {
             var comment = mapper.Map<Comment>(newComment);
@@ -45,15 +47,38 @@ namespace Kopyw.Services.DTOs.Interfaces
         }
 
 
-        public async Task<List<CommentDTO>> GetRange(long postId)
+        public async Task<List<CommentDTO>> GetRange(long postId, string userId)
         {
-            var comments = await commentManager.GetRange(postId);
-            return mapper.Map<List<CommentDTO>>(comments);
+            var dbcomments = await commentManager.GetRange(postId);
+            var comments = mapper.Map<List<CommentDTO>>(dbcomments);
+            if(!string.IsNullOrEmpty(userId))
+            {
+                var userVotes = await commentManager.GetVotes(dbcomments, userId);
+                foreach(var vote in userVotes)
+                {
+                    comments[userVotes.IndexOf(vote)].UserVote = vote.Value;
+                }
+            }
+            return comments;
         }
 
         public async Task<CommentDTO> Update(CommentDTO Comment)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<CommentVoteDTO> Vote(CommentVoteDTO vote)
+        {
+            var v = mapper.Map<CommentVote>(vote);
+            var added = await commentManager.Vote(v);
+            return mapper.Map<CommentVoteDTO>(added);
+        }
+
+        public async Task<CommentVoteDTO> DeleteVote(CommentVoteDTO vote)
+        {
+            var v = mapper.Map<CommentVote>(vote);
+            var deleted = await commentManager.DeleteVote(v);
+            return mapper.Map<CommentVoteDTO>(deleted);
         }
     }
 }

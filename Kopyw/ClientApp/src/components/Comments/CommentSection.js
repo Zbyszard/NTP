@@ -14,34 +14,6 @@ class CommentSection extends Component {
             show: props.show,
             isLoading: true,
             comments: []
-            /*comments: [{
-                id: 0,
-                authorName: "Andrzej",
-                text: "fajen",
-                score: -1,
-                userVote: 1
-            },
-            {
-                id: 1,
-                authorName: "Akwarelista",
-                text: ":(",
-                score: 20,
-                userVote: -1
-            },
-            {
-                id: 2,
-                authorName: "QWEASD",
-                text: "pzdr",
-                score: -89,
-                userVote: -1
-            },
-            {
-                id: 3,
-                authorName: "Zagłoba",
-                text: "+1 byczq",
-                score: 45845,
-                userVote: 0
-            }]*/
         }
     }
 
@@ -104,6 +76,7 @@ class CommentSection extends Component {
             </section>
         );
     }
+    
 }
 
 CommentSection.propTypes = {

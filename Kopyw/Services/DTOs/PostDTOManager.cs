@@ -44,6 +44,7 @@ namespace Kopyw.Services.DTOs
             if (await postManager.Add(post) == null)
                 return null;
             newPost.Id = post.Id;
+            newPost.PostTime = post.PostTime;
             return newPost;
         }
         private IQueryable<PostDTO> PostDTOQuery(string loggedUserId, string sort = null, string sortDir = null)

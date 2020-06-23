@@ -46,7 +46,7 @@ class Post extends Component {
                         {plus1}
                         <button className={classes.commentCount}
                             onClick={this.toggleComments}>
-                            {this.props.commentCount} comments
+                            {this.props.commentCount} {this.props.commentCount == 1 ? "comment" : "comments"}
                         </button>
                     </div>
                     <CommentSection postId={this.props.id}

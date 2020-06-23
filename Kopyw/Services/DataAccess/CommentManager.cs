@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 
 namespace Kopyw.Services.DataAccess
@@ -51,9 +52,56 @@ namespace Kopyw.Services.DataAccess
             return comments;
         }
 
-        public async Task<Comment> Update(Comment comment)
+        public async  Task<Comment> Update(Comment comment)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<List<CommentVote>> GetVotes(List<Comment> comments, string userId)
+        {
+            var votes = (from c in comments
+                         select new CommentVote
+                         {
+                             CommentId = c.Id,
+                             UserId = userId,
+                             Value = (from cv in db.CommentVotes
+                                      where cv.CommentId == c.Id && cv.UserId == userId
+                                      select cv.Value).FirstOrDefault()
+                         }).ToList();
+            return votes;
+        }
+
+        public async Task<CommentVote> Vote(CommentVote vote)
+        {
+            var oldVote = await db.CommentVotes
+                .Where(c => c.UserId == vote.UserId && c.CommentId == vote.CommentId)
+                .FirstOrDefaultAsync();
+            if (oldVote != null)
+            {
+                oldVote.Value = vote.Value;
+                db.Entry(oldVote).State = EntityState.Modified;
+                vote = oldVote;
+            }
+            else
+                db.Entry(vote).State = EntityState.Added;
+            if (await db.SaveChangesAsync() == 1)
+                return vote;
+            return null;
+        }
+        public async Task<CommentVote> DeleteVote(CommentVote vote)
+        {
+            var oldVote = await db.CommentVotes
+                .Where(c => c.UserId == vote.UserId && c.CommentId == vote.CommentId)
+                .FirstOrDefaultAsync();
+            if(oldVote != null)
+            {
+                vote = oldVote;
+                db.Entry(vote).State = EntityState.Deleted;
+                if (await db.SaveChangesAsync() == 0)
+                    return null;
+                return vote;
+            }
+            return null;
         }
     }
 }

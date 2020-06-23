@@ -65,7 +65,9 @@ class PostForm extends Component {
             Text: this.state.text
         };
         axios.post("/post", newPost).then(r => {
+            const post = r.data;
             this.setState({ title: "", text: "" });
+            this.props.onPost(post);
         });
 
     }
