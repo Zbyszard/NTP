@@ -19,7 +19,6 @@ class PostList extends Component {
     }
 
     componentDidMount = () => {
-
         this.requestData();
     }
 

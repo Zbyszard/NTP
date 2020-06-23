@@ -13,6 +13,7 @@ namespace Kopyw.DTOs
         {
             CreateMap<Comment, CommentDTO>()
                 .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
+                .ForMember(d => d.PostId, o => o.MapFrom(s => s.PostId))
                 .ForMember(d => d.AuthorId, o => o.MapFrom(s => s.AuthorId))
                 .ForMember(d => d.AuthorName, o => o.MapFrom(s => s.Author.UserName))
                 .ForMember(d => d.PostTime, o => o.MapFrom(s => s.PostTime))
@@ -21,6 +22,7 @@ namespace Kopyw.DTOs
                 .ForMember(d => d.Text, o => o.MapFrom(s => s.Text));
             CreateMap<CommentDTO, Comment>()
                 .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
+                .ForMember(d => d.PostId, o => o.MapFrom(s => s.PostId))
                 .ForMember(d => d.AuthorId, o => o.MapFrom(s => s.AuthorId))
                 .ForMember(d => d.Text, o => o.MapFrom(s => s.Text));
         }

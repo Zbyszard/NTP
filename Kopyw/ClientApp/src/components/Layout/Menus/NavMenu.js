@@ -5,6 +5,7 @@ import MenuBar from './MenuBar/MenuBar';
 import SideMenu from './SideMenu/SideMenu';
 import NavItem from './NavItem';
 import AuthorizedRender from '../../api-authorization/AuthorizedRender';
+import MenuContext from './MenuContext';
 
 class NavMenu extends Component {
   static displayName = NavMenu.name;
@@ -36,22 +37,26 @@ class NavMenu extends Component {
         <LoginMenu />
       </>;
     return (
-      <header>
-        <MenuBar sideMenuActive={this.state.showSideMenu}
-          menuIconClickHandler={this.toggleSideMenu}>
-          {navItems}
-        </MenuBar>
-        <SideMenu isActive={this.state.showSideMenu}
-          toggleHandler={this.toggleSideMenu}>
-          {navItems}
-        </SideMenu>
-      </header>
+      <MenuContext.Provider value={{ navItemClicked: this.closeSideMenu }}>
+        <header>
+          <MenuBar sideMenuActive={this.state.showSideMenu}
+            menuIconClickHandler={this.toggleSideMenu}>
+            {navItems}
+          </MenuBar>
+          <SideMenu isActive={this.state.showSideMenu}
+            toggleHandler={this.toggleSideMenu}>
+            {navItems}
+          </SideMenu>
+        </header>
+      </MenuContext.Provider>
     );
   }
 
   toggleSideMenu = () => {
-    if (this.state.showSideMenu)
-      this.setState(state => { return { showSideMenu: !state.showSideMenu }; });
+    this.setState(state => { return { showSideMenu: !state.showSideMenu }; });
+  }
+  closeSideMenu = () => {
+    this.setState(state => { return { showSideMenu: false }; });
   }
 
 }

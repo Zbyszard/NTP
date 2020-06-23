@@ -50,8 +50,7 @@ class Post extends Component {
                         </button>
                     </div>
                     <CommentSection postId={this.props.id}
-                        show={this.state.showComments}
-                        showPlusMinus={this.props.showPlus} />
+                        show={this.state.showComments} />
                 </div>
 
             </>

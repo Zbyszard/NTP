@@ -21,16 +21,12 @@ namespace Kopyw.Services.DataAccess
         }          
         public async Task<Post> Add(Post newPost)
         {
-            try
-            {
-                db.Add(newPost);
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
+
+            db.Add(newPost);
+            if (await db.SaveChangesAsync() == 1)
+                return newPost;
+            else
                 return null;
-            }
-            return newPost;
         }
 
         public async Task<bool?> Delete(long id, string loggedUserId)

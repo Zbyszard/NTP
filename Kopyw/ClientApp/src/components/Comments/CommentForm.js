@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classes from './CommentForm.module.css';
+import axios from 'axios';
 
 class CommentForm extends Component {
     constructor(props) {
@@ -46,7 +47,15 @@ class CommentForm extends Component {
     }
 
     sendComment = () => {
-        throw new Error("send comment not implemented");
+        const newComment = {
+            postId: this.props.postId,
+            text: this.state.text
+        };
+        axios.post("/comment/add", newComment).then(r => {
+            const comment = r.data;
+            this.setState({text: ""});
+            this.props.onCommentPost(comment);
+        })
     }
 
     validate = () => {

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import MenuContext from './MenuContext';
 import PropTypes from 'prop-types';
 
 const NavItem = props => {
-
+    const context = useContext(MenuContext);
     return (
-        <li onClick={props.clickHandler}>
+        <li onClick={context.navItemClicked}>
             {props.children}
         </li>
     );

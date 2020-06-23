@@ -48,6 +48,7 @@ namespace Kopyw
             services.AddScoped<IPostDTOManager, PostDTOManager>();
             services.AddScoped<ICommentDTOManager, CommentDTOManager>();
             services.AddScoped<IPostManager, PostManager>();
+            services.AddScoped<ICommentManager, CommentManager>();
 
 
             var mappingConfig = new MapperConfiguration(mc =>
