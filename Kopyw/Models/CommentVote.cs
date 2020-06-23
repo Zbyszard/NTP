@@ -10,7 +10,7 @@ namespace Kopyw.Models
     {
         public long Id { get; set; }
         [Required]
-        public bool Value { get; set; }
+        public int Value { get; set; }
         public string UserId { get; set; }
         [Required]
         public long CommentId { get; set; }

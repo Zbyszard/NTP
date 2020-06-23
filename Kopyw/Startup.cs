@@ -16,6 +16,8 @@ using Kopyw.Services.DTOs;
 using Kopyw.Services.DataAccess;
 using Kopyw.Services.DataAccess.Interfaces;
 using Kopyw.Services;
+using AutoMapper;
+using Kopyw.DTOs;
 
 namespace Kopyw
 {
@@ -46,6 +48,16 @@ namespace Kopyw
             services.AddScoped<IPostDTOManager, PostDTOManager>();
             services.AddScoped<ICommentDTOManager, CommentDTOManager>();
             services.AddScoped<IPostManager, PostManager>();
+
+
+            var mappingConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 

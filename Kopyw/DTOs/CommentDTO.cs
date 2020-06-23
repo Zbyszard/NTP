@@ -10,6 +10,7 @@ namespace Kopyw.DTOs
     public class CommentDTO
     {
         public long Id { get; set; }
+        public string AuthorId { get; set; }
         public string AuthorName { get; set; }
         public string Text { get; set; }
         public DateTime PostTime { get; set; }

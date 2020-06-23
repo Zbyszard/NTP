@@ -18,7 +18,7 @@ namespace Kopyw.Services.DataAccess
         public PostManager(ApplicationDbContext dbContext)
         {
             db = dbContext;
-        }
+        }          
         public async Task<Post> Add(Post newPost)
         {
             try

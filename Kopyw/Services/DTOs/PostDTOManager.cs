@@ -1,4 +1,5 @@
-﻿using Kopyw.Data;
+﻿using AutoMapper;
+using Kopyw.Data;
 using Kopyw.DTOs;
 using Kopyw.Models;
 using Kopyw.Services.DataAccess.Interfaces;
@@ -20,16 +21,18 @@ namespace Kopyw.Services.DTOs
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IPostManager postManager;
+        private readonly IMapper mapper;
         public PostDTOManager(
             ApplicationDbContext dbContext,
             UserManager<ApplicationUser> userManager,
-            IPostManager postManager)
+            IPostManager postManager,
+            IMapper mapper)
         {
             db = dbContext;
             this.userManager = userManager;
             this.postManager = postManager;
+            this.mapper = mapper;
         }
-
         public async Task<PostDTO> Add(PostDTO newPost)
         {
             var post = new Post
