@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router';
+import { Route, Switch } from 'react-router';
 import Layout from './components/Layout/Layout';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import authService from './components/api-authorization/AuthorizeService'
@@ -30,18 +30,17 @@ export default class App extends Component {
 
 
   render() {
-    let userRoute;
     return (
       <AuthContext.Provider value={this.state.authorizationState}>
         <Layout>
-          <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
-          <AuthorizedRender>
-            <Route key={1} exact path="/me" render={props => <PostList {...props} getUrl={`/post/user/${this.state.authorizationState.userName}`} />} />
-            <Route key={2} exact path="/observed" render={props => <PostList {...props} getUrl="/post/observed" />} />
-          </AuthorizedRender>
-            <Route key={3} exact path="/" render={props => <PostList {...props} getUrl="/post/new" />} />
-            <Route key={4} exact path="/top" render={props => <PostList {...props} getUrl="/post/score" />} />
-            <Route key={5} exact path="/user/:username" render={props => <PostList {...props} getUrl="/post/user" />} />
+          <Switch>
+            <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
+            <Route key={5} exact path="/user/:username/:page?" render={props => <PostList {...props} getUrl="/post/user" />} />
+            <Route key={1} exact path="/me/:page?" render={props => <AuthorizedRender><PostList {...props} showForm={true} getUrl={`/post/user/${this.state.authorizationState.userName}`} /></AuthorizedRender>} />
+            <Route key={2} exact path="/observed/:page?" render={props => <AuthorizedRender><PostList {...props} getUrl="/post/observed" /></AuthorizedRender>} />
+            <Route key={4} exact path="/top/:page?" render={props => <PostList {...props} getUrl="/post/score" />} />
+            <Route key={3} exact path="/:page?" render={props => <PostList {...props} showForm={true} getUrl="/post/new" />} />
+          </Switch>
         </Layout>
       </AuthContext.Provider>
     );

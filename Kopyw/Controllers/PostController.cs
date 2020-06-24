@@ -52,6 +52,20 @@ namespace Kopyw.Controllers
             return Ok(list);
         }
         [HttpGet]
+        [Route("user/pages/{userName}/{postsPerPage}")]
+        public async Task<ActionResult<int>> GetUserPages(string userName, int postsPerPage)
+        {
+            if(string.IsNullOrEmpty(userName))
+            {
+                var user = await userFinder.FindByClaimsPrincipal(User);
+                if (user == null)
+                    return NotFound();
+                userName = user.UserName;
+            }
+            int pages = postDTOManager.GetUserPages(userName, postsPerPage);
+            return Ok(pages);
+        }
+        [HttpGet]
         [Route("{type}/{page}/{count}/{sort}/{sortDir}")]
         public async Task<ActionResult<List<PostDTO>>> GetRange(string type, int page, int count, string sort, string sortDir)
         {
@@ -77,6 +91,22 @@ namespace Kopyw.Controllers
             if (list == null || list.Count == 0)
                 return NotFound();
             return Ok(list);
+        }
+        [HttpGet]
+        [Route("pages/{postsPerPage}")]
+        public ActionResult<int> GetPages(int postsPerPage)
+        {
+            int pages = postDTOManager.GetPages(postsPerPage);
+            return Ok(pages);
+        }
+        [Authorize]
+        [HttpGet]
+        [Route("observed/pages/{postsPerPage}")]
+        public async Task<ActionResult<int>> GetFollowedPages(int postsPerPage)
+        {
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            int pages = postDTOManager.GetFollowedPages(user.Id, postsPerPage);
+            return Ok(pages);
         }
         [Authorize]
         [HttpPost]

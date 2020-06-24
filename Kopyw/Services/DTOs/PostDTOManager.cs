@@ -78,9 +78,9 @@ namespace Kopyw.Services.DTOs
             if (type == null || dir == null)
                 return query;
             if (type.Equals("score") && dir.Equals("desc"))
-                query = query.Select(p => p).OrderByDescending(p => p.Score);
+                query = query.Select(p => p).OrderByDescending(p => p.Score).ThenByDescending(p => p.PostTime);
             else if (type.Equals("score"))
-                query = query.Select(p => p).OrderBy(p => p.Score);
+                query = query.Select(p => p).OrderBy(p => p.Score).ThenByDescending(p => p.PostTime);
             else if (type.Equals("time") && dir.Equals("asc"))
                 query = query.Select(p => p).OrderBy(p => p.PostTime);
             else

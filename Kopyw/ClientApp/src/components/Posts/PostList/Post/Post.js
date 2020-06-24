@@ -31,9 +31,10 @@ class Post extends Component {
                         {this.props.author}
                     </Link>
                     <h1 className={classes.title}>
-                        <Link to={`/post/${this.props.id}`}>
+                        {/* <Link to={`/post/${this.props.id}`}>
                             {this.props.title}
-                        </Link>
+                        </Link> */}
+                        <div>{this.props.title}</div>
                     </h1>
                     <p className={classes.time}>
                         {formatDate(this.props.postTime)}
