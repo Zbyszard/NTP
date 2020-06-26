@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import authService from '../api-authorization/AuthorizeService';
 import axios from 'axios';
 import classes from './PostForm.module.css';
 
@@ -9,8 +8,10 @@ class PostForm extends Component {
         this.state = {
             title: "",
             text: "",
+            isBlocked: false,
             validationMessages: []
         }
+        this.blockTimer = null;
     }
 
     render() {
@@ -38,6 +39,10 @@ class PostForm extends Component {
         );
     }
 
+    componentWillUnmount = () => {
+        clearTimeout(this.blockTimer);
+    }
+
     preventEnter = e => {
         if (e.key === "Enter")
             e.preventDefault();
@@ -54,6 +59,8 @@ class PostForm extends Component {
 
     submitHandler = e => {
         e.preventDefault();
+        if(this.state.isBlocked)
+            return;
         if (!this.validateFields())
             return;
         this.sendNewPost();
@@ -64,11 +71,16 @@ class PostForm extends Component {
             Title: this.state.title,
             Text: this.state.text
         };
-        axios.post("/post", newPost).then(r => {
-            const post = r.data;
-            this.setState({ title: "", text: "" });
-            this.props.onPost(post);
-        });
+        this.setState({ isBlocked: true });
+        axios.post("/post", newPost)
+            .then(r => {
+                const post = r.data;
+                this.setState({ title: "", text: "" });
+                this.props.onPost(post);
+            })
+            .finally(() => {
+                this.blockTimer = setTimeout(() => this.setState({ isBlocked: false }), 1000);
+            });
 
     }
 

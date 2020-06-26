@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import classes from '../Menu.module.css';
 import '../../../Shared/Icons/css/fontello.css';
 
@@ -9,39 +10,14 @@ class Search extends Component {
         this.state = {
             showSearch: false,
             searchString: "",
-            iconSize: "1rem"
+            iconSize: "1rem",
+            redirect: null
         };
     }
 
     componentDidMount() {
         let inputHeight = `${this.inputRef.current.clientHeight * 0.8}px`;
         this.setState({ iconSize: inputHeight });
-    }
-
-    render() {
-        let barClasses = [classes.searchBar];
-        let iconClasses = [classes.searchIcon];
-        if (this.state.showSearch)
-            barClasses.push(classes.active);
-        else
-            iconClasses.push(classes.active);
-        let barClassList = barClasses.join(' ');
-        let iconClassList = iconClasses.join(' ');
-        return (
-            <>
-                <input className={barClassList}
-                    value={this.state.searchString}
-                    onChange={this.inputChangeHandler}
-                    type="text"
-                    placeholder="Looking for..."
-                    ref={this.inputRef}
-                    onBlur={this.disableSearch} />
-                <div className={iconClassList}
-                    onClick={this.enableSearch}>
-                    <i style={{ fontSize: this.state.iconSize }} className="icon-search" />
-                </div>
-            </>
-        );
     }
 
     inputChangeHandler = e => {
@@ -56,6 +32,50 @@ class Search extends Component {
         if (this.state.searchString === "")
             this.setState({ showSearch: false });
     }
+
+    search = e => {
+        e.preventDefault();
+        let str = this.state.searchString;
+        if (!str.replace(/\s/g, '').length) {
+            this.setState({ redirect: '/' });
+            return;
+        }
+        this.setState({ redirect: `/search/${str}` });
+    }
+
+    render() {
+        let barClasses = [classes.searchBar];
+        let iconClasses = [classes.searchIcon];
+        if (this.state.showSearch)
+            barClasses.push(classes.active);
+        else
+            iconClasses.push(classes.active);
+        let barClassList = barClasses.join(' ');
+        let iconClassList = iconClasses.join(' ');
+        if (!!this.state.redirect) {
+            let redirect = this.state.redirect;
+            this.setState({ redirect: null });
+            return <Redirect to={redirect} />
+        }
+        return (
+            <>
+                <form onSubmit={this.search} id="searchform" />
+                <input className={barClassList}
+                    form="searchform"
+                    value={this.state.searchString}
+                    onChange={this.inputChangeHandler}
+                    type="text"
+                    placeholder="Looking for..."
+                    ref={this.inputRef}
+                    onBlur={this.disableSearch} />
+                <div className={iconClassList}
+                    onClick={this.enableSearch}>
+                    <i style={{ fontSize: this.state.iconSize }} className="icon-search" />
+                </div>
+            </>
+        );
+    }
+
 
 }
 

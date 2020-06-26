@@ -16,6 +16,8 @@ namespace Kopyw.Services.DTOs.Interfaces
         public int GetUserPages(string userName, int postsPerPage);
         public Task<List<PostDTO>> GetFollowedPosts(int count, int page, string loggedUserId, string sort, string sortDir);
         public int GetFollowedPages(string loggedUserId, int postsPerPage);
+        public Task<List<PostDTO>> Search(string phrase, int count, int page, string loggedUserId);
+        public int GetSearchPages(string phrase, int postsPerPage);
         public Task<bool?> Update(PostDTO post, string loggedUserId);
         public Task<PostVoteDTO> AddVote(PostVoteDTO newVoteDTO);
         public Task<PostVoteDTO> DeleteVote(PostVoteDTO voteDTO);

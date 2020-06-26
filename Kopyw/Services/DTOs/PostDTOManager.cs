@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace Kopyw.Services.DTOs
 {
+    //will be updated to use AutoMapper
     public class PostDTOManager : IPostDTOManager
     {
         private readonly ApplicationDbContext db;
@@ -168,8 +169,34 @@ namespace Kopyw.Services.DTOs
                               select p).Skip((page - 1) * count).Take(count).ToListAsync();
             return posts;
         }
+        public IQueryable<PostDTO> SearchQuery(string phrase, string loggedUserId)
+        {
+            string lowerPhrase = phrase.ToLower();
+            var postQuery = PostDTOQuery(loggedUserId, "score", "desc");
+            var q = (from p in postQuery
+                     where p.AuthorName.ToLower() == lowerPhrase ||
+                     p.Title.ToLower().Contains(lowerPhrase) ||
+                     p.Text.ToLower().Contains(lowerPhrase)
+                     select p);
+            return q;
+        }
+        public async Task<List<PostDTO>> Search(string phrase, int count, int page, string loggedUserId)
+        {
+            string lowerPhrase = phrase.ToLower();
+            var searchQuery = SearchQuery(phrase, loggedUserId);
+            var posts = await searchQuery.Skip((page - 1) * count).Take(count).ToListAsync();
+            return posts;
+        }
+        public int GetSearchPages(string phrase, int postsPerPage)
+        {
+            var searchQuery = SearchQuery(phrase, null);
+            int posts = searchQuery.Count();
 
-
+            int pages = posts / postsPerPage;
+            if (posts % postsPerPage != 0)
+                pages++;
+            return pages;
+        }
         public async Task<bool?> Update(PostDTO post, string loggedUserId)
         {
             var p = await postManager.Get(post.Id);

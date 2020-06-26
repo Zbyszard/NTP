@@ -46,7 +46,6 @@ namespace Kopyw.Services.DTOs.Interfaces
             throw new NotImplementedException();
         }
 
-
         public async Task<List<CommentDTO>> GetRange(long postId, string userId)
         {
             var dbcomments = await commentManager.GetRange(postId);

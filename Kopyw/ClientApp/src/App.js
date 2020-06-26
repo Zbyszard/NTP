@@ -35,11 +35,12 @@ export default class App extends Component {
         <Layout>
           <Switch>
             <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
-            <Route key={5} exact path="/user/:username/:page?" render={props => <PostList {...props} getUrl="/post/user" />} />
-            <Route key={1} exact path="/me/:page?" render={props => <AuthorizedRender><PostList {...props} showForm={true} getUrl={`/post/user/${this.state.authorizationState.userName}`} /></AuthorizedRender>} />
-            <Route key={2} exact path="/observed/:page?" render={props => <AuthorizedRender><PostList {...props} getUrl="/post/observed" /></AuthorizedRender>} />
-            <Route key={4} exact path="/top/:page?" render={props => <PostList {...props} getUrl="/post/score" />} />
-            <Route key={3} exact path="/:page?" render={props => <PostList {...props} showForm={true} getUrl="/post/new" />} />
+            <Route exact path="/search/:phrase/:page?" render={props => <PostList {...props} getUrl="/post/search" />} />
+            <Route exact path="/user/:username/:page?" render={props => <PostList {...props} getUrl="/post/user" />} />
+            <Route exact path="/me/:page?" render={props => <AuthorizedRender><PostList {...props} showForm={true} getUrl={`/post/user/${this.state.authorizationState.userName}`} /></AuthorizedRender>} />
+            {/* <Route exact path="/observed/:page?" render={props => <AuthorizedRender><PostList {...props} getUrl="/post/observed" /></AuthorizedRender>} /> */}
+            <Route exact path="/top/:page?" render={props => <PostList {...props} getUrl="/post/score" />} />
+            <Route exact path="/:page?" render={props => <PostList {...props} showForm={true} getUrl="/post/new" />} />
           </Switch>
         </Layout>
       </AuthContext.Provider>

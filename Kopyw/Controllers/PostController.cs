@@ -93,6 +93,21 @@ namespace Kopyw.Controllers
             return Ok(list);
         }
         [HttpGet]
+        [Route("search/{phrase}/{page}/{count}")]
+        public async Task<ActionResult<List<PostDTO>>> Search(string phrase, int page, int count)
+        {
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            var posts = await postDTOManager.Search(phrase, count, page, user?.Id);
+            return Ok(posts);
+        }
+        [HttpGet]
+        [Route("search/pages/{phrase}/{postsPerPage}")]
+        public ActionResult<int> GetSearchPages(string phrase, int postsPerPage)
+        {
+            int pages = postDTOManager.GetSearchPages(phrase, postsPerPage);
+            return Ok(pages);
+        }
+        [HttpGet]
         [Route("pages/{postsPerPage}")]
         public ActionResult<int> GetPages(int postsPerPage)
         {

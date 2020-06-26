@@ -1,0 +1,23 @@
+@keyframes loading {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(500%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.container {
+    width: 150px;
+}
+
+.dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    background-color: ivory;
+    animation: loading 1.5s infinite ease-in-out;
+}

@@ -1,0 +1,10 @@
+.communicate {
+    display: flex;
+    position: absolute;
+    left:50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 20vh;
+    align-items: center;
+    justify-content: center;
+}

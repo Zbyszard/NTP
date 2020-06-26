@@ -27,9 +27,9 @@ class NavMenu extends Component {
           <Link to="/top">Top</Link>
         </NavItem>
         <AuthorizedRender>
-          <NavItem>
+          {/* <NavItem>
             <Link to="/observed">Observed</Link>
-          </NavItem>
+          </NavItem> */}
           <NavItem>
             <Link to="/me">Your posts</Link>
           </NavItem>
