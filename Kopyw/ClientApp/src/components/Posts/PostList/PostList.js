@@ -18,6 +18,8 @@ class PostList extends Component {
             pageCount: 1,
             postsPerPage: 10,
             currentPage: props.match.params.page || 1,
+            sliderValue: 1,
+            sliderMax: 1,
             sortDir: "desc",
             lastRequestUrl: null,
             isLoading: true
@@ -34,6 +36,7 @@ class PostList extends Component {
         if (prevProps.location.pathname !== this.props.location.pathname) {
             this.requestPageCount();
             this.requestData(page);
+            this.changePage(page);
         }
     }
 
@@ -65,11 +68,11 @@ class PostList extends Component {
     requestPageCount = () => {
         let url;
         let getUrl = this.props.getUrl;
-        let userString = "/post/user";
+        let userString = "/user";
         if (getUrl.includes(userString)) {
             let userName;
-            userName = this.props.location.pathname.substring(getUrl.indexOf(userString) + userString.length);
-            url = `/post/user/pages${userName}/${this.state.postsPerPage}`;
+            userName = this.props.location.pathname.substring(userString.indexOf(userString) + userString.length + 1);
+            url = `/post/user/pages/${userName}/${this.state.postsPerPage}`;
         }
         else if (getUrl.includes("search")) {
             url = `/post/search/pages/${this.props.match.params.phrase}/${this.state.postsPerPage}`;
@@ -84,8 +87,9 @@ class PostList extends Component {
     }
 
     postAddedCallback = post => {
-        if (this.state.currentPage == 1)
+        if (this.state.currentPage === 1)
             this.setState(state => {
+                state.posts.pop();
                 return { posts: [post, ...state.posts] };
             });
         else
@@ -101,12 +105,21 @@ class PostList extends Component {
         return url.substring(0, url.indexOf(':page?'));
     }
 
+    setSliderValue = value => {
+        this.setState({ sliderValue: value });
+    }
+
+    setSliderMax = value => {
+        this.setState({ sliderMax: value });
+    }
+
     changePage = pageNum => {
         if (pageNum < 1)
             pageNum = 1;
         else if (pageNum > this.state.pageCount)
             pageNum = this.state.pageCount;
         this.setState({ currentPage: pageNum });
+        this.setSliderValue(pageNum);
     }
 
     render() {
@@ -124,7 +137,11 @@ class PostList extends Component {
                 <PageSelector pagesCount={this.state.pageCount}
                     currentPage={+this.state.currentPage}
                     url={this.urlWithoutParams()}
-                    onLinkClick={this.changePage} />
+                    onLinkClick={this.changePage}
+                    max={this.state.sliderMax}
+                    value={+this.state.sliderValue}
+                    setMax={this.setSliderMax}
+                    setValue={this.setSliderValue} />
             content = this.state.posts.map(p =>
                 <AuthContext.Consumer key={p.id}>
                     {context =>

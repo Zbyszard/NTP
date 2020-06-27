@@ -42,29 +42,30 @@ class CommentSection extends Component {
     }
 
     render() {
-        if (!this.props.show)
-            return null;
-
         let comments;
         if (this.state.isLoading)
             comments = <div>Loading...</div>;
-        else if (this.state.comments.length == 0)
+        else if (this.state.comments.length === 0)
             comments = <div>No comments yet.</div>;
         else
             comments = this.state.comments.map(c =>
-                <AuthContext>
+                <AuthContext.Consumer key={c.id}>
                     {context => <Comment text={c.text}
-                        id={c.id} key={c.id}
+                        id={c.id}
                         authorName={c.authorName}
                         postTime={new Date(c.postTime)}
                         score={c.score}
                         userVote={c.userVote}
                         showPlusMinus={context.authorized && context.userName !== c.authorName} />
                     }
-                </AuthContext>);
+                </AuthContext.Consumer>);
+        let containerClasses = [classes.container];
+        if (!this.props.show)
+            containerClasses.push(classes.hidden);
+        let containerClassList = containerClasses.join(' ');
         return (
             <section>
-                <div className={classes.container}>
+                <div className={containerClassList}>
                     <AuthorizedRender>
                         <CommentForm postId={this.props.postId}
                             onCommentPost={this.commentAddedCallback} />
@@ -76,7 +77,7 @@ class CommentSection extends Component {
             </section>
         );
     }
-    
+
 }
 
 CommentSection.propTypes = {

@@ -2,6 +2,7 @@ import React from 'react'
 import { Component } from 'react';
 import authService from './AuthorizeService';
 import { AuthenticationResultStatus } from './AuthorizeService';
+import Communicate from '../Shared/Communicate/Communicate';
 import { QueryParameterNames, LogoutActions, ApplicationPaths } from './ApiAuthorizationConstants';
 
 // The main responsibility of this component is to handle the user's logout process.
@@ -14,8 +15,9 @@ export class Logout extends Component {
         this.state = {
             message: undefined,
             isReady: false,
-            authenticated: false
+            authenticated: false,
         };
+        this.redirectTimeout = null;
     }
 
     componentDidMount() {
@@ -42,22 +44,33 @@ export class Logout extends Component {
         this.populateAuthenticationState();
     }
 
+    componentWillUnmount() {
+        clearTimeout(this.redirectTimeout);
+    }
+
     render() {
         const { isReady, message } = this.state;
         if (!isReady) {
             return <div></div>
         }
         if (!!message) {
-            return (<div>{message}</div>);
+            {
+                if (this.props.redirect) {
+                    this.redirectTimeout = setTimeout(() => {
+                        this.props.redirect("/");
+                    }, 2000);
+                }
+                return (<Communicate>{message}</Communicate>);
+            }
         } else {
             const action = this.props.action;
             switch (action) {
                 case LogoutActions.Logout:
-                    return (<div>Processing logout</div>);
+                    return (<Communicate>Processing logout</Communicate>);
                 case LogoutActions.LogoutCallback:
-                    return (<div>Processing logout callback</div>);
+                    return (<Communicate>Processing logout callback</Communicate>);
                 case LogoutActions.LoggedOut:
-                    return (<div>{message}</div>);
+                    return (<Communicate>{message}</Communicate>);
                 default:
                     throw new Error(`Invalid action '${action}'`);
             }

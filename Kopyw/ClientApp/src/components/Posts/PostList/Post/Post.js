@@ -47,7 +47,7 @@ class Post extends Component {
                         {plus1}
                         <button className={classes.commentCount}
                             onClick={this.toggleComments}>
-                            {this.props.commentCount} {this.props.commentCount == 1 ? "comment" : "comments"}
+                            {this.props.commentCount} {this.props.commentCount === 1 ? "comment" : "comments"}
                         </button>
                     </div>
                     <CommentSection postId={this.props.id}
@@ -74,13 +74,11 @@ class Post extends Component {
     vote = () => {
         const data = { postId: this.props.id };
         axios.post("/post/vote", data).then(response => {
-            const r = response.data;
             this.setState({ userVote: true });
         });
     }
 
     deleteVote = () => {
-        const data = { postId: this.props.id };
         axios.delete(`/post/vote/${this.props.id}`).then(response => {
             this.setState({ userVote: false });
         });

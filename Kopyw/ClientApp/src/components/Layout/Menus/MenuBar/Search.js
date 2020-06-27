@@ -10,8 +10,7 @@ class Search extends Component {
         this.state = {
             showSearch: false,
             searchString: "",
-            iconSize: "1rem",
-            redirect: null
+            iconSize: "1rem"
         };
     }
 
@@ -35,12 +34,13 @@ class Search extends Component {
 
     search = e => {
         e.preventDefault();
+        let redirectUrl;
         let str = this.state.searchString;
-        if (!str.replace(/\s/g, '').length) {
-            this.setState({ redirect: '/' });
-            return;
-        }
-        this.setState({ redirect: `/search/${str}` });
+        if (!str.replace(/\s/g, '').length)
+            redirectUrl = "/"
+        else
+            redirectUrl = `/search/${str}`;
+        this.props.history.push(redirectUrl);
     }
 
     render() {
@@ -52,11 +52,6 @@ class Search extends Component {
             iconClasses.push(classes.active);
         let barClassList = barClasses.join(' ');
         let iconClassList = iconClasses.join(' ');
-        if (!!this.state.redirect) {
-            let redirect = this.state.redirect;
-            this.setState({ redirect: null });
-            return <Redirect to={redirect} />
-        }
         return (
             <>
                 <form onSubmit={this.search} id="searchform" />
@@ -75,8 +70,6 @@ class Search extends Component {
             </>
         );
     }
-
-
 }
 
 export default Search;

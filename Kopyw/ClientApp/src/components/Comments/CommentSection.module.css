@@ -2,6 +2,10 @@
     margin-top: 10px;
 }
 
+.hidden {
+    display: none;
+}
+
 .commentContainer {
     margin-top: 10px;
 }

@@ -6,25 +6,25 @@ import { ApplicationPaths, LoginActions, LogoutActions } from './ApiAuthorizatio
 
 export default class ApiAuthorizationRoutes extends Component {
 
-  render () {
-    return(
+  render() {
+    return (
       <Fragment>
-          <Route path={ApplicationPaths.Login} render={() => loginAction(LoginActions.Login)} />
-          <Route path={ApplicationPaths.LoginFailed} render={() => loginAction(LoginActions.LoginFailed)} />
-          <Route path={ApplicationPaths.LoginCallback} render={() => loginAction(LoginActions.LoginCallback)} />
-          <Route path={ApplicationPaths.Profile} render={() => loginAction(LoginActions.Profile)} />
-          <Route path={ApplicationPaths.Register} render={() => loginAction(LoginActions.Register)} />
-          <Route path={ApplicationPaths.LogOut} render={() => logoutAction(LogoutActions.Logout)} />
-          <Route path={ApplicationPaths.LogOutCallback} render={() => logoutAction(LogoutActions.LogoutCallback)} />
-          <Route path={ApplicationPaths.LoggedOut} render={() => logoutAction(LogoutActions.LoggedOut)} />
+        <Route path={ApplicationPaths.Login} render={() => this.loginAction(LoginActions.Login)} />
+        <Route path={ApplicationPaths.LoginFailed} render={() => this.loginAction(LoginActions.LoginFailed)} />
+        <Route path={ApplicationPaths.LoginCallback} render={() => this.loginAction(LoginActions.LoginCallback)} />
+        <Route path={ApplicationPaths.Profile} render={() => this.loginAction(LoginActions.Profile)} />
+        <Route path={ApplicationPaths.Register} render={() => this.loginAction(LoginActions.Register)} />
+        <Route path={ApplicationPaths.LogOut} render={() => this.logoutAction(LogoutActions.Logout)} />
+        <Route path={ApplicationPaths.LogOutCallback} render={() => this.logoutAction(LogoutActions.LogoutCallback)} />
+        <Route path={ApplicationPaths.LoggedOut} render={() => this.logoutAction(LogoutActions.LoggedOut)} />
       </Fragment>);
   }
-}
 
-function loginAction(name){
+  loginAction = name => {
     return (<Login action={name}></Login>);
-}
+  }
 
-function logoutAction(name) {
-    return (<Logout action={name}></Logout>);
+  logoutAction = name => {
+    return (<Logout redirect={this.props.history.push} action={name}></Logout>);
+  }
 }

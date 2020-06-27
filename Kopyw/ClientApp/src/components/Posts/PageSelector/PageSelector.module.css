@@ -9,7 +9,7 @@
     box-sizing: border-box;
     margin-bottom: 10px;
     border: 1px solid black;
-    background-color: rgb(50, 50, 50);
+    background-color: rgb(35, 35, 35);
     width: 100%;
     height: 40px;
     display: flex;
@@ -46,12 +46,14 @@
     box-sizing: border-box;
     width: 100%;
     height: 5px;
-    background-color: rgb(30, 30, 30);
+    background-color: rgb(80, 80, 80);
 }
 
-.slider::-webkit-slider-thumb,
-.slider::-moz-range-thumb {
+.slider::-webkit-slider-thumb, .slider::-webkit-slider-runnable-track, .slider::-moz-range-thumb {
+    -webkit-appearance: none;
+    appearance: none;
     border: none;
+    border-radius: 100%;
     background-color: rgb(160, 160, 160);
     cursor: pointer;
 }
