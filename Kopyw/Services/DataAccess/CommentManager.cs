@@ -46,7 +46,7 @@ namespace Kopyw.Services.DataAccess
             return comment;
         }
 
-        public async Task<List<Comment>> GetRange(long postId)
+        public async Task<List<Comment>> GetPage(long postId)
         {
             var comments = await CommentQuery().Where(c => c.PostId == postId).ToListAsync();
             return comments;

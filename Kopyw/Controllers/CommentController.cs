@@ -51,10 +51,10 @@ namespace Kopyw.Controllers
         }
         [Route("{postId}")]
         [HttpGet]
-        public async Task<ActionResult<List<CommentDTO>>> GetRange(long postId)
+        public async Task<ActionResult<List<CommentDTO>>> GetPage(long postId)
         {
             var user = await userFinder.FindByClaimsPrincipal(User);
-            var comments = await commentDTOManager.GetRange(postId, user?.Id);
+            var comments = await commentDTOManager.GetPage(postId, user?.Id);
             return Ok(comments);
         }
         [Authorize]

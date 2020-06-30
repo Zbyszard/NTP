@@ -2,6 +2,7 @@
 using Kopyw.Data;
 using Kopyw.Models;
 using Kopyw.Services.DataAccess.Interfaces;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -44,16 +45,124 @@ namespace Kopyw.Services.DataAccess
             return true;
         }
 
+        private IQueryable<Post> PostQuery()
+        {
+            var query = (from p in db.Posts
+                         select p)
+                         .Include(p => p.Author)
+                         .Include(p => p.Comments)
+                         .Include(p => p.Votes);
+            return query;
+        }
+        private IQueryable<Post> SortedQuery(IQueryable<Post> query, string sort, string sortOrder)
+        {
+            sort ??= "";
+            sortOrder ??= "";
+            if(sort == "time")
+            {
+                if (sortOrder == "desc")
+                    return query.OrderByDescending(p => p.PostTime);
+                else if (sortOrder == "asc")
+                    return query.OrderBy(p => p.PostTime);
+            }
+            else if (sort == "score")
+            {
+                if (sortOrder == "desc")
+                    return query.OrderByDescending(p => p.Votes.Count);
+                else if (sortOrder == "asc")
+                    return query.OrderBy(p => p.Votes.Count);
+            }
+            return query;
+        }
+        private int CountToPageCount(int count, int postsPerPage)
+        {
+            int pages = count / postsPerPage;
+            if (count % postsPerPage != 0)
+                pages++;
+            return pages;
+        }
+        public async Task<List<Post>> GetPage(int count, int page, string sort, string sortOrder)
+        {
+            var query = SortedQuery(PostQuery(), sort, sortOrder);
+            var posts = await query.Skip((page - 1) * count).Take(count).ToListAsync();
+            return posts;
+        }
+        public int GetPagesCount(int postsPerPage)
+        {
+            var count = PostQuery().Count();
+            return CountToPageCount(count, postsPerPage);
+        }
+        private IQueryable<Post> UserPostsQuery(string userName)
+        {
+            var query = PostQuery().Where(p => p.Author.UserName == userName);
+            return query;
+        }
+        public async Task<List<Post>> GetUserPosts(int count, int page, string userName, string sort, string sortOrder)
+        {
+            var query = SortedQuery(UserPostsQuery(userName), sort, sortOrder);
+            var posts = await query.Skip((page - 1) * count).Take(count).ToListAsync();
+            return posts;
+        }
+        public int GetUserPagesCount(string userName, int postsPerPage)
+        {
+            var count = UserPostsQuery(userName).Count();
+            return CountToPageCount(count, postsPerPage);
+        }
+        private IQueryable<Post> FollowedPostsQuery(string followingUserName)
+        {
+            throw new NotImplementedException();
+        }
+        public async Task<List<Post>> GetFollowedPosts(int count, int page, string sort, string sortOrder)
+        {
+            throw new NotImplementedException();
+        }
+        public int GetFollowedPagesCount(string loggedUserId, int postsPerPage)
+        {
+            throw new NotImplementedException();
+        }
+        private IQueryable<Post> SearchQuery(string phrase)
+        {
+            string lowerPhrase = phrase.ToLower();
+            var query = PostQuery().Where(p => p.Author.UserName.ToLower() == lowerPhrase ||
+                     p.Title.ToLower().Contains(lowerPhrase) ||
+                     p.Text.ToLower().Contains(lowerPhrase));
+            return query;
+        }
+        public async Task<List<Post>> Search(string phrase, int count, int page, string sort, string sortOrder)
+        {
+            var query = SortedQuery(SearchQuery(phrase), sort, sortOrder);
+            var posts = await query.Skip((page - 1) * count).Take(count).ToListAsync();
+            return posts;
+        }
+        public int GetSearchPagesCount(string phrase, int postsPerPage)
+        {
+            var count = SearchQuery(phrase).Count();
+            return CountToPageCount(count, postsPerPage);
+        }
         public async Task<Post> Get(long id)
         {
-            var post = await db.Posts.Select(p => p).Where(p => p.Id == id).FirstOrDefaultAsync();
+            var post = await PostQuery().Select(p => p).Where(p => p.Id == id).FirstOrDefaultAsync();
             return post;
         }
-
+        public async Task<List<PostInfo>> GetInformation(List<long> ids, string loggedUserId)
+        {
+            var infos = await (from p in db.Posts
+                               where ids.Contains(p.Id)
+                               select new PostInfo
+                               {
+                                   PostId = p.Id,
+                                   CommentCount = p.Comments.Count,
+                                   Score = p.Votes.Count,
+                                   UserVote = (from pv in db.PostVotes
+                                               where pv.PostId == p.Id && pv.UserId == loggedUserId
+                                               select pv).FirstOrDefault()
+                               }).ToListAsync();
+            var sorted = infos.OrderBy(pi => ids.IndexOf(pi.PostId)).ToList();
+            return sorted;
+        }
         public async Task<int> Update(Post post)
         {
-            db.Entry(post).State = EntityState.Modified;
-            return await db.SaveChangesAsync();
+            throw new NotImplementedException();
         }
 
         public async Task<PostVote> AddVote(PostVote newVote)

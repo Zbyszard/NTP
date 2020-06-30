@@ -20,10 +20,14 @@ class PostList extends Component {
             currentPage: props.match.params.page || 1,
             sliderValue: 1,
             sliderMax: 1,
-            sortDir: "desc",
+            sort: "score",
+            sortOrder: "desc",
             lastRequestUrl: null,
             isLoading: true
         }
+        this.dataCancelSource = null;
+        this.pageDataCancelSource = null;
+        this.justCaughtInfo = false;
     }
 
     componentDidMount = () => {
@@ -34,56 +38,126 @@ class PostList extends Component {
     componentDidUpdate = (prevProps, prevState) => {
         let page = this.props.match.params.page || 1;
         if (prevProps.location.pathname !== this.props.location.pathname) {
-            this.requestPageCount();
-            this.requestData(page);
             this.changePage(page);
+            this.requestPageCount();
+            this.requestData();
         }
+        if (prevState.posts !== this.state.posts && !this.justCaughtInfo) {
+            this.requestPostInfo();
+        }
+        if (this.justCaughtInfo)
+            this.justCaughtInfo = false;
     }
 
-    requestData = pageNumber => {
+    createRequestUrl = () => {
         let getUrl = this.props.getUrl;
-        let url;
-        url = `${getUrl}/${pageNumber}/${this.state.postsPerPage}`;
-        if (this.props.getUrl === "/post/user")
-            url = `${getUrl}/${this.props.match.params.username}/${pageNumber}/${this.state.postsPerPage}`;
-        url += `/${this.state.sort}/${this.state.sortDir}`;
-        if (getUrl.includes("search"))
-            url = `${getUrl}/${this.props.match.params.phrase}/${pageNumber}/${this.state.postsPerPage}`;
-        this.setState({ isLoading: true });
-        axios.get(url).then(response => {
+        let page = this.props.match.params.page || 1;
+        if (getUrl.includes("/post/user")) {
+            if (getUrl === "/post/user") {
+                let user = this.props.match.params.username;
+                getUrl += `/${user}`;
+            }
+            getUrl += `/${this.state.sort}/${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
+            return getUrl;
+        }
+        if (getUrl.includes("/search")) {
+            getUrl += `/${this.props.match.params.phrase}/${this.state.sort}/` +
+                `${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
+            return getUrl;
+        }
+        if (getUrl.includes("time")) {
+            getUrl += `/${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
+            return getUrl;
+        }
+        if (getUrl.includes("score")) {
+            getUrl += `/${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
+            return getUrl;
+        }
+        getUrl += `/${this.state.sort}/${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
+        return getUrl;
+    }
 
-            this.setState({
-                posts: response.data,
-                isLoading: false,
-                currentPage: this.props.match.params.page || 1,
-                lastRequestUrl: this.props.location.pathname
-            });
-        })
+    requestData = () => {
+        let url = this.createRequestUrl();
+        this.setState({ isLoading: true });
+        if (this.state.isLoading && this.dataCancelSource)
+            this.dataCancelSource.cancel();
+        this.dataCancelSource = axios.CancelToken.source();
+        axios.get(url, { cancelToken: this.dataCancelSource.token })
+            .then(response => {
+                this.setState({
+                    posts: response.data,
+                    isLoading: false,
+                    currentPage: this.props.match.params.page || 1,
+                    lastRequestUrl: this.props.location.pathname
+                });
+                this.dataCancelSource = null;
+            })
             .catch(error => {
+                if (axios.isCancel(error))
+                    return;
                 console.log(error);
                 this.setState({ isLoading: false })
             });
     }
 
-    requestPageCount = () => {
-        let url;
+    createPageRequestUrl = () => {
         let getUrl = this.props.getUrl;
-        let userString = "/user";
-        if (getUrl.includes(userString)) {
-            let userName;
-            userName = this.props.location.pathname.substring(userString.indexOf(userString) + userString.length + 1);
-            url = `/post/user/pages/${userName}/${this.state.postsPerPage}`;
+        if (getUrl.includes("/post/user")) {
+            if (getUrl === "/post/user")
+                getUrl += `/pages/${this.props.match.params.username}/${this.state.postsPerPage}`;
+            else {
+                getUrl = `${getUrl.substring(0, "/post/user".length)}/` +
+                    `pages/${getUrl.substring("/post/user".length + 1)}/${this.state.postsPerPage}`;
+            }
+            return getUrl;
         }
-        else if (getUrl.includes("search")) {
-            url = `/post/search/pages/${this.props.match.params.phrase}/${this.state.postsPerPage}`;
+        if (getUrl.includes("/search")) {
+            getUrl += `/pages/${this.props.match.params.phrase}/${this.state.postsPerPage}`;
+            return getUrl;
         }
-        else if (getUrl.includes("observed"))
-            url = `/post/observed/pages/${this.state.postsPerPage}`;
-        else
-            url = `/post/pages/${this.state.postsPerPage}`;
-        axios.get(url).then(r => {
-            this.setState({ pageCount: r.data });
-        });
+        if (getUrl.includes("time") || getUrl.includes("score")) {
+            getUrl = `/post/pages/${this.state.postsPerPage}`;
+            return getUrl;
+        }
+        return getUrl;
+    }
+
+    requestPageCount = () => {
+        let url = this.createPageRequestUrl();
+        if (this.state.isLoading && this.pageDataCancelSource)
+            this.pageDataCancelSource.cancel();
+        this.pageDataCancelSource = axios.CancelToken.source();
+        axios.get(url, { cancelToken: this.pageDataCancelSource.token })
+            .then(r => {
+                this.setState({ pageCount: r.data });
+                this.pageDataCancelSource = null;
+            })
+            .catch(error => {
+                if (axios.isCancel(error))
+                    return;
+            });
+    }
+
+    requestPostInfo = () => {
+        const ids = this.state.posts.map(p => p.id);
+        axios.post("/post/info", ids)
+            .then(r => {
+                const d = r.data;
+                const posts = this.state.posts;
+                 let updatedPosts = d.map((inf, index) => {
+                    if (inf.postId === posts[index].id) {
+                        let p = posts[index];
+                        p.commentCount = inf.commentCount;
+                        p.score = inf.score;
+                        p.userVote = inf.userVote;
+                        return p;
+                    }
+                    return null;
+                });
+                this.justCaughtInfo = true;
+                this.setState({ posts: updatedPosts });
+            });
     }
 
     postAddedCallback = post => {

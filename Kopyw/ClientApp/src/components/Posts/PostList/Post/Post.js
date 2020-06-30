@@ -6,6 +6,7 @@ import formatDate from '../../../Shared/Functions/formatDate';
 import axios from 'axios';
 import classes from './Post.module.css';
 
+//lift state up
 class Post extends Component {
     constructor(props) {
         super(props);

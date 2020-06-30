@@ -35,25 +35,46 @@ namespace Kopyw.Controllers
         [Route("{id}")]
         public async Task<ActionResult<PostDTO>> Get(long id)
         {
-            var user = await userFinder.FindByClaimsPrincipal(User);
-            var post = await postDTOManager.Get(id, user?.Id);
+            var post = await postDTOManager.Get(id);
             if (post == null)
                 return NotFound();
             return Ok(post);
         }
         [HttpGet]
-        [Route("user/{userName}/{page}/{count}/{sort}/{sortDir}")]
-        public async Task<ActionResult<List<PostDTO>>> GetFromUser(int page, int count, string userName, string sort, string sortDir)
+        [Route("{sort}/{sortOrder}/{page}/{count}")]
+        public async Task<ActionResult<List<PostDTO>>> GetPage(int page, int count, string sort, string sortOrder)
         {
-            var user = await userFinder.FindByClaimsPrincipal(User);
-            var list = await postDTOManager.GetUserPosts(count, page, userName, user?.Id, sort, sortDir);
-            if (list == null || list.Count() == 0)
+            var list = await postDTOManager.GetPage(count, page, sort, sortOrder);
+            if (list == null || list.Count == 0)
+                return NotFound();
+            return Ok(list);
+        }
+        [HttpGet]
+        [Route("pages/{postsPerPage}")]
+        public ActionResult<int> GetPages(int postsPerPage)
+        {
+            int pages = postDTOManager.GetPagesCount(postsPerPage);
+            return Ok(pages);
+        }
+        [HttpGet]
+        [Route("user/{userName}/{sort}/{sortOrder}/{page}/{count}")]
+        public async Task<ActionResult<List<PostDTO>>> GetFromUser(int page, int count, string userName, string sort, string sortOrder)
+        {
+            if (string.IsNullOrEmpty(userName))
+            {
+                var user = await userFinder.FindByClaimsPrincipal(User);
+                if (user == null)
+                    return NotFound();
+                userName = user.UserName;
+            }
+            var list = await postDTOManager.GetUserPosts(count, page, userName, sort, sortOrder);
+            if (list.Count() == 0)
                 return NotFound();
             return Ok(list);
         }
         [HttpGet]
         [Route("user/pages/{userName}/{postsPerPage}")]
-        public async Task<ActionResult<int>> GetUserPages(string userName, int postsPerPage)
+        public async Task<ActionResult<int>> GetUserPages(int postsPerPage, string userName)
         {
             if(string.IsNullOrEmpty(userName))
             {
@@ -62,66 +83,44 @@ namespace Kopyw.Controllers
                     return NotFound();
                 userName = user.UserName;
             }
-            int pages = postDTOManager.GetUserPages(userName, postsPerPage);
+            int pages = postDTOManager.GetUserPagesCount(userName, postsPerPage);
             return Ok(pages);
         }
         [HttpGet]
-        [Route("{type}/{page}/{count}/{sort}/{sortDir}")]
-        public async Task<ActionResult<List<PostDTO>>> GetRange(string type, int page, int count, string sort, string sortDir)
+        [Route("search/{phrase}/{sort}/{sortOrder}/{page}/{count}")]
+        public async Task<ActionResult<List<PostDTO>>> Search(string phrase, int page, int count, string sort, string sortOrder)
         {
-            var user = await userFinder.FindByClaimsPrincipal(User);
-            List<PostDTO> list;
-            switch(type)
-            {
-                case "new":
-                    list = await postDTOManager.GetRange(count, page, user?.Id, "time", sortDir);
-                    break;
-                case "score":
-                    list = await postDTOManager.GetRange(count, page, user?.Id, "score", sortDir);
-                    break;
-                case "observed":
-                case "followed":
-                    if (user == null)
-                        goto default;
-                    list = await postDTOManager.GetFollowedPosts(count, page, user.Id, sort, sortDir);
-                    break;
-                default:
-                    return BadRequest();
-            }
-            if (list == null || list.Count == 0)
-                return NotFound();
-            return Ok(list);
-        }
-        [HttpGet]
-        [Route("search/{phrase}/{page}/{count}")]
-        public async Task<ActionResult<List<PostDTO>>> Search(string phrase, int page, int count)
-        {
-            var user = await userFinder.FindByClaimsPrincipal(User);
-            var posts = await postDTOManager.Search(phrase, count, page, user?.Id);
+            var posts = await postDTOManager.Search(phrase, count, page, sort, sortOrder);
             return Ok(posts);
         }
         [HttpGet]
         [Route("search/pages/{phrase}/{postsPerPage}")]
         public ActionResult<int> GetSearchPages(string phrase, int postsPerPage)
         {
-            int pages = postDTOManager.GetSearchPages(phrase, postsPerPage);
+            int pages = postDTOManager.GetSearchPagesCount(phrase, postsPerPage);
             return Ok(pages);
         }
+        [Authorize]
         [HttpGet]
-        [Route("pages/{postsPerPage}")]
-        public ActionResult<int> GetPages(int postsPerPage)
+        [Route("observed/{sort}/{sortOrder}/{page}/{count}")]
+        public async Task<ActionResult<List<PostDTO>>> GetFollowed(int page, int count, string sort, string sortOrder)
         {
-            int pages = postDTOManager.GetPages(postsPerPage);
-            return Ok(pages);
+            throw new NotImplementedException();
         }
         [Authorize]
         [HttpGet]
         [Route("observed/pages/{postsPerPage}")]
         public async Task<ActionResult<int>> GetFollowedPages(int postsPerPage)
         {
+            throw new NotImplementedException();
+        }
+        [HttpPost]
+        [Route("info")]
+        public async Task<ActionResult<List<PostInfoDTO>>> GetPostInfo(List<long> ids)
+        {
             var user = await userFinder.FindByClaimsPrincipal(User);
-            int pages = postDTOManager.GetFollowedPages(user.Id, postsPerPage);
-            return Ok(pages);
+            var info = await postDTOManager.GetInformation(ids, user?.Id);
+            return Ok(info);
         }
         [Authorize]
         [HttpPost]

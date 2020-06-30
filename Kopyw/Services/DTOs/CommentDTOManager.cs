@@ -46,9 +46,9 @@ namespace Kopyw.Services.DTOs.Interfaces
             throw new NotImplementedException();
         }
 
-        public async Task<List<CommentDTO>> GetRange(long postId, string userId)
+        public async Task<List<CommentDTO>> GetPage(long postId, string userId)
         {
-            var dbcomments = await commentManager.GetRange(postId);
+            var dbcomments = await commentManager.GetPage(postId);
             var comments = mapper.Map<List<CommentDTO>>(dbcomments);
             if(!string.IsNullOrEmpty(userId))
             {
