@@ -39,7 +39,6 @@ class Comment extends Component {
         }
         const scoreClassList = scoreClasses.join(' ');
         const score = this.props.score;
-        const scoreSign = score < 0 ? '-' : score > 0 ? '+' : null;
         return (
             <div className={classes.comment}>
                 <div className={classes.commentHeader}>
@@ -48,7 +47,7 @@ class Comment extends Component {
                     </Link>
                     <span className={classes.time}>{formatDate(this.props.postTime)}</span>
                     {voteButtons}
-                    <span className={scoreClassList}>{scoreSign}{this.props.score}</span>
+                    <span className={scoreClassList}>{this.props.score}</span>
                 </div>
                 <p className={classes.text}>{this.props.text}</p>
             </div>

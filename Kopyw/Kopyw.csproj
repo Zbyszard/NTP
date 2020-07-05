@@ -7,7 +7,12 @@
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+    <UserSecretsId>37443770-4617-4f8f-9c3a-c3a046d0fe94</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <None Update="certificate.pfx" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />

@@ -49,6 +49,28 @@ class PostList extends Component {
             this.justCaughtInfo = false;
     }
 
+    postVote = postId => {
+        const data = { postId: postId };
+        axios.post("/post/vote", data).then(response => {
+            this.setPostVote(postId, true);
+        });
+    }
+
+    deletePostVote = postId => {
+        axios.delete(`/post/vote/${postId}`).then(response => {
+            this.setPostVote(postId, false);
+        });
+    }
+
+    setPostVote = (postId, value) => {
+        let posts = this.state.posts;
+        let index = posts.findIndex(p => p.id === postId);
+        if (index === -1)
+            return;
+        posts[index].userVote = value;
+        this.setState({ posts: posts });
+    }
+
     createRequestUrl = () => {
         let getUrl = this.props.getUrl;
         let page = this.props.match.params.page || 1;
@@ -145,7 +167,7 @@ class PostList extends Component {
             .then(r => {
                 const d = r.data;
                 const posts = this.state.posts;
-                 let updatedPosts = d.map((inf, index) => {
+                let updatedPosts = d.map((inf, index) => {
                     if (inf.postId === posts[index].id) {
                         let p = posts[index];
                         p.commentCount = inf.commentCount;
@@ -227,7 +249,9 @@ class PostList extends Component {
                             score={p.score}
                             commentCount={p.commentCount}
                             userVote={p.userVote}
-                            showPlus={context.authorized && context.userName !== p.authorName} />
+                            showPlus={context.authorized && context.userName !== p.authorName}
+                            voteCallback={this.postVote}
+                            deleteVoteCallback={this.deletePostVote} />
                     }
                 </AuthContext.Consumer>);
         }

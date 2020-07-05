@@ -3,22 +3,18 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import CommentSection from '../../../Comments/CommentSection';
 import formatDate from '../../../Shared/Functions/formatDate';
-import axios from 'axios';
 import classes from './Post.module.css';
 
-//lift state up
 class Post extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userVote: props.userVote,
-            score: props.score,
             showComments: false
         };
     }
     render() {
         let plusClasses = [classes.plus];
-        if (this.state.userVote)
+        if (this.props.userVote)
             plusClasses.push(classes.active);
         const plusClassList = plusClasses.join(' ');
         const plus1 = this.props.showPlus ?
@@ -44,7 +40,7 @@ class Post extends Component {
                         {this.props.text}
                     </p>
                     <div className={classes.actionSection}>
-                        <span className={classes.score}>+{this.state.score}</span>
+                        <span className={classes.score}>+{this.props.score}</span>
                         {plus1}
                         <button className={classes.commentCount}
                             onClick={this.toggleComments}>
@@ -66,23 +62,18 @@ class Post extends Component {
     }
 
     plusClickHandler = () => {
-        if (this.state.userVote)
+        if (this.props.userVote)
             this.deleteVote();
         else
             this.vote();
     }
 
     vote = () => {
-        const data = { postId: this.props.id };
-        axios.post("/post/vote", data).then(response => {
-            this.setState({ userVote: true });
-        });
+        this.props.voteCallback(this.props.id);
     }
 
     deleteVote = () => {
-        axios.delete(`/post/vote/${this.props.id}`).then(response => {
-            this.setState({ userVote: false });
-        });
+        this.props.deleteVoteCallback(this.props.id);
     }
 }
 
@@ -95,7 +86,9 @@ Post.propTypes = {
     score: PropTypes.number.isRequired,
     commentCount: PropTypes.number.isRequired,
     showPlus: PropTypes.bool,
-    userAuthenticated: PropTypes.bool
+    userAuthenticated: PropTypes.bool,
+    deleteVoteCallback: PropTypes.func,
+    voteCallback: PropTypes.func
 }
 
 export default Post;
