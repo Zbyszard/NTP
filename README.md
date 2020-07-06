@@ -7,7 +7,7 @@ https://kopyw.azurewebsites.net/
 During development
 
 ## Technologies
-.NET Core  
+.NET Core (API)  
 Entity Framework  
 React  
 
