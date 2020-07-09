@@ -52,6 +52,13 @@ namespace Kopyw.DTOs
 
             CreateMap<PostInfo, PostInfoDTO>()
                 .ForMember(d => d.UserVote, o => o.MapFrom(s => s.UserVote != null));
+
+            CreateMap<Follow, FollowDTO>()
+                .ForMember(d => d.AuthorId, o => o.MapFrom(s => s.AuthorId))
+                .ForMember(d => d.ObserverId, o => o.MapFrom(s => s.ObserverId));
+            CreateMap<FollowDTO, Follow>()
+                .ForMember(d => d.AuthorId, o => o.MapFrom(s => s.AuthorId))
+                .ForMember(d => d.ObserverId, o => o.MapFrom(s => s.ObserverId));
         }
     }
 }

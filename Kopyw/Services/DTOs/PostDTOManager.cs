@@ -92,11 +92,13 @@ namespace Kopyw.Services.DTOs
         }
         public async Task<List<PostDTO>> GetFollowedPosts(int count, int page, string loggedUserId, string sort, string sortOrder)
         {
-            throw new NotImplementedException();
+            var posts = await postManager.GetFollowedPosts(count, page, loggedUserId, sort, sortOrder);
+            var dtos = mapper.Map<List<PostDTO>>(posts);
+            return dtos;
         }
         public int GetFollowedPagesCount(string loggedUserId, int postsPerPage)
         {
-            throw new NotImplementedException();
+            return postManager.GetFollowedPagesCount(loggedUserId, postsPerPage);
         }
         public async Task<List<PostInfoDTO>> GetInformation(List<long> ids, string loggedUserId)
         {

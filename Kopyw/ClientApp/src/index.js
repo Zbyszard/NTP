@@ -13,9 +13,15 @@ axios.interceptors.request.use(async reqConfig => {
   return reqConfig;
 }, error => Promise.reject(error));
 
+axios.interceptors.response.use(resp => resp,
+  async error => {
+    let auth = await authService.isAuthenticated();
+    if(auth && error.response.status === 401)
+      window.location.pathname = "/authentication/login";
+    return Promise.reject(error);
+  });
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
 const rootElement = document.getElementById('root');
-
 ReactDOM.render(
   <BrowserRouter basename={baseUrl}>
     <App />

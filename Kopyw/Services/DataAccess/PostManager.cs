@@ -49,9 +49,7 @@ namespace Kopyw.Services.DataAccess
         {
             var query = (from p in db.Posts
                          select p)
-                         .Include(p => p.Author)
-                         .Include(p => p.Comments)
-                         .Include(p => p.Votes);
+                         .Include(p => p.Author);
             return query;
         }
         private IQueryable<Post> SortedQuery(IQueryable<Post> query, string sort, string sortOrder)
@@ -108,17 +106,26 @@ namespace Kopyw.Services.DataAccess
             var count = UserPostsQuery(userName).Count();
             return CountToPageCount(count, postsPerPage);
         }
-        private IQueryable<Post> FollowedPostsQuery(string followingUserName)
+        private IQueryable<Post> FollowedPostsQuery(string loggedUserId)
         {
-            throw new NotImplementedException();
+            var query = (from f in db.Follows
+                         join author in db.Users on f.AuthorId equals author.Id
+                         join p in db.Posts on author.Id equals p.AuthorId
+                         where f.Observer.Id == loggedUserId
+                         select p)
+                         .Include(p => p.Author);
+            return query;
         }
-        public async Task<List<Post>> GetFollowedPosts(int count, int page, string sort, string sortOrder)
+        public async Task<List<Post>> GetFollowedPosts(int count, int page, string loggedUserId, string sort, string sortOrder)
         {
-            throw new NotImplementedException();
+            var query = SortedQuery(FollowedPostsQuery(loggedUserId), sort, sortOrder);
+            var posts = await query.Skip((page - 1) * count).Take(count).ToListAsync();
+            return posts;
         }
         public int GetFollowedPagesCount(string loggedUserId, int postsPerPage)
         {
-            throw new NotImplementedException();
+            var count = FollowedPostsQuery(loggedUserId).Count();
+            return CountToPageCount(count, postsPerPage);
         }
         private IQueryable<Post> SearchQuery(string phrase)
         {
@@ -155,7 +162,8 @@ namespace Kopyw.Services.DataAccess
                                    Score = p.Votes.Count,
                                    UserVote = (from pv in db.PostVotes
                                                where pv.PostId == p.Id && pv.UserId == loggedUserId
-                                               select pv).FirstOrDefault()
+                                               select pv).FirstOrDefault(),
+                                   FollowingAuthor = p.Author.FollowedBy.Any(f => f.ObserverId == loggedUserId)
                                }).ToListAsync();
             var sorted = infos.OrderBy(pi => ids.IndexOf(pi.PostId)).ToList();
             return sorted;

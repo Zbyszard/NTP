@@ -45,8 +45,6 @@ namespace Kopyw.Controllers
         public async Task<ActionResult<List<PostDTO>>> GetPage(int page, int count, string sort, string sortOrder)
         {
             var list = await postDTOManager.GetPage(count, page, sort, sortOrder);
-            if (list == null || list.Count == 0)
-                return NotFound();
             return Ok(list);
         }
         [HttpGet]
@@ -68,8 +66,6 @@ namespace Kopyw.Controllers
                 userName = user.UserName;
             }
             var list = await postDTOManager.GetUserPosts(count, page, userName, sort, sortOrder);
-            if (list.Count() == 0)
-                return NotFound();
             return Ok(list);
         }
         [HttpGet]
@@ -105,14 +101,18 @@ namespace Kopyw.Controllers
         [Route("observed/{sort}/{sortOrder}/{page}/{count}")]
         public async Task<ActionResult<List<PostDTO>>> GetFollowed(int page, int count, string sort, string sortOrder)
         {
-            throw new NotImplementedException();
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            var posts = await postDTOManager.GetFollowedPosts(count, page, user.Id, sort, sortOrder);
+            return posts;
         }
         [Authorize]
         [HttpGet]
         [Route("observed/pages/{postsPerPage}")]
         public async Task<ActionResult<int>> GetFollowedPages(int postsPerPage)
         {
-            throw new NotImplementedException();
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            int pages = postDTOManager.GetFollowedPagesCount(user.Id, postsPerPage);
+            return Ok(pages);
         }
         [HttpPost]
         [Route("info")]

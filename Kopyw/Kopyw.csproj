@@ -46,6 +46,8 @@
     <Compile Remove="Data\Migrations\20200610183928_AddModels.Designer.cs" />
     <Compile Remove="Data\Migrations\20200610191313_AddModelsa.cs" />
     <Compile Remove="Data\Migrations\20200610191313_AddModelsa.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200708155331_RenameCommentsToComment.cs" />
+    <Compile Remove="Data\Migrations\20200708155331_RenameCommentsToComment.Designer.cs" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

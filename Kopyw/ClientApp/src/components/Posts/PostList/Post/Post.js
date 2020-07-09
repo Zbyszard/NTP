@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { follow, unfollow } from '../../../Shared/FollowApiCalls/FollowApiCalls';
 import PropTypes from 'prop-types';
 import CommentSection from '../../../Comments/CommentSection';
+import ContextMenu from '../../../Shared/ContextMenu/ContextMenu';
+import ContextMenuItem from '../../../Shared/ContextMenu/ContextMenuItem';
 import formatDate from '../../../Shared/Functions/formatDate';
 import classes from './Post.module.css';
 
@@ -21,12 +24,25 @@ class Post extends Component {
             <button className={plusClassList}
                 onClick={this.plusClickHandler}>+1</button> :
             null;
+        let menu = null;
+        if (this.props.userAuthorized) {
+            const menuItems = this.getMenuItems();
+            menu =
+                <div className={classes.menuContainer}>
+                    <ContextMenu>
+                        {menuItems}
+                    </ContextMenu>
+                </div>;
+        }
         return (
             <>
                 <div className={classes.post}>
-                    <Link className={classes.author} to={`/user/${this.props.author}`}>
-                        {this.props.author}
-                    </Link>
+                    <div className={classes.header}>
+                        <Link className={classes.author} to={`/user/${this.props.author}`}>
+                            {this.props.author}
+                        </Link>
+                        {menu}
+                    </div>
                     <h1 className={classes.title}>
                         {/* <Link to={`/post/${this.props.id}`}>
                             {this.props.title}
@@ -55,6 +71,28 @@ class Post extends Component {
         );
     }
 
+    getMenuItems = () => {
+        const items = [];
+        let index = 0;
+        if (this.props.author === this.props.userName) {
+            items.push(<ContextMenuItem key={index++}>Edit</ContextMenuItem>);
+            items.push(<ContextMenuItem key={index++}>Delete</ContextMenuItem>);
+        }
+        else
+            items.push(<ContextMenuItem key={index++} clickCallback={this.followItemClicked}>
+                {this.props.followingAuthor ? "Unfollow user" : "Observe user"}
+            </ContextMenuItem>);
+        return items;
+    }
+
+    followItemClicked = () => {
+        if (!this.props.followingAuthor)
+            follow(this.props.authorId).then(() => this.props.followCallback());
+        else
+            unfollow(this.props.authorId).then(() => this.props.followCallback());
+
+    }
+
     toggleComments = () => {
         this.setState(state => {
             return { showComments: !state.showComments };
@@ -80,15 +118,18 @@ class Post extends Component {
 Post.propTypes = {
     id: PropTypes.number.isRequired,
     author: PropTypes.string,
+    authorId: PropTypes.string,
     title: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
     postTime: PropTypes.instanceOf(Date).isRequired,
     score: PropTypes.number.isRequired,
     commentCount: PropTypes.number.isRequired,
     showPlus: PropTypes.bool,
-    userAuthenticated: PropTypes.bool,
+    userAuthorized: PropTypes.bool,
+    userName: PropTypes.string,
     deleteVoteCallback: PropTypes.func,
-    voteCallback: PropTypes.func
+    voteCallback: PropTypes.func,
+    followCallback: PropTypes.func
 }
 
 export default Post;

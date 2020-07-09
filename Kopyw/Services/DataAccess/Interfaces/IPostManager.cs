@@ -15,7 +15,7 @@ namespace Kopyw.Services.DataAccess.Interfaces
         public int GetPagesCount(int postsPerPage);
         public Task<List<Post>> GetUserPosts(int count, int page, string userName, string sort, string sortOrder);
         public int GetUserPagesCount(string userName, int postsPerPage);
-        public Task<List<Post>> GetFollowedPosts(int count, int page, string sort, string sortOrder);
+        public Task<List<Post>> GetFollowedPosts(int count, int page, string loggedUserId, string sort, string sortOrder);
         public int GetFollowedPagesCount(string loggedUserId, int postsPerPage);
         public Task<List<Post>> Search(string phrase, int count, int page, string sort, string sortOrder);
         public int GetSearchPagesCount(string phrase, int postsPerPage);

@@ -28,7 +28,6 @@ export default class App extends Component {
       }));
   }
 
-
   render() {
     return (
       <AuthContext.Provider value={this.state.authorizationState}>
@@ -38,7 +37,7 @@ export default class App extends Component {
             <Route exact path="/search/:phrase/:page?" render={props => <PostList {...props} getUrl="/post/search" />} />
             <Route exact path="/user/:username/:page?" render={props => <PostList {...props} getUrl="/post/user" />} />
             <Route exact path="/me/:page?" render={props => <AuthorizedRender><PostList {...props} showForm={true} getUrl={`/post/user/${this.state.authorizationState.userName}`} /></AuthorizedRender>} />
-            {/* <Route exact path="/observed/:page?" render={props => <AuthorizedRender><PostList {...props} getUrl="/post/observed" /></AuthorizedRender>} /> */}
+            <Route exact path="/observed/:page?" render={props => <AuthorizedRender><PostList {...props} getUrl="/post/observed" /></AuthorizedRender>} />
             <Route exact path="/top/:page?" render={props => <PostList {...props} getUrl="/post/score" />} />
             <Route exact path="/:page?" render={props => <PostList {...props} showForm={true} getUrl="/post/time" />} />
           </Switch>

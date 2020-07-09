@@ -11,5 +11,6 @@ namespace Kopyw.DTOs
         public int CommentCount { get; set; }
         public int Score { get; set; }
         public bool UserVote { get; set; }
+        public bool FollowingAuthor { get; set; }
     }
 }

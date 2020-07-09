@@ -20,7 +20,7 @@ class PostList extends Component {
             currentPage: props.match.params.page || 1,
             sliderValue: 1,
             sliderMax: 1,
-            sort: "score",
+            sort: "time",
             sortOrder: "desc",
             lastRequestUrl: null,
             isLoading: true
@@ -87,14 +87,11 @@ class PostList extends Component {
                 `${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
             return getUrl;
         }
-        if (getUrl.includes("time")) {
+        if (getUrl.includes("time") || getUrl.includes("score")) {
             getUrl += `/${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
             return getUrl;
         }
-        if (getUrl.includes("score")) {
-            getUrl += `/${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
-            return getUrl;
-        }
+
         getUrl += `/${this.state.sort}/${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
         return getUrl;
     }
@@ -142,7 +139,7 @@ class PostList extends Component {
             getUrl = `/post/pages/${this.state.postsPerPage}`;
             return getUrl;
         }
-        return getUrl;
+        return getUrl + `/pages/${this.state.postsPerPage}`;
     }
 
     requestPageCount = () => {
@@ -173,6 +170,7 @@ class PostList extends Component {
                         p.commentCount = inf.commentCount;
                         p.score = inf.score;
                         p.userVote = inf.userVote;
+                        p.followingAuthor = inf.followingAuthor;
                         return p;
                     }
                     return null;
@@ -243,15 +241,20 @@ class PostList extends Component {
                     {context =>
                         <Post id={p.id}
                             author={p.authorName}
+                            authorId={p.authorId}
                             title={p.title}
                             postTime={new Date(p.postTime)}
                             text={p.text}
                             score={p.score}
                             commentCount={p.commentCount}
                             userVote={p.userVote}
+                            followingAuthor={p.followingAuthor}
                             showPlus={context.authorized && context.userName !== p.authorName}
+                            userAuthorized={context.authorized}
+                            userName={context.userName}
                             voteCallback={this.postVote}
-                            deleteVoteCallback={this.deletePostVote} />
+                            deleteVoteCallback={this.deletePostVote}
+                            followCallback={this.requestPostInfo} />
                     }
                 </AuthContext.Consumer>);
         }

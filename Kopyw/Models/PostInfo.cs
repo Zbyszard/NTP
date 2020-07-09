@@ -12,6 +12,7 @@ namespace Kopyw.Models
         public long PostId { get; set; }
         public int CommentCount { get; set; }
         public int Score { get; set; }
+        public bool FollowingAuthor { get; set; }
         public PostVote UserVote { get; set; }
     }
 }

@@ -47,6 +47,8 @@ namespace Kopyw
             services.AddScoped<UserFinder, UserFinder>();
             services.AddScoped<IPostDTOManager, PostDTOManager>();
             services.AddScoped<ICommentDTOManager, CommentDTOManager>();
+            services.AddScoped<IFollowDTOManager, FollowDTOManager>();
+            services.AddScoped<IFollowManager, FollowManager>();
             services.AddScoped<IPostManager, PostManager>();
             services.AddScoped<ICommentManager, CommentManager>();
 
