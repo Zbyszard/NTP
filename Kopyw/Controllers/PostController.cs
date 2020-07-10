@@ -138,21 +138,21 @@ namespace Kopyw.Controllers
             return CreatedAtAction(nameof(Get), new { id = added.Id }, added);
         }
         [Authorize]
+        [Route("edit")]
         [HttpPut]
-        public async Task<ActionResult> Edit(PostDTO post)
+        public async Task<ActionResult<PostDTO>> Edit(PostDTO post)
         {
             var user = await userFinder.FindByClaimsPrincipal(User);
-            var result = await postDTOManager.Update(post, user.Id);
+            if (user.Id != post.AuthorId)
+                return Forbid();
+            var result = await postDTOManager.Update(post);
             if (result == null)
                 return NotFound();
-            if (result.Value)
-                return Ok();
-            else
-                return BadRequest();
+            return Ok(post);
         }
-        [Route("delete")]
+        [Route("delete/{id}")]
         [Authorize]
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public async Task<ActionResult> Delete(long id)
         {
             var user = await userFinder.FindByClaimsPrincipal(User);

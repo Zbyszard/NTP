@@ -15,6 +15,7 @@ namespace Kopyw.Models
         public string Text { get; set; }
         [Required]
         public DateTime PostTime { get; set; }
+        public DateTime? LastEditTime { get; set; }
         public string AuthorId { get; set; }
 
         public List<Comment> Comments { get; set; }

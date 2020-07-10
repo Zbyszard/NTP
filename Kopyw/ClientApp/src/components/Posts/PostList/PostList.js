@@ -23,16 +23,24 @@ class PostList extends Component {
             sort: "time",
             sortOrder: "desc",
             lastRequestUrl: null,
-            isLoading: true
+            isLoading: true,
+            formBlocked: false,
+            formKey: (new Date).getTime()
         }
         this.dataCancelSource = null;
         this.pageDataCancelSource = null;
         this.justCaughtInfo = false;
+        this.formBlockTimer = null;
     }
 
     componentDidMount = () => {
         this.requestPageCount();
         this.requestData(this.state.currentPage);
+    }
+
+
+    componentWillUnmount = () => {
+        clearTimeout(this.formBlockTimer);
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -180,14 +188,54 @@ class PostList extends Component {
             });
     }
 
-    postAddedCallback = post => {
+
+    sendNewPost = newPost => {
+        this.setState({ formBlocked: true });
+        axios.post("/post", newPost)
+            .then(r => {
+                const post = r.data;
+                this.postAdded(post);
+            })
+            .finally(() => {
+                this.formBlockTimer = setTimeout(() => this.setState({ formBlocked: false }), 1000);
+            });
+    }
+
+    postAdded = post => {
         if (this.state.currentPage === 1)
             this.setState(state => {
                 state.posts.pop();
-                return { posts: [post, ...state.posts] };
+                return {
+                    posts: [post, ...state.posts],
+                    formKey: (new Date).getTime()
+                };
             });
         else
             this.changePage(1);
+    }
+
+    postEdited = post => {
+        axios.put("/post/edit", post)
+            .then(r => {
+                if (r.status === 200) {
+                    let edited = r.data;
+                    let posts = this.state.posts;
+                    let index = posts.findIndex(p => p.id === edited.id);
+                    posts[index].text = edited.text;
+                    posts[index].title = edited.title;
+                    posts[index].lastEditTime = edited.lastEditTime;
+                    this.setState({ posts: posts });
+                }
+            })
+    }
+
+    deleteCallback = postId => {
+        axios.delete(`/post/delete/${postId}`)
+            .then(r => {
+                if(r.status === 200){
+                    this.requestData();
+                }
+            })
     }
 
     urlWithoutParams = () => {
@@ -244,6 +292,7 @@ class PostList extends Component {
                             authorId={p.authorId}
                             title={p.title}
                             postTime={new Date(p.postTime)}
+                            lastEdit={new Date(p.lastEditTime)}
                             text={p.text}
                             score={p.score}
                             commentCount={p.commentCount}
@@ -252,6 +301,8 @@ class PostList extends Component {
                             showPlus={context.authorized && context.userName !== p.authorName}
                             userAuthorized={context.authorized}
                             userName={context.userName}
+                            editCallback={this.postEdited}
+                            deleteCallback={this.deleteCallback}
                             voteCallback={this.postVote}
                             deleteVoteCallback={this.deletePostVote}
                             followCallback={this.requestPostInfo} />
@@ -262,7 +313,9 @@ class PostList extends Component {
         if (this.props.showForm)
             form =
                 <AuthorizedRender>
-                    <PostForm onPost={this.postAddedCallback} />
+                    <PostForm key={this.state.formKey}
+                        postCallback={this.sendNewPost}
+                        isBlocked={this.state.formBlocked} />
                 </AuthorizedRender>;
         return (
             <>

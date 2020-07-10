@@ -7,12 +7,14 @@ import ContextMenu from '../../../Shared/ContextMenu/ContextMenu';
 import ContextMenuItem from '../../../Shared/ContextMenu/ContextMenuItem';
 import formatDate from '../../../Shared/Functions/formatDate';
 import classes from './Post.module.css';
+import PostForm from '../../PostForm';
 
 class Post extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showComments: false
+            showComments: false,
+            editMode: false
         };
     }
     render() {
@@ -34,9 +36,16 @@ class Post extends Component {
                     </ContextMenu>
                 </div>;
         }
-        return (
-            <>
-                <div className={classes.post}>
+        let postBody = null;
+        if (this.state.editMode) {
+            postBody = <PostForm isBlocked={false}
+                title={this.props.title}
+                text={this.props.text}
+                postCallback={this.editHandler} />
+        }
+        else {
+            postBody =
+                <>
                     <div className={classes.header}>
                         <Link className={classes.author} to={`/user/${this.props.author}`}>
                             {this.props.author}
@@ -49,12 +58,18 @@ class Post extends Component {
                         </Link> */}
                         <div>{this.props.title}</div>
                     </h1>
-                    <p className={classes.time}>
+                    <p className={classes.time} title={this.props.lastEdit ? formatDate(this.props.lastEdit) : null}>
                         {formatDate(this.props.postTime)}
                     </p>
                     <p className={classes.text}>
                         {this.props.text}
                     </p>
+                </>
+        }
+        return (
+            <>
+                <div className={classes.post}>
+                    {postBody}
                     <div className={classes.actionSection}>
                         <span className={classes.score}>+{this.props.score}</span>
                         {plus1}
@@ -66,7 +81,6 @@ class Post extends Component {
                     <CommentSection postId={this.props.id}
                         show={this.state.showComments} />
                 </div>
-
             </>
         );
     }
@@ -75,14 +89,29 @@ class Post extends Component {
         const items = [];
         let index = 0;
         if (this.props.author === this.props.userName) {
-            items.push(<ContextMenuItem key={index++}>Edit</ContextMenuItem>);
-            items.push(<ContextMenuItem key={index++}>Delete</ContextMenuItem>);
+            items.push(<ContextMenuItem key={index++} clickCallback={this.editItemClicked}>Edit</ContextMenuItem>);
+            items.push(<ContextMenuItem key={index++} clickCallback={this.deleteItemClicked}>Delete</ContextMenuItem>);
         }
         else
             items.push(<ContextMenuItem key={index++} clickCallback={this.followItemClicked}>
                 {this.props.followingAuthor ? "Unfollow user" : "Observe user"}
             </ContextMenuItem>);
         return items;
+    }
+
+    editItemClicked = () => {
+        this.setState({ editMode: true });
+    }
+
+    editHandler = post => {
+        post.id = this.props.id;
+        post.authorId = this.props.authorId;
+        this.props.editCallback(post);
+        this.setState({ editMode: false });
+    }
+
+    deleteItemClicked = () => {
+        this.props.deleteCallback(this.props.id);
     }
 
     followItemClicked = () => {

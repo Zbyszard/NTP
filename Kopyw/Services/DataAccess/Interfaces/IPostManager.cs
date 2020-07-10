@@ -19,7 +19,7 @@ namespace Kopyw.Services.DataAccess.Interfaces
         public int GetFollowedPagesCount(string loggedUserId, int postsPerPage);
         public Task<List<Post>> Search(string phrase, int count, int page, string sort, string sortOrder);
         public int GetSearchPagesCount(string phrase, int postsPerPage);
-        public Task<int> Update(Post post);
+        public Task<Post> Update(Post post);
         public Task<bool?> Delete(long id, string loggedUserId);
         public Task<PostVote> AddVote(PostVote newVote);
         public Task<PostVote> DeleteVote(PostVote vote);

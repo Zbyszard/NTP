@@ -168,9 +168,24 @@ namespace Kopyw.Services.DataAccess
             var sorted = infos.OrderBy(pi => ids.IndexOf(pi.PostId)).ToList();
             return sorted;
         }
-        public async Task<int> Update(Post post)
+        public async Task<Post> Update(Post post)
         {
-            throw new NotImplementedException();
+            var dbPost = await (from p in db.Posts
+                                where p.Id == post.Id
+                                select p).FirstOrDefaultAsync();
+            dbPost.Text = post.Text;
+            dbPost.Title = post.Title;
+            dbPost.LastEditTime = DateTime.Now;
+            try
+            {
+                db.Entry(dbPost).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+            }
+            catch(DbUpdateException)
+            {
+                return null;
+            }
+            return dbPost;
         }
 
         public async Task<PostVote> AddVote(PostVote newVote)

@@ -16,7 +16,6 @@ using System.Threading.Tasks;
 
 namespace Kopyw.Services.DTOs
 {
-    //will be updated to use AutoMapper
     public class PostDTOManager : IPostDTOManager
     {
         private readonly IPostManager postManager;
@@ -41,19 +40,12 @@ namespace Kopyw.Services.DTOs
             newPost.PostTime = post.PostTime;
             return newPost;
         }
-        public async Task<bool?> Update(PostDTO post, string loggedUserId)
+        public async Task<PostDTO> Update(PostDTO post)
         {
-            var p = await postManager.Get(post.Id);
-            if (p == null)
-                return null;
-            if (p.AuthorId != loggedUserId)
-                return false;
-            p.Text = post.Text;
-            p.Title = post.Title;
-            if(await postManager.Update(p) == 1)
-                return true;
-            else
-                return null;
+            var dbPost = mapper.Map<Post>(post);
+            dbPost = await postManager.Update(dbPost);
+            post = mapper.Map<PostDTO>(dbPost);
+            return post;
         }
         public async Task<PostDTO> Get(long id)
         {

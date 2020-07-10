@@ -15,6 +15,7 @@ namespace Kopyw.Models
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime PostTime { get; set; }
+        public DateTime? LastEditTime { get; set; }
         public string AuthorId { get; set; }
         [Required]
         public long PostId { get; set; }

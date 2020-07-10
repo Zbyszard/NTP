@@ -38,11 +38,11 @@ namespace Kopyw.Controllers
             var added = await commentDTOManager.Add(newComment);
             if (added == null)
                 return BadRequest();        
-             return CreatedAtAction(nameof(Get), new { id = added.Id }, added);
+             return CreatedAtAction(nameof(GetSingle), new { id = added.Id }, added);
         }
         [Route("single/{id}")]
         [HttpGet]
-        public async Task<ActionResult<CommentDTO>> Get(long id)
+        public async Task<ActionResult<CommentDTO>> GetSingle(long id)
         {
             var comment = await commentDTOManager.Get(id);
             if (comment == null)
@@ -51,12 +51,13 @@ namespace Kopyw.Controllers
         }
         [Route("{postId}")]
         [HttpGet]
-        public async Task<ActionResult<List<CommentDTO>>> GetPage(long postId)
+        public async Task<ActionResult<List<CommentDTO>>> GetComments(long postId)
         {
             var user = await userFinder.FindByClaimsPrincipal(User);
             var comments = await commentDTOManager.GetPage(postId, user?.Id);
             return Ok(comments);
         }
+
         [Authorize]
         [Route("vote")]
         [HttpPost]

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
 import classes from './PostForm.module.css';
 
@@ -6,12 +7,10 @@ class PostForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: "",
-            text: "",
-            isBlocked: false,
+            title: props.title || "",
+            text: props.text || "",
             validationMessages: []
         }
-        this.blockTimer = null;
     }
 
     render() {
@@ -39,10 +38,6 @@ class PostForm extends Component {
         );
     }
 
-    componentWillUnmount = () => {
-        clearTimeout(this.blockTimer);
-    }
-
     preventEnter = e => {
         if (e.key === "Enter")
             e.preventDefault();
@@ -59,29 +54,15 @@ class PostForm extends Component {
 
     submitHandler = e => {
         e.preventDefault();
-        if(this.state.isBlocked)
+        if (this.props.isBlocked)
             return;
         if (!this.validateFields())
             return;
-        this.sendNewPost();
-    }
-
-    sendNewPost = () => {
-        const newPost = {
+        const post = {
             Title: this.state.title,
             Text: this.state.text
         };
-        this.setState({ isBlocked: true });
-        axios.post("/post", newPost)
-            .then(r => {
-                const post = r.data;
-                this.setState({ title: "", text: "" });
-                this.props.onPost(post);
-            })
-            .finally(() => {
-                this.blockTimer = setTimeout(() => this.setState({ isBlocked: false }), 1000);
-            });
-
+        this.props.postCallback(post);
     }
 
     validateFields = () => {
@@ -103,6 +84,11 @@ class PostForm extends Component {
         this.setState({ validationMessages: messages });
         return isOk;
     }
+}
+
+PostForm.propTypes = {
+    isBlocked: PropTypes.bool.isRequired,
+    postCallback: PropTypes.func.isRequired
 }
 
 export default PostForm;
