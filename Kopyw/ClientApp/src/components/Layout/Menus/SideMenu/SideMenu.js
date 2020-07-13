@@ -1,5 +1,5 @@
 import React from 'react';
-import Backdrop from '../../Backdrop/Backdrop';
+import Backdrop from '../../../Shared/Backdrop/Backdrop';
 import PropTypes from 'prop-types';
 import HamburgerIcon from '../HamburgerIcon/HamburgerIcon';
 import classes from '../Menu.module.css';

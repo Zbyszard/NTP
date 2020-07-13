@@ -9,6 +9,7 @@ import Communicate from '../../Shared/Communicate/Communicate';
 import LoadingSymbol from '../../Shared/LoadingSymbol/LoadingSymbol';
 import classes from './PostList.module.css';
 import PageSelector from '../PageSelector/PageSelector';
+import Warning from '../../Shared/Warning/Warning';
 
 class PostList extends Component {
     constructor(props) {
@@ -25,7 +26,8 @@ class PostList extends Component {
             lastRequestUrl: null,
             isLoading: true,
             formBlocked: false,
-            formKey: (new Date).getTime()
+            formKey: new Date().getTime(),
+            postIdToBeDeleted: null
         }
         this.dataCancelSource = null;
         this.pageDataCancelSource = null;
@@ -35,12 +37,15 @@ class PostList extends Component {
 
     componentDidMount = () => {
         this.requestPageCount();
-        this.requestData(this.state.currentPage);
+        this.requestData();
     }
-
 
     componentWillUnmount = () => {
         clearTimeout(this.formBlockTimer);
+        if (this.dataCancelSource)
+            this.dataCancelSource.cancel();
+        if (this.pageDataCancelSource)
+            this.pageDataCancelSource.cancel();
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -207,7 +212,7 @@ class PostList extends Component {
                 state.posts.pop();
                 return {
                     posts: [post, ...state.posts],
-                    formKey: (new Date).getTime()
+                    formKey: new Date().getTime()
                 };
             });
         else
@@ -229,13 +234,22 @@ class PostList extends Component {
             })
     }
 
-    deleteCallback = postId => {
-        axios.delete(`/post/delete/${postId}`)
+    showDeleteWarning = postId => {
+        this.setState({ postIdToBeDeleted: postId });
+    }
+
+    deletePost = () => {
+        axios.delete(`/post/delete/${this.state.postIdToBeDeleted}`)
             .then(r => {
-                if(r.status === 200){
+                if (r.status === 200) {
                     this.requestData();
+                    this.setState({ postIdToBeDeleted: null });
                 }
             })
+    }
+
+    cancelDeletePost = () => {
+        this.setState({ postIdToBeDeleted: null });
     }
 
     urlWithoutParams = () => {
@@ -292,7 +306,7 @@ class PostList extends Component {
                             authorId={p.authorId}
                             title={p.title}
                             postTime={new Date(p.postTime)}
-                            lastEdit={new Date(p.lastEditTime)}
+                            lastEdit={p.lastEditTime ? new Date(p.lastEditTime) : null}
                             text={p.text}
                             score={p.score}
                             commentCount={p.commentCount}
@@ -302,7 +316,7 @@ class PostList extends Component {
                             userAuthorized={context.authorized}
                             userName={context.userName}
                             editCallback={this.postEdited}
-                            deleteCallback={this.deleteCallback}
+                            deleteCallback={this.showDeleteWarning}
                             voteCallback={this.postVote}
                             deleteVoteCallback={this.deletePostVote}
                             followCallback={this.requestPostInfo} />
@@ -317,8 +331,14 @@ class PostList extends Component {
                         postCallback={this.sendNewPost}
                         isBlocked={this.state.formBlocked} />
                 </AuthorizedRender>;
+        let deleteWarning = this.state.postIdToBeDeleted ?
+            <Warning message="Are you sure you want to delete this post?"
+                confirmCallback={this.deletePost}
+                cancelCallback={this.cancelDeletePost} /> :
+            null;
         return (
             <>
+                {deleteWarning}
                 {form}
                 {pageSelector}
                 {loadingSymbol}

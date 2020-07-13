@@ -1,0 +1,11 @@
+.button {
+    background-color: transparent;
+    border: none;
+    font-family: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+.button:hover, .button:active {
+    color: rgb(150, 150, 150)
+}

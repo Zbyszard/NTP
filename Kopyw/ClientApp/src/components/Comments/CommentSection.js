@@ -56,7 +56,9 @@ class CommentSection extends Component {
                         postTime={new Date(c.postTime)}
                         score={c.score}
                         userVote={c.userVote}
-                        showPlusMinus={context.authorized && context.userName !== c.authorName} />
+                        showPlusMinus={context.authorized && context.userName !== c.authorName}
+                        userAuthorized={context.authorized}
+                        userName={context.userName} />
                     }
                 </AuthContext.Consumer>);
         let containerClasses = [classes.container];

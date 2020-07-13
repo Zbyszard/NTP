@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import formatDate from '../../Shared/Functions/formatDate';
+import Button from '../../Shared/Button/Button';
 import axios from 'axios';
 import classes from './Comment.module.css';
 
@@ -39,6 +40,13 @@ class Comment extends Component {
         }
         const scoreClassList = scoreClasses.join(' ');
         const score = this.props.score;
+        let ownCommentActions = null;
+        if (this.props.userAuthorized && this.props.userName === this.props.authorName)
+            ownCommentActions =
+                <>
+                    <Button fontSize="0.7rem">Edit</Button>
+                    <Button fontSize="0.7rem">Delete</Button>
+                </>
         return (
             <div className={classes.comment}>
                 <div className={classes.commentHeader}>
@@ -46,6 +54,7 @@ class Comment extends Component {
                         {this.props.authorName}
                     </Link>
                     <span className={classes.time}>{formatDate(this.props.postTime)}</span>
+                    {ownCommentActions}
                     {voteButtons}
                     <span className={scoreClassList}>{this.props.score}</span>
                 </div>
@@ -97,7 +106,9 @@ Comment.propTypes = {
     postTime: PropTypes.instanceOf(Date).isRequired,
     score: PropTypes.number,
     userVote: PropTypes.number,
-    showPlusMinus: PropTypes.bool
+    showPlusMinus: PropTypes.bool,
+    userAuthorized: PropTypes.bool.isRequired,
+    userName: PropTypes.string.isRequired
 }
 
 export default Comment;

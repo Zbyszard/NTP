@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import authService from './components/api-authorization/AuthorizeService';
 import axios from 'axios';
 import App from './App';
+import { LoginActions } from './components/api-authorization/ApiAuthorizationConstants';
 //import registerServiceWorker from './registerServiceWorker';
 
 axios.defaults.baseURL = "/api";
@@ -16,8 +17,14 @@ axios.interceptors.request.use(async reqConfig => {
 axios.interceptors.response.use(resp => resp,
   async error => {
     let auth = await authService.isAuthenticated();
-    if(auth && error.response.status === 401)
-      window.location.pathname = "/authentication/login";
+    if (auth && error.response.status === 401) {
+      let state = { returnUrl: window.location };
+      let status = await authService.signIn(state);
+      if (status === LoginActions.LoginFailed)
+        window.location.pathname = "/authentication/login";
+      else
+        return axios.request(error.config);
+    }
     return Promise.reject(error);
   });
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');

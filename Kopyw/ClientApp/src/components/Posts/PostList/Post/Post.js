@@ -8,6 +8,7 @@ import ContextMenuItem from '../../../Shared/ContextMenu/ContextMenuItem';
 import formatDate from '../../../Shared/Functions/formatDate';
 import classes from './Post.module.css';
 import PostForm from '../../PostForm';
+import Button from '../../../Shared/Button/Button';
 
 class Post extends Component {
     constructor(props) {
@@ -58,7 +59,8 @@ class Post extends Component {
                         </Link> */}
                         <div>{this.props.title}</div>
                     </h1>
-                    <p className={classes.time} title={this.props.lastEdit ? formatDate(this.props.lastEdit) : null}>
+                    <p className={classes.time}
+                        title={this.props.lastEdit ? `Last edit: ${formatDate(this.props.lastEdit)}` : null}>
                         {formatDate(this.props.postTime)}
                     </p>
                     <p className={classes.text}>
@@ -73,10 +75,10 @@ class Post extends Component {
                     <div className={classes.actionSection}>
                         <span className={classes.score}>+{this.props.score}</span>
                         {plus1}
-                        <button className={classes.commentCount}
+                        <Button
                             onClick={this.toggleComments}>
                             {this.props.commentCount} {this.props.commentCount === 1 ? "comment" : "comments"}
-                        </button>
+                        </Button>
                     </div>
                     <CommentSection postId={this.props.id}
                         show={this.state.showComments} />

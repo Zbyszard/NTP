@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
+import Button from '../Shared/Button/Button';
 import classes from './PostForm.module.css';
 
 class PostForm extends Component {
@@ -11,14 +11,18 @@ class PostForm extends Component {
             text: props.text || "",
             validationMessages: []
         }
+        this.editMode = props.title && props.text;
+        this.formRef = React.createRef();
     }
 
     render() {
         let messages = !this.state.validationMessages.length ? null :
             this.state.validationMessages.map(msg => <li key={msg}>{msg}</li>);
+        let cancelButton = !this.editMode ? null :
+            <Button onClick={this.props.cancelCallback}>Cancel</Button>;
         return (
             <div className={classes.container}>
-                <form onSubmit={this.submitHandler}>
+                <form onSubmit={this.submitHandler} ref={this.formRef}>
                     <input className={classes.title}
                         value={this.state.title}
                         onChange={this.changeHandler}
@@ -32,7 +36,10 @@ class PostForm extends Component {
                         placeholder="Write something" />
                     {!messages ? null :
                         <ul className={classes.validationMessages}>{messages}</ul>}
-                    <input type="submit" value="Send" />
+                    <div className={classes.buttons}>
+                        {cancelButton}
+                        <Button onClick={this.submitHandler}>Submit</Button>
+                    </div>
                 </form>
             </div>
         );
@@ -53,7 +60,7 @@ class PostForm extends Component {
     }
 
     submitHandler = e => {
-        e.preventDefault();
+        e && e.preventDefault();
         if (this.props.isBlocked)
             return;
         if (!this.validateFields())
@@ -88,7 +95,8 @@ class PostForm extends Component {
 
 PostForm.propTypes = {
     isBlocked: PropTypes.bool.isRequired,
-    postCallback: PropTypes.func.isRequired
+    postCallback: PropTypes.func.isRequired,
+    cancelCallback: PropTypes.func
 }
 
 export default PostForm;
