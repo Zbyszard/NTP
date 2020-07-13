@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PageLink from './PageLink';
 import PropTypes from 'prop-types';
 import classes from './PageSelector.module.css';
@@ -8,7 +8,7 @@ const PageSelector = props => {
         const value = e.target.value;
         props.setValue(+value);
     }
-
+    const [lastClickTime, setLastClickTime] = useState(null);
     useEffect(() => {
         props.setValue(props.currentPage);
     }, []);
@@ -17,7 +17,14 @@ const PageSelector = props => {
         props.setMax(props.pagesCount > 10 ? props.pagesCount - 9 : 1);
     }, [props.pagesCount]);
 
-    let showSlider = props.pagesCount > 10;
+    const onLinkClick = pageNumber => {
+        let now = new Date();
+        if(lastClickTime !== null && now - lastClickTime < 500)
+            return;
+        setLastClickTime(now);
+        props.linkClickCallback(pageNumber);
+    }
+
     const visiblePagesCount = props.pagesCount > 10 ? 10 : props.pagesCount;
     const firstPageNumber = props.value > props.pagesCount - 9 ?
         props.pagesCount - 9 <= 1 ? 1 : props.pagesCount - 9 :
@@ -28,11 +35,11 @@ const PageSelector = props => {
             return <PageLink number={key}
                 key={key}
                 url={props.url}
-                clickCallback={props.onLinkClick}
+                clickCallback={onLinkClick}
                 active={props.currentPage === key} />
         });
     let slider = null;
-    if (showSlider) {
+    if (props.pagesCount > 10) {
         slider = <input className={classes.slider}
             onChange={slideHandler}
             type="range"
@@ -57,7 +64,7 @@ PageSelector.propTypes = {
     value: PropTypes.number.isRequired,
     setMax: PropTypes.func,
     setValue: PropTypes.func,
-    onLinkClick: PropTypes.func
+    linkClickCallback: PropTypes.func
 }
 
 export default PageSelector;

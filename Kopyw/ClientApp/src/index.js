@@ -17,7 +17,7 @@ axios.interceptors.request.use(async reqConfig => {
 axios.interceptors.response.use(resp => resp,
   async error => {
     let auth = await authService.isAuthenticated();
-    if (auth && error.response.status === 401) {
+    if (auth && error.response && error.response.status === 401) {
       let state = { returnUrl: window.location };
       let status = await authService.signIn(state);
       if (status === LoginActions.LoginFailed)

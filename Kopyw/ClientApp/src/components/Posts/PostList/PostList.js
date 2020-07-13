@@ -112,7 +112,7 @@ class PostList extends Component {
     requestData = () => {
         let url = this.createRequestUrl();
         this.setState({ isLoading: true });
-        if (this.state.isLoading && this.dataCancelSource)
+        if (this.dataCancelSource)
             this.dataCancelSource.cancel();
         this.dataCancelSource = axios.CancelToken.source();
         axios.get(url, { cancelToken: this.dataCancelSource.token })
@@ -188,6 +188,10 @@ class PostList extends Component {
                     }
                     return null;
                 });
+                if (updatedPosts.some(p => p === null)) {
+                    this.justCaughtInfo = false;
+                    return;
+                }
                 this.justCaughtInfo = true;
                 this.setState({ posts: updatedPosts });
             });
@@ -293,7 +297,7 @@ class PostList extends Component {
                 <PageSelector pagesCount={this.state.pageCount}
                     currentPage={+this.state.currentPage}
                     url={this.urlWithoutParams()}
-                    onLinkClick={this.changePage}
+                    linkClickCallback={this.changePage}
                     max={this.state.sliderMax}
                     value={+this.state.sliderValue}
                     setMax={this.setSliderMax}
