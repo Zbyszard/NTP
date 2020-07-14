@@ -2,19 +2,24 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classes from './CommentForm.module.css';
 import axios from 'axios';
+import Button from '../Shared/Button/Button';
 
 class CommentForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            text: "",
+            text: props.text || "",
             validationMessages: []
         };
+        this.editMode = !!props.text;
     }
 
     render() {
         let messages = !this.state.validationMessages.length ? null :
             this.state.validationMessages.map(msg => <li key={msg}>{msg}</li>);
+        let cancelButton = null;
+        if (this.editMode)
+            cancelButton = <Button onClick={this.props.cancelCallback}>Cancel</Button>;
         return (
             <div className={classes.container}>
                 <form onSubmit={this.submitHandler}>
@@ -25,7 +30,10 @@ class CommentForm extends Component {
                         placeholder="Your comment" />
                     {!messages ? null :
                         <ul className={classes.validationMessages}>{messages}</ul>}
-                    <input type="submit" value="Send" />
+                    <div className={classes.buttons}>
+                        {cancelButton}
+                        <Button onClick={this.submitHandler}>Send</Button>
+                    </div>
                 </form>
             </div>
         );
@@ -40,22 +48,16 @@ class CommentForm extends Component {
     }
 
     submitHandler = e => {
-        e.preventDefault();
+        e && e.preventDefault();
+        if(this.props.isBlocked)
+            return;
         if (!this.validate())
             return;
-        this.sendComment();
-    }
-
-    sendComment = () => {
-        const newComment = {
+        let comment = {
             postId: this.props.postId,
             text: this.state.text
         };
-        axios.post("/comment/add", newComment).then(r => {
-            const comment = r.data;
-            this.setState({text: ""});
-            this.props.onCommentPost(comment);
-        })
+        this.props.submitCallback(comment);
     }
 
     validate = () => {
@@ -74,7 +76,11 @@ class CommentForm extends Component {
 }
 
 CommentForm.propTypes = {
-    comments: PropTypes.arrayOf(PropTypes.object)
+    postId: PropTypes.number.isRequired,
+    isBlocked: PropTypes.bool,
+    text: PropTypes.string,
+    submitCallback: PropTypes.func,
+    cancelCallback: PropTypes.func
 }
 
 export default CommentForm;

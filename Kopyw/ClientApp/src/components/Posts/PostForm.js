@@ -12,7 +12,6 @@ class PostForm extends Component {
             validationMessages: []
         }
         this.editMode = props.title && props.text;
-        this.formRef = React.createRef();
     }
 
     render() {
@@ -22,7 +21,7 @@ class PostForm extends Component {
             <Button onClick={this.props.cancelCallback}>Cancel</Button>;
         return (
             <div className={classes.container}>
-                <form onSubmit={this.submitHandler} ref={this.formRef}>
+                <form onSubmit={this.submitHandler}>
                     <input className={classes.title}
                         value={this.state.title}
                         onChange={this.changeHandler}

@@ -5,13 +5,15 @@ import formatDate from '../../Shared/Functions/formatDate';
 import Button from '../../Shared/Button/Button';
 import axios from 'axios';
 import classes from './Comment.module.css';
+import CommentForm from '../CommentForm';
 
 class Comment extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            userVote: props.userVote
+            userVote: props.userVote,
+            editMode: false
         };
     }
     render() {
@@ -25,7 +27,7 @@ class Comment extends Component {
         const minusClassList = minusClasses.join(' ');
         let voteButtons;
         let scoreClasses = [classes.score];
-        if (this.props.showPlusMinus) {
+        if (this.props.showPlusMinus && !this.props.deleted) {
             voteButtons =
                 <>
                     <button className={plusClassList}
@@ -44,24 +46,61 @@ class Comment extends Component {
         if (this.props.userAuthorized && this.props.userName === this.props.authorName)
             ownCommentActions =
                 <>
-                    <Button fontSize="0.7rem">Edit</Button>
-                    <Button fontSize="0.7rem">Delete</Button>
+                    <Button fontSize="0.7rem" onClick={this.editClickHandler}>Edit</Button>
+                    <Button fontSize="0.7rem" onClick={this.deleteClickHandler}>Delete</Button>
                 </>
+        let commentBody =
+            <p className={classes.text}>
+                {!this.props.deleted ? this.props.text : "[comment deleted]"}
+            </p>;
+        if (this.state.editMode) {
+            commentBody =
+                <CommentForm
+                    postId={this.props.postId}
+                    submitCallback={this.editSubmitHandler}
+                    cancelCallback={this.cancelEdit}
+                    text={this.props.text} />
+        }
+        let userLink =
+            <Link className={classes.author} to={`/user/${this.props.authorName}`}>
+                {this.props.authorName}
+            </Link>;
+        if (this.props.deleted)
+            userLink = <span className={classes.author}>[comment deleted]</span>
         return (
             <div className={classes.comment}>
                 <div className={classes.commentHeader}>
-                    <Link className={classes.author} to={`/user/${this.props.authorName}`}>
-                        {this.props.authorName}
-                    </Link>
+                    {userLink}
                     <span className={classes.time}>{formatDate(this.props.postTime)}</span>
                     {ownCommentActions}
                     {voteButtons}
                     <span className={scoreClassList}>{this.props.score}</span>
                 </div>
-                <p className={classes.text}>{this.props.text}</p>
+                {commentBody}
             </div>
         );
     }
+
+    editClickHandler = () => {
+        this.setState({ editMode: true });
+    }
+
+    editSubmitHandler = comment => {
+        comment.id = this.props.id;
+        comment.authorId = this.props.authorId;
+        comment.authorName = this.props.authorName;
+        this.props.editCallback(comment);
+        this.setState({ editMode: false });
+    }
+
+    deleteClickHandler = () => {
+        this.props.deleteCallback(this.props.id);
+    }
+
+    cancelEdit = () => {
+        this.setState({ editMode: false });
+    }
+
     plusClickHandler = () => {
         if (this.state.userVote > 0) {
             this.deleteVote();
@@ -101,14 +140,18 @@ class Comment extends Component {
     }
 }
 Comment.propTypes = {
+    postId: PropTypes.number.isRequired,
     id: PropTypes.number.isRequired,
     authorName: PropTypes.string,
+    authorId: PropTypes.string,
     postTime: PropTypes.instanceOf(Date).isRequired,
     score: PropTypes.number,
     userVote: PropTypes.number,
     showPlusMinus: PropTypes.bool,
     userAuthorized: PropTypes.bool.isRequired,
-    userName: PropTypes.string.isRequired
+    userName: PropTypes.string.isRequired,
+    editCallback: PropTypes.func,
+    deleteCallback: PropTypes.func
 }
 
 export default Comment;

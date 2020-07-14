@@ -1,5 +1,5 @@
 .container {
-    position: relative;
+    overflow: visible;
     white-space: nowrap;
 }
 .meatballs {
@@ -13,9 +13,7 @@
     font-size: 1.5rem;
 }
 .menu {
-    position: absolute;
-    right: 0;
-    top: 15px;
+    position: fixed;
     display: none;
     background-color: rgb(40, 40, 40);
     overflow: hidden;

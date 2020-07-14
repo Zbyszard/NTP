@@ -35,9 +35,25 @@ namespace Kopyw.Services.DataAccess
                 return null;
         }
 
-        public async Task<Comment> Delete(long id)
+        public async Task<Comment> Delete(long id, string loggedUserId)
         {
-            throw new NotImplementedException();
+            var comment = await db.Comments.Where(c => c.Id == id && c.AuthorId == loggedUserId).FirstOrDefaultAsync();
+            if (comment == null)
+                return null;
+            comment.AuthorId = null;
+            comment.Text = null;
+            comment.LastEditTime = null;
+            comment.Deleted = true;
+            db.Entry(comment).State = EntityState.Modified;
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch(DbUpdateException)
+            {
+                return null;
+            }
+            return comment;
         }
 
         public async Task<Comment> Get(long id)
@@ -54,10 +70,21 @@ namespace Kopyw.Services.DataAccess
 
         public async  Task<Comment> Update(Comment comment)
         {
-            throw new NotImplementedException();
+            var updated = await db.Comments.Where(c => c.Id == comment.Id).FirstOrDefaultAsync();
+            updated.Text = comment.Text;
+            updated.LastEditTime = DateTime.Now;
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch(DbUpdateException)
+            {
+                return null;
+            }
+            return updated;
         }
 
-        public async Task<List<CommentVote>> GetVotes(List<Comment> comments, string userId)
+        public List<CommentVote> GetVotes(List<Comment> comments, string userId)
         {
             var votes = (from c in comments
                          select new CommentVote
@@ -73,6 +100,9 @@ namespace Kopyw.Services.DataAccess
 
         public async Task<CommentVote> Vote(CommentVote vote)
         {
+            var comment = await db.Comments.Where(c => c.Id == vote.CommentId).FirstOrDefaultAsync();
+            if (comment?.Deleted == null)
+                return null;
             var oldVote = await db.CommentVotes
                 .Where(c => c.UserId == vote.UserId && c.CommentId == vote.CommentId)
                 .FirstOrDefaultAsync();
@@ -84,9 +114,15 @@ namespace Kopyw.Services.DataAccess
             }
             else
                 db.Entry(vote).State = EntityState.Added;
-            if (await db.SaveChangesAsync() == 1)
-                return vote;
-            return null;
+            try
+            {
+                await db.SaveChangesAsync();
+            }
+            catch(DbUpdateException)
+            {
+                return null;
+            }
+            return vote;
         }
         public async Task<CommentVote> DeleteVote(CommentVote vote)
         {
@@ -97,9 +133,17 @@ namespace Kopyw.Services.DataAccess
             {
                 vote = oldVote;
                 db.Entry(vote).State = EntityState.Deleted;
-                if (await db.SaveChangesAsync() == 0)
+                try
+                {
+                    if (await db.SaveChangesAsync() == 0)
+                        return null;
+                    else
+                        return vote;
+                }
+                catch(DbUpdateException)
+                {
                     return null;
-                return vote;
+                }
             }
             return null;
         }

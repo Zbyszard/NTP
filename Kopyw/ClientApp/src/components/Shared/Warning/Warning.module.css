@@ -1,7 +1,7 @@
 .message {
     box-sizing: border-box;
     background-color: rgb(60, 60, 60);
-    width: 100%;
+    width: 700px;
     padding: 40px 10px;
     border: 1px solid black;
     border-bottom: none;
@@ -12,7 +12,7 @@
     padding: 10px 0;
     background-color: rgb(60, 60, 60);
     display: flex;
-    width: 100%;
+    width: 700px;
     flex-direction: row;
     justify-content: flex-start;
     border: 1px solid black;

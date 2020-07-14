@@ -10,7 +10,6 @@ namespace Kopyw.Models
     public class Comment
     {
         public long Id { get; set; }
-        [Required]
         public string Text { get; set; }
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
@@ -19,6 +18,7 @@ namespace Kopyw.Models
         public string AuthorId { get; set; }
         [Required]
         public long PostId { get; set; }
+        public bool Deleted { get; set; }
 
 
         public ApplicationUser Author { get; set; }

@@ -17,5 +17,6 @@ namespace Kopyw.DTOs
         public DateTime PostTime { get; set; }
         public int Score { get; set; }
         public int UserVote { get; set; }
+        public bool Deleted { get; set; }
     }
 }

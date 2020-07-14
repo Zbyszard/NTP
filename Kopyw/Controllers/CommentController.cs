@@ -57,7 +57,30 @@ namespace Kopyw.Controllers
             var comments = await commentDTOManager.GetPage(postId, user?.Id);
             return Ok(comments);
         }
-
+        [Authorize]
+        [Route("edit")]
+        [HttpPut]
+        public async Task<ActionResult<CommentDTO>> Edit(CommentDTO comment)
+        {
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            if (user.Id != comment.AuthorId)
+                return Forbid();
+            var updated = await commentDTOManager.Update(comment);
+            if (updated == null)
+                return NotFound();
+            return updated;
+        }
+        [Authorize]
+        [Route("delete/{commentId}")]
+        [HttpDelete]
+        public async Task<ActionResult<CommentDTO>> Delete(long commentId)
+        {
+            var user = await userFinder.FindByClaimsPrincipal(User);
+            var deleted = await commentDTOManager.Delete(commentId, user.Id);
+            if (deleted == null)
+                return NotFound();
+            return deleted;
+        }
         [Authorize]
         [Route("vote")]
         [HttpPost]

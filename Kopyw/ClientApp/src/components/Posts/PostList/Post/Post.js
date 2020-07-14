@@ -42,7 +42,8 @@ class Post extends Component {
             postBody = <PostForm isBlocked={false}
                 title={this.props.title}
                 text={this.props.text}
-                postCallback={this.editHandler} />
+                postCallback={this.editHandler}
+                cancelCallback={this.cancelEdit} />
         }
         else {
             postBody =
@@ -110,6 +111,10 @@ class Post extends Component {
         post.authorId = this.props.authorId;
         this.props.editCallback(post);
         this.setState({ editMode: false });
+    }
+
+    cancelEdit = () => {
+        this.setState({editMode: false});
     }
 
     deleteItemClicked = () => {
