@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import formatDate from '../../Shared/Functions/formatDate';
+import formatDate from '../../../Shared/Functions/formatDate';
 import Button from '../../Shared/Button/Button';
 import axios from 'axios';
 import classes from './Comment.module.css';
 import CommentForm from '../CommentForm';
+import UserLink from '../../Shared/UserLink/UserLink';
 
 class Comment extends Component {
     constructor(props) {
@@ -61,16 +62,10 @@ class Comment extends Component {
                     cancelCallback={this.cancelEdit}
                     text={this.props.text} />
         }
-        let userLink =
-            <Link className={classes.author} to={`/user/${this.props.authorName}`}>
-                {this.props.authorName}
-            </Link>;
-        if (this.props.deleted)
-            userLink = <span className={classes.author}>[comment deleted]</span>
         return (
             <div className={classes.comment}>
                 <div className={classes.commentHeader}>
-                    {userLink}
+                    <UserLink user={this.props.authorName} />
                     <span className={classes.time}>{formatDate(this.props.postTime)}</span>
                     {ownCommentActions}
                     {voteButtons}

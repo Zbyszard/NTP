@@ -20,11 +20,6 @@
     display: flex;
 }
 
-.author {
-    font-size: 0.8rem;
-    font-weight: bold;
-}
-
 .menuContainer {
     margin-left: auto;
 }

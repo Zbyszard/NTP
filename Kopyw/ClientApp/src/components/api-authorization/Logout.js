@@ -60,17 +60,17 @@ export class Logout extends Component {
                         this.props.redirect("/");
                     }, 2000);
                 }
-                return (<Communicate>{message}</Communicate>);
+                return (<Communicate zIndex={-1}>{message}</Communicate>);
             }
         } else {
             const action = this.props.action;
             switch (action) {
                 case LogoutActions.Logout:
-                    return (<Communicate>Processing logout</Communicate>);
+                    return (<Communicate zIndex={-1}>Processing logout</Communicate>);
                 case LogoutActions.LogoutCallback:
-                    return (<Communicate>Processing logout callback</Communicate>);
+                    return (<Communicate zIndex={-1}>Processing logout callback</Communicate>);
                 case LogoutActions.LoggedOut:
-                    return (<Communicate>{message}</Communicate>);
+                    return (<Communicate zIndex={-1}>{message}</Communicate>);
                 default:
                     throw new Error(`Invalid action '${action}'`);
             }

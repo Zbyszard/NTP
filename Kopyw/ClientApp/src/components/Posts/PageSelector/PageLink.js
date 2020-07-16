@@ -20,7 +20,7 @@ const PageLink = props => {
         linkClasses.push(classes.active);
     const linkClassList = linkClasses.join(' ');
     return (
-        <Link to={url} onClick={clickHandler}
+        <Link to={url}
             className={linkClassList}>
             {props.number}
         </Link>

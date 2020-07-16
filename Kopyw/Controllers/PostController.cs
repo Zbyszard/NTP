@@ -41,7 +41,7 @@ namespace Kopyw.Controllers
             return Ok(post);
         }
         [HttpGet]
-        [Route("{sort}/{sortOrder}/{page}/{count}")]
+        [Route("{sort}/{sortOrder}/{count}/{page}")]
         public async Task<ActionResult<List<PostDTO>>> GetPage(int page, int count, string sort, string sortOrder)
         {
             var list = await postDTOManager.GetPage(count, page, sort, sortOrder);
@@ -55,7 +55,7 @@ namespace Kopyw.Controllers
             return Ok(pages);
         }
         [HttpGet]
-        [Route("user/{userName}/{sort}/{sortOrder}/{page}/{count}")]
+        [Route("user/{userName}/{sort}/{sortOrder}/{count}/{page}")]
         public async Task<ActionResult<List<PostDTO>>> GetFromUser(int page, int count, string userName, string sort, string sortOrder)
         {
             if (string.IsNullOrEmpty(userName))
@@ -83,7 +83,7 @@ namespace Kopyw.Controllers
             return Ok(pages);
         }
         [HttpGet]
-        [Route("search/{phrase}/{sort}/{sortOrder}/{page}/{count}")]
+        [Route("search/{phrase}/{sort}/{sortOrder}/{count}/{page}")]
         public async Task<ActionResult<List<PostDTO>>> Search(string phrase, int page, int count, string sort, string sortOrder)
         {
             var posts = await postDTOManager.Search(phrase, count, page, sort, sortOrder);
@@ -98,7 +98,7 @@ namespace Kopyw.Controllers
         }
         [Authorize]
         [HttpGet]
-        [Route("observed/{sort}/{sortOrder}/{page}/{count}")]
+        [Route("observed/{sort}/{sortOrder}/{count}/{page}")]
         public async Task<ActionResult<List<PostDTO>>> GetFollowed(int page, int count, string sort, string sortOrder)
         {
             var user = await userFinder.FindByClaimsPrincipal(User);

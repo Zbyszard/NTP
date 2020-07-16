@@ -6,12 +6,10 @@ import classes from './PageSelector.module.css';
 const PageSelector = props => {
     const slideHandler = e => {
         const value = e.target.value;
-        props.setValue(+value);
+        setSliderValue(+value);
     }
     const [lastClickTime, setLastClickTime] = useState(null);
-    useEffect(() => {
-        props.setValue(props.currentPage);
-    }, []);
+    const [sliderValue, setSliderValue] = useState(props.value);
 
     useEffect(() => {
         props.setMax(props.pagesCount > 10 ? props.pagesCount - 9 : 1);
@@ -26,16 +24,15 @@ const PageSelector = props => {
     }
 
     const visiblePagesCount = props.pagesCount > 10 ? 10 : props.pagesCount;
-    const firstPageNumber = props.value > props.pagesCount - 9 ?
+    const firstPageNumber = sliderValue > props.pagesCount - 9 ?
         props.pagesCount - 9 <= 1 ? 1 : props.pagesCount - 9 :
-        props.value;
+        sliderValue;
     const visiblePages = Array.from(Array(visiblePagesCount),
         (el, index) => {
             let key = +firstPageNumber + index;
             return <PageLink number={key}
                 key={key}
                 url={props.url}
-                clickCallback={onLinkClick}
                 active={props.currentPage === key} />
         });
     let slider = null;
@@ -43,7 +40,7 @@ const PageSelector = props => {
         slider = <input className={classes.slider}
             onChange={slideHandler}
             type="range"
-            value={props.value}
+            value={sliderValue}
             step={1} min={1} max={props.max} />;
     }
     return (
@@ -62,9 +59,7 @@ PageSelector.propTypes = {
     url: PropTypes.string.isRequired,
     max: PropTypes.number.isRequired,
     value: PropTypes.number.isRequired,
-    setMax: PropTypes.func,
-    setValue: PropTypes.func,
-    linkClickCallback: PropTypes.func
+    setMax: PropTypes.func
 }
 
 export default PageSelector;

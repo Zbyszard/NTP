@@ -52,9 +52,9 @@ export class Login extends Component {
         } else {
             switch (action) {
                 case LoginActions.Login:
-                    return (<Communicate>Processing login</Communicate>);
+                    return (<Communicate zIndex={-1}>Processing login</Communicate>);
                 case LoginActions.LoginCallback:
-                    return (<Communicate>Processing login callback</Communicate>);
+                    return (<Communicate zIndex={-1}>Processing login callback</Communicate>);
                 case LoginActions.Profile:
                 case LoginActions.Register:
                     return (<div></div>);

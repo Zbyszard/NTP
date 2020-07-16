@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import AuthContext from '../../api-authorization/AuthContext';
+import { withRouter } from 'react-router-dom';
+import AuthContext from '../../../Context/AuthContext';
 import AuthorizedRender from '../../api-authorization/AuthorizedRender';
+import { PostApiConstants } from '../../../Shared/ApiConstants/ApiConstants';
 import PropTypes from 'prop-types';
 import Post from './Post/Post';
 import PostForm from '../PostForm';
@@ -16,14 +18,10 @@ class PostList extends Component {
         super(props);
         this.state = {
             posts: [],
+            currentPage: 1,
             pageCount: 1,
-            postsPerPage: 10,
-            currentPage: props.match.params.page || 1,
             sliderValue: 1,
             sliderMax: 1,
-            sort: "time",
-            sortOrder: "desc",
-            lastRequestUrl: null,
             isLoading: true,
             formBlocked: false,
             formKey: new Date().getTime(),
@@ -36,6 +34,7 @@ class PostList extends Component {
     }
 
     componentDidMount = () => {
+        this.setPage();
         this.requestPageCount();
         this.requestData();
     }
@@ -49,30 +48,35 @@ class PostList extends Component {
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        let page = this.props.match.params.page || 1;
-        if (prevProps.location.pathname !== this.props.location.pathname) {
-            this.changePage(page);
+        if (prevProps.match.params.page !== this.props.match.params.page)
+            this.setPage();
+        else if (prevState.currentPage !== this.state.currentPage) {
             this.requestPageCount();
             this.requestData();
         }
-        if (prevState.posts !== this.state.posts && !this.justCaughtInfo) {
+
+        if (prevState.posts !== this.state.posts && !this.justCaughtInfo)
             this.requestPostInfo();
-        }
-        if (this.justCaughtInfo)
+        else if (this.justCaughtInfo)
             this.justCaughtInfo = false;
     }
 
     postVote = postId => {
+        let url = PostApiConstants.addVote;
         const data = { postId: postId };
-        axios.post("/post/vote", data).then(response => {
-            this.setPostVote(postId, true);
+        axios.post(url, data).then(response => {
+            if (response.status === 200)
+                this.setPostVote(postId, true);
         });
     }
 
     deletePostVote = postId => {
-        axios.delete(`/post/vote/${postId}`).then(response => {
-            this.setPostVote(postId, false);
-        });
+        let url = `${PostApiConstants.deleteVote}/${postId}`;
+        axios.delete(url)
+            .then(response => {
+                if (response.status === 200)
+                    this.setPostVote(postId, false);
+            });
     }
 
     setPostVote = (postId, value) => {
@@ -84,43 +88,22 @@ class PostList extends Component {
         this.setState({ posts: posts });
     }
 
-    createRequestUrl = () => {
-        let getUrl = this.props.getUrl;
-        let page = this.props.match.params.page || 1;
-        if (getUrl.includes("/post/user")) {
-            if (getUrl === "/post/user") {
-                let user = this.props.match.params.username;
-                getUrl += `/${user}`;
-            }
-            getUrl += `/${this.state.sort}/${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
-            return getUrl;
-        }
-        if (getUrl.includes("/search")) {
-            getUrl += `/${this.props.match.params.phrase}/${this.state.sort}/` +
-                `${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
-            return getUrl;
-        }
-        if (getUrl.includes("time") || getUrl.includes("score")) {
-            getUrl += `/${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
-            return getUrl;
-        }
-
-        getUrl += `/${this.state.sort}/${this.state.sortOrder}/${page}/${this.state.postsPerPage}`;
-        return getUrl;
-    }
-
     requestData = () => {
-        let url = this.createRequestUrl();
+        let url = null;
+        if (this.props.singlePostId)
+            url = `${this.props.getPostsUrl}/${this.props.singlePostId}`;
+        else
+            url = `${this.props.getPostsUrl}/${this.state.currentPage}`;
         this.setState({ isLoading: true });
         if (this.dataCancelSource)
             this.dataCancelSource.cancel();
         this.dataCancelSource = axios.CancelToken.source();
         axios.get(url, { cancelToken: this.dataCancelSource.token })
             .then(response => {
+                let data = this.props.singlePostId ? [response.data] : response.data;
                 this.setState({
-                    posts: response.data,
+                    posts: data,
                     isLoading: false,
-                    currentPage: this.props.match.params.page || 1,
                     lastRequestUrl: this.props.location.pathname
                 });
                 this.dataCancelSource = null;
@@ -133,30 +116,10 @@ class PostList extends Component {
             });
     }
 
-    createPageRequestUrl = () => {
-        let getUrl = this.props.getUrl;
-        if (getUrl.includes("/post/user")) {
-            if (getUrl === "/post/user")
-                getUrl += `/pages/${this.props.match.params.username}/${this.state.postsPerPage}`;
-            else {
-                getUrl = `${getUrl.substring(0, "/post/user".length)}/` +
-                    `pages/${getUrl.substring("/post/user".length + 1)}/${this.state.postsPerPage}`;
-            }
-            return getUrl;
-        }
-        if (getUrl.includes("/search")) {
-            getUrl += `/pages/${this.props.match.params.phrase}/${this.state.postsPerPage}`;
-            return getUrl;
-        }
-        if (getUrl.includes("time") || getUrl.includes("score")) {
-            getUrl = `/post/pages/${this.state.postsPerPage}`;
-            return getUrl;
-        }
-        return getUrl + `/pages/${this.state.postsPerPage}`;
-    }
-
     requestPageCount = () => {
-        let url = this.createPageRequestUrl();
+        if (this.props.singlePostId)
+            return;
+        let url = this.props.getPageCountUrl;
         if (this.state.isLoading && this.pageDataCancelSource)
             this.pageDataCancelSource.cancel();
         this.pageDataCancelSource = axios.CancelToken.source();
@@ -172,8 +135,9 @@ class PostList extends Component {
     }
 
     requestPostInfo = () => {
+        let url = PostApiConstants.getInfo;
         const ids = this.state.posts.map(p => p.id);
-        axios.post("/post/info", ids)
+        axios.post(url, ids)
             .then(r => {
                 const d = r.data;
                 const posts = this.state.posts;
@@ -199,32 +163,26 @@ class PostList extends Component {
 
 
     sendNewPost = newPost => {
+        let url = PostApiConstants.add;
         this.setState({ formBlocked: true });
-        axios.post("/post", newPost)
-            .then(r => {
-                const post = r.data;
-                this.postAdded(post);
+        axios.post(url, newPost)
+            .then(response => {
+                if (response.status === 201) {
+                    this.setState({ formKey: new Date().getTime() });
+                    if (this.state.currentPage === 1)
+                        this.requestData();
+                    else
+                        this.props.history.push(this.props.match.url);
+                }
             })
             .finally(() => {
                 this.formBlockTimer = setTimeout(() => this.setState({ formBlocked: false }), 1000);
             });
     }
 
-    postAdded = post => {
-        if (this.state.currentPage === 1)
-            this.setState(state => {
-                state.posts.pop();
-                return {
-                    posts: [post, ...state.posts],
-                    formKey: new Date().getTime()
-                };
-            });
-        else
-            this.changePage(1);
-    }
-
     postEdited = post => {
-        axios.put("/post/edit", post)
+        let url = PostApiConstants.edit;
+        axios.put(url, post)
             .then(r => {
                 if (r.status === 200) {
                     let edited = r.data;
@@ -243,7 +201,8 @@ class PostList extends Component {
     }
 
     deletePost = () => {
-        axios.delete(`/post/delete/${this.state.postIdToBeDeleted}`)
+        let url = `${PostApiConstants.delete}/${this.state.postIdToBeDeleted}`;
+        axios.delete(url)
             .then(r => {
                 if (r.status === 200) {
                     this.requestData();
@@ -265,43 +224,35 @@ class PostList extends Component {
         return url.substring(0, url.indexOf(':page?'));
     }
 
-    setSliderValue = value => {
-        this.setState({ sliderValue: value });
-    }
-
     setSliderMax = value => {
         this.setState({ sliderMax: value });
     }
 
-    changePage = pageNum => {
-        if (pageNum < 1)
-            pageNum = 1;
-        else if (pageNum > this.state.pageCount)
-            pageNum = this.state.pageCount;
-        this.setState({ currentPage: pageNum });
-        this.setSliderValue(pageNum);
+    setPage = () => {
+        let page = !isNaN(+this.props.match.params.page) && +this.props.match.params.page || 1;
+        this.setState({ currentPage: page });
     }
 
     render() {
-        let pageSelector;
+        let pageSelector = null;
         let content;
         let loadingSymbol;
         if (this.state.isLoading) {
-            loadingSymbol = <Communicate><LoadingSymbol /></Communicate>;
+            loadingSymbol = <Communicate zIndex={-1}><LoadingSymbol /></Communicate>;
         }
         if (!this.state.isLoading && !this.state.posts.length) {
-            content = <Communicate>Nothing to show</Communicate>;
+            content = <Communicate zIndex={-1}>Nothing to show</Communicate>;
         }
         else if (!!this.state.posts.length) {
-            pageSelector =
-                <PageSelector pagesCount={this.state.pageCount}
-                    currentPage={+this.state.currentPage}
-                    url={this.urlWithoutParams()}
-                    linkClickCallback={this.changePage}
-                    max={this.state.sliderMax}
-                    value={+this.state.sliderValue}
-                    setMax={this.setSliderMax}
-                    setValue={this.setSliderValue} />
+            if (!this.props.singlePostId)
+                pageSelector =
+                    <PageSelector pagesCount={this.state.pageCount}
+                        currentPage={+this.state.currentPage}
+                        url={this.urlWithoutParams()}
+                        max={this.state.sliderMax}
+                        value={this.state.currentPage}
+                        setMax={this.setSliderMax}
+                        setValue={this.setSliderValue} />
             content = this.state.posts.map(p =>
                 <AuthContext.Consumer key={p.id}>
                     {context =>
@@ -356,8 +307,10 @@ class PostList extends Component {
 }
 
 PostList.propTypes = {
-    getUrl: PropTypes.string.isRequired,
-    showForm: PropTypes.bool
+    getPostsUrl: PropTypes.string.isRequired,
+    getPageCountUrl: PropTypes.string.isRequired,
+    showForm: PropTypes.bool,
+    singlePostId: PropTypes.bool
 }
 
-export default PostList;
+export default withRouter(PostList);

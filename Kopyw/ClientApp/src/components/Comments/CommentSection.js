@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import AuthorizedRender from '../api-authorization/AuthorizedRender';
-import AuthContext from '../api-authorization/AuthContext';
+import AuthContext from '../../Context/AuthContext';
 import CommentForm from './CommentForm';
 import Comment from './Comment/Comment';
 import PropTypes from 'prop-types';

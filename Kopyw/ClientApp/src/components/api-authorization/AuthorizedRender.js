@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import AuthContext from './AuthContext';
+import AuthContext from '../../Context/AuthContext';
 
 const AuthorizedRender = props => {
     const authContext = useContext(AuthContext);

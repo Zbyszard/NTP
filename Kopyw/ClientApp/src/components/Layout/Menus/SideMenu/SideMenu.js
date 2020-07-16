@@ -12,15 +12,17 @@ const SideMenu = props => {
     let menuClassList = menuClasses.join(' ');
     return (
         <>
-            <div className={menuClassList}>
-                <HamburgerIcon
-                    containerClass={classes.menuIcon}
-                    isActive={true}
-                    clickHandler={props.toggleHandler} />
-                <ul className={classes.menuList}>
-                    {props.children}
-                </ul>
-            </div>
+            <div className={classes.fixedParent}>
+                <div className={menuClassList}>
+                    <HamburgerIcon
+                        containerClass={classes.menuIcon}
+                        isActive={true}
+                        clickHandler={props.toggleHandler} />
+                    <ul className={classes.menuList}>
+                        {props.children}
+                    </ul>
+                </div>
+            </div >
             <Backdrop clickHandler={props.toggleHandler}
                 isActive={props.isActive}
                 zIndex={10} />

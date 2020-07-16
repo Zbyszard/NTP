@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { follow, unfollow } from '../../../Shared/FollowApiCalls/FollowApiCalls';
+import { follow, unfollow } from '../../../../Shared/FollowApiCalls/FollowApiCalls';
 import PropTypes from 'prop-types';
 import CommentSection from '../../../Comments/CommentSection';
 import ContextMenu from '../../../Shared/ContextMenu/ContextMenu';
 import ContextMenuItem from '../../../Shared/ContextMenu/ContextMenuItem';
-import formatDate from '../../../Shared/Functions/formatDate';
+import formatDate from '../../../../Shared/Functions/formatDate';
 import classes from './Post.module.css';
 import PostForm from '../../PostForm';
 import Button from '../../../Shared/Button/Button';
+import UserLink from '../../../Shared/UserLink/UserLink';
+import { GetPostApiConstants } from '../../../../Shared/ApiConstants/ApiConstants';
 
 class Post extends Component {
     constructor(props) {
@@ -49,16 +51,13 @@ class Post extends Component {
             postBody =
                 <>
                     <div className={classes.header}>
-                        <Link className={classes.author} to={`/user/${this.props.author}`}>
-                            {this.props.author}
-                        </Link>
+                        <UserLink user={this.props.author} />
                         {menu}
                     </div>
                     <h1 className={classes.title}>
-                        {/* <Link to={`/post/${this.props.id}`}>
+                        <Link to={`${GetPostApiConstants.single}/${this.props.id}`}>
                             {this.props.title}
-                        </Link> */}
-                        <div>{this.props.title}</div>
+                        </Link>
                     </h1>
                     <p className={classes.time}
                         title={this.props.lastEdit ? `Last edit: ${formatDate(this.props.lastEdit)}` : null}>
@@ -114,7 +113,7 @@ class Post extends Component {
     }
 
     cancelEdit = () => {
-        this.setState({editMode: false});
+        this.setState({ editMode: false });
     }
 
     deleteItemClicked = () => {
