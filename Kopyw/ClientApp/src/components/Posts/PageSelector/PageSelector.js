@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import PageLink from './PageLink';
 import PropTypes from 'prop-types';
-import classes from './PageSelector.module.css';
+import css from './PageSelector.module.css';
 
 const PageSelector = props => {
     const slideHandler = e => {
@@ -14,14 +15,6 @@ const PageSelector = props => {
     useEffect(() => {
         props.setMax(props.pagesCount > 10 ? props.pagesCount - 9 : 1);
     }, [props.pagesCount]);
-
-    const onLinkClick = pageNumber => {
-        let now = new Date();
-        if(lastClickTime !== null && now - lastClickTime < 500)
-            return;
-        setLastClickTime(now);
-        props.linkClickCallback(pageNumber);
-    }
 
     const visiblePagesCount = props.pagesCount > 10 ? 10 : props.pagesCount;
     const firstPageNumber = sliderValue > props.pagesCount - 9 ?
@@ -37,18 +30,26 @@ const PageSelector = props => {
         });
     let slider = null;
     if (props.pagesCount > 10) {
-        slider = <input className={classes.slider}
+        slider = <input className={css.slider}
             onChange={slideHandler}
             type="range"
             value={sliderValue}
             step={1} min={1} max={props.max} />;
     }
     return (
-        <div className={classes.pageSelector}>
-            <div className={classes.linkContainer}>
+        <div className={css.pageSelector}>
+            <div className={css.linkContainer}>
                 {visiblePages}
             </div>
             {slider}
+            <div className={css.navButtons}>
+                <Link className={css.prev}
+                    to={props.currentPage < 3 ? props.url : `${props.url}/${props.currentPage - 1}`} />
+                <Link className={css.next}
+                    to={props.currentPage > props.pagesCount - 1 ?
+                        `${props.url}/${props.pagesCount}` :
+                        `${props.url}/${props.currentPage + 1}`} />
+            </div>
         </div>
     );
 }

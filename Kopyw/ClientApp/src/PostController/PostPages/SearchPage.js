@@ -15,7 +15,7 @@ class SearchPage extends Component {
         return (
             <PageControllerContext.Consumer>
                 {context =>
-                    <PostList
+                    <PostList key={phrase}
                         getPostsUrl={`${GetPostApiConstants.searched}/${phrase}/${context.sort}/${context.sortOrder}/${context.postsPerPage}`}
                         getPageCountUrl={`${GetPageCountApiConstants.searched}/${phrase}/${context.postsPerPage}`} />
                 }

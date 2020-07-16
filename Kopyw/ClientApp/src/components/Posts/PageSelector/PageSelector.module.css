@@ -53,7 +53,48 @@
     -webkit-appearance: none;
     appearance: none;
     border: none;
+    height: 20px;
+    width: 20px;
     border-radius: 100%;
     background-color: rgb(160, 160, 160);
     cursor: pointer;
+}
+
+.navButtons {
+    display: flex;
+    box-sizing: border-box;
+    flex-direction: row;
+    height: 40px;
+    border: 1px solid black;
+    margin-bottom: 10px;
+}
+
+.prev, .next {
+    font-size: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    border: none;
+    height: 100%;
+}
+
+.prev {
+    border-right: 1px solid black;
+}
+
+.prev::before {
+    content: "←";
+}
+
+.next::before {
+    content: "→";
+}
+
+@media screen and (min-width: 700px) {
+    .navButtons {
+        display: none;
+    }
 }

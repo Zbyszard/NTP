@@ -12,18 +12,22 @@ const ContextMenu = props => {
         const clickListener = () => {
             setActive(false);
             document.removeEventListener("click", clickListener);
+            document.removeEventListener("scroll", scrollListener);
         };
+        const scrollListener = () => {
+            setActive(false);
+            document.removeEventListener("click", clickListener);
+            document.removeEventListener("scroll", scrollListener);
+        }
         setmenuXPos(e.clientX);
         setmenuYPos(e.clientY);
         if (!active) {
             menuRef.current.focus();
             document.addEventListener("click", clickListener);
+            document.addEventListener("scroll", scrollListener);
         }
         setActive(!active);
     }
-    const hide = () => {
-        setActive(false);
-    };
 
     let menuClassList = [classes.menu];
     if (active)
@@ -35,7 +39,6 @@ const ContextMenu = props => {
             <i className={classes.meatballs} onClick={toggle} />
             <div className={menuClasses}
                 ref={menuRef}
-                onBlur={hide}
                 style={style}>
                 {props.children}
             </div>

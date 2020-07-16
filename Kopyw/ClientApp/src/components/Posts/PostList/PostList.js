@@ -107,6 +107,7 @@ class PostList extends Component {
                     lastRequestUrl: this.props.location.pathname
                 });
                 this.dataCancelSource = null;
+                window.scroll(0,0);
             })
             .catch(error => {
                 if (axios.isCancel(error))
@@ -217,11 +218,14 @@ class PostList extends Component {
 
     urlWithoutParams = () => {
         let url = this.props.match.path;
-        if (url.includes(":username"))
-            url = url.replace(":username", this.props.match.params.username);
-        else if (url.includes(":phrase"))
-            url = url.replace(":phrase", this.props.match.params.phrase);
-        return url.substring(0, url.indexOf(':page?'));
+        for (let key in this.props.match.params) {
+            if (key === "page") {
+                url = url.replace("/:page?", '');
+                continue;
+            }
+            url = url.replace(`:${key}`, this.props.match.params[key]);
+        }
+        return url;
     }
 
     setSliderMax = value => {
@@ -244,7 +248,7 @@ class PostList extends Component {
             content = <Communicate zIndex={-1}>Nothing to show</Communicate>;
         }
         else if (!!this.state.posts.length) {
-            if (!this.props.singlePostId)
+            if (!this.props.singlePostId && this.state.pageCount !== 1)
                 pageSelector =
                     <PageSelector pagesCount={this.state.pageCount}
                         currentPage={+this.state.currentPage}

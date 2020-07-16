@@ -58,12 +58,22 @@
     color: rgb(255, 140, 140);
 }
 
-.minus:hover, .minus:active, .minusActive {
+.minus:hover, .minus:active {
+    background-color: rgb(255, 140, 140);
+    color: black;
+}
+
+.minusActive {
     background-color: rgb(255, 70, 70);
     color: black;
 }
 
-.plus:hover, .plus:active, .plusActive {
+.plus:hover, .plus:active {
+    background-color: rgb(170, 255, 140);
+    color: black;
+}
+
+.plusActive {
     background-color: rgb(120, 255, 70);
     color: black;
 }

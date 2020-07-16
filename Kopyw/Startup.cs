@@ -18,6 +18,7 @@ using Kopyw.Services.DataAccess.Interfaces;
 using Kopyw.Services;
 using AutoMapper;
 using Kopyw.DTOs;
+using Microsoft.CodeAnalysis.Options;
 
 namespace Kopyw
 {
@@ -39,8 +40,13 @@ namespace Kopyw
 
             services.AddDefaultIdentity<ApplicationUser>(options =>
             {
-                options.SignIn.RequireConfirmedAccount = true;
+                options.SignIn.RequireConfirmedAccount = false;
                 options.User.RequireUniqueEmail = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequiredUniqueChars = 0;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 

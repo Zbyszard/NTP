@@ -62,7 +62,12 @@
     cursor: pointer;
 }
 
-.plus:active, .plus:hover, .active {
+.plus:active, .plus:hover {
+    background-color: rgb(170, 255, 140);
+    color: black;
+}
+
+.active {
     background-color: rgb(120, 255, 70);
     color: black;
 }
