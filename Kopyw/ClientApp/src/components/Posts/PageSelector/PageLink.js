@@ -9,7 +9,7 @@ const PageLink = props => {
         linkClasses.push(classes.active);
     const linkClassList = linkClasses.join(' ');
     return (
-        <Link to={`${props.url}/${props.number}`}
+        <Link to={`${props.url}${props.number === 1 ? '' : `/${props.number}`}`}
             className={linkClassList}>
             {props.number}
         </Link>

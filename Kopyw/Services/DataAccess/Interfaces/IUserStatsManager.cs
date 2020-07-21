@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Kopyw.Services.DataAccess.Interfaces
 {
-    public interface IFollowManager
+    public interface IUserStatsManager
     {
-        Task<Follow> Add(Follow newFollow);
-        Task<Follow> Delete(string authorId, string userId);
+        Task<UserStats> Get(string userName, string loggedUserId);
     }
 }

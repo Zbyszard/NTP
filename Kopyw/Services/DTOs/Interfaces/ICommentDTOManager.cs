@@ -8,12 +8,12 @@ namespace Kopyw.Services.DTOs.Interfaces
 {
     public interface ICommentDTOManager
     {
-        public Task<CommentDTO> Add(CommentDTO newComment);
-        public Task<CommentDTO> Get(long id);
-        public Task<List<CommentDTO>> GetPage(long postId, string userId);
-        public Task<CommentDTO> Update(CommentDTO comment);
-        public Task<CommentDTO> Delete(long id, string loggedUserId);
-        public Task<CommentVoteDTO> Vote(CommentVoteDTO vote);
-        public Task<CommentVoteDTO> DeleteVote(CommentVoteDTO vote);
+        Task<CommentDTO> Add(CommentDTO newComment);
+        Task<CommentDTO> Get(long id);
+        Task<List<CommentDTO>> GetPage(long postId, string userId);
+        Task<CommentDTO> Update(CommentDTO comment);
+        Task<CommentDTO> Delete(long id, string loggedUserId);
+        Task<CommentVoteDTO> Vote(CommentVoteDTO vote);
+        Task<CommentVoteDTO> DeleteVote(CommentVoteDTO vote);
     }
 }

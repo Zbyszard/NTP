@@ -22,3 +22,7 @@ export const PostApiConstants = {
     deleteVote: "/post/vote",
     getInfo: "/post/info"
 }
+
+export const UserApiConstants = {
+    getStats: "/userStats"
+}

@@ -8,13 +8,13 @@ namespace Kopyw.Services.DataAccess.Interfaces
 {
     public interface ICommentManager
     {
-        public Task<Comment> Add(Comment newComment);
-        public Task<Comment> Get(long id);
-        public Task<List<Comment>> GetPage(long postId);
-        public Task<Comment> Update(Comment comment);
-        public List<CommentVote> GetVotes(List<Comment> comments, string userId);
-        public Task<CommentVote> Vote(CommentVote vote);
-        public Task<CommentVote> DeleteVote(CommentVote vote);
-        public Task<Comment> Delete(long id, string loggedUserId);
+        Task<Comment> Add(Comment newComment);
+        Task<Comment> Get(long id);
+        Task<List<Comment>> GetPage(long postId);
+        Task<Comment> Update(Comment comment);
+        List<CommentVote> GetVotes(List<Comment> comments, string userId);
+        Task<CommentVote> Vote(CommentVote vote);
+        Task<CommentVote> DeleteVote(CommentVote vote);
+        Task<Comment> Delete(long id, string loggedUserId);
     }
 }

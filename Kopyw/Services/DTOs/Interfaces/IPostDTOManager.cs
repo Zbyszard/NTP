@@ -8,19 +8,19 @@ namespace Kopyw.Services.DTOs.Interfaces
 {
     public interface IPostDTOManager
     {
-        public Task<PostDTO> Add(PostDTO newPost);
-        public Task<PostDTO> Get(long id);
-        public Task<List<PostDTO>> GetPage(int count, int page, string sort, string sortOrder);
-        public int GetPagesCount(int postsPerPage);
-        public Task<List<PostDTO>> GetUserPosts(int count, int page, string userName, string sort, string sortOrder);
-        public int GetUserPagesCount(string userName, int postsPerPage);
-        public Task<List<PostDTO>> GetFollowedPosts(int count, int page, string loggedUserId, string sort, string sortOrder);
-        public int GetFollowedPagesCount(string loggedUserId, int postsPerPage);
-        public Task<List<PostDTO>> Search(string phrase, int count, int page, string sort, string sortOrder);
-        public int GetSearchPagesCount(string phrase, int postsPerPage);
-        public Task<List<PostInfoDTO>> GetInformation(List<long> ids, string loggedUserId);
-        public Task<PostDTO> Update(PostDTO post);
-        public Task<PostVoteDTO> AddVote(PostVoteDTO newVoteDTO);
-        public Task<PostVoteDTO> DeleteVote(PostVoteDTO voteDTO);
+       Task<PostDTO> Add(PostDTO newPost);
+       Task<PostDTO> Get(long id);
+       Task<List<PostDTO>> GetPage(int count, int page, string sort, string sortOrder);
+       int GetPagesCount(int postsPerPage);
+       Task<List<PostDTO>> GetUserPosts(int count, int page, string userName, string sort, string sortOrder);
+       int GetUserPagesCount(string userName, int postsPerPage);
+       Task<List<PostDTO>> GetFollowedPosts(int count, int page, string loggedUserId, string sort, string sortOrder);
+       int GetFollowedPagesCount(string loggedUserId, int postsPerPage);
+       Task<List<PostDTO>> Search(string phrase, int count, int page, string sort, string sortOrder);
+       int GetSearchPagesCount(string phrase, int postsPerPage);
+       Task<List<PostInfoDTO>> GetInformation(List<long> ids, string loggedUserId);
+       Task<PostDTO> Update(PostDTO post);
+       Task<PostVoteDTO> AddVote(PostVoteDTO newVoteDTO);
+       Task<PostVoteDTO> DeleteVote(PostVoteDTO voteDTO);
     }
 }

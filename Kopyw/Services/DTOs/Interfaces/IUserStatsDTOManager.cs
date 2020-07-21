@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Kopyw.Services.DTOs.Interfaces
 {
-    public interface IFollowDTOManager
+    public interface IUserStatsDTOManager
     {
-        Task<FollowDTO> Add(FollowDTO newFollow);
-        Task<FollowDTO> Delete(string authorId, string userId);
+        Task<UserStatsDTO> Get(string userName, string loggedUserId);
     }
 }

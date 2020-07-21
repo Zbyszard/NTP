@@ -59,6 +59,10 @@ namespace Kopyw.DTOs
             CreateMap<FollowDTO, Follow>()
                 .ForMember(d => d.AuthorId, o => o.MapFrom(s => s.AuthorId))
                 .ForMember(d => d.ObserverId, o => o.MapFrom(s => s.ObserverId));
+
+            CreateMap<UserStats, UserStatsDTO>()
+                .ForMember(d => d.UserName, o => o.MapFrom(s => s.User.UserName))
+                .ForMember(d => d.IsFollowed, o => o.MapFrom(s => s.LoggedUserFollow != null));
         }
     }
 }
