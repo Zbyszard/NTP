@@ -11,6 +11,7 @@ namespace Kopyw.Services.DataAccess.Interfaces
         Task<Post> Add(Post newPost);
         Task<Post> Get(long id);
         Task<List<PostInfo>> GetInformation(List<long> ids, string loggedUserId);
+        Task<PostInfo> GetUpdate(long id);
         Task<List<Post>> GetPage(int count, int page, string sort, string sortOrder);
         int GetPagesCount(int postsPerPage);
         Task<List<Post>> GetUserPosts(int count, int page, string userName, string sort, string sortOrder);

@@ -97,6 +97,11 @@ namespace Kopyw.Services.DTOs
             var infoList = await postManager.GetInformation(ids, loggedUserId);
             return mapper.Map<List<PostInfoDTO>>(infoList);
         }
+        public async Task<PostInfoDTO> GetUpdate(long id)
+        {
+            var info = await postManager.GetUpdate(id);
+            return mapper.Map<PostInfoDTO>(info);
+        }
         public async Task<PostVoteDTO> AddVote(PostVoteDTO newVoteDTO)
         {
             var newVote = new PostVote { PostId = newVoteDTO.PostId, UserId = newVoteDTO.UserId };

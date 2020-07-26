@@ -6,6 +6,7 @@ using Kopyw.DTOs;
 using Kopyw.Models;
 using Kopyw.Services;
 using Kopyw.Services.DTOs.Interfaces;
+using Kopyw.Services.Notifiers.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,14 @@ namespace Kopyw.Controllers
     {
         private readonly UserFinder userFinder;
         private readonly ICommentDTOManager commentDTOManager;
+        private readonly IPostNotifier postNotifier;
         public CommentController(UserFinder userFinder, 
-            ICommentDTOManager commentDTOManager)
+            ICommentDTOManager commentDTOManager,
+            IPostNotifier postNotifier)
         {
             this.userFinder = userFinder;
             this.commentDTOManager = commentDTOManager;
+            this.postNotifier = postNotifier;
         }
         [Authorize]
         [Route("add")]
@@ -37,8 +41,9 @@ namespace Kopyw.Controllers
             newComment.AuthorId = user.Id;
             var added = await commentDTOManager.Add(newComment);
             if (added == null)
-                return BadRequest();        
-             return CreatedAtAction(nameof(GetSingle), new { id = added.Id }, added);
+                return BadRequest();
+            await postNotifier.SendUpdate(newComment.PostId);
+            return CreatedAtAction(nameof(GetSingle), new { id = added.Id }, added);
         }
         [Route("single/{id}")]
         [HttpGet]

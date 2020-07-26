@@ -12,6 +12,7 @@ import LoadingSymbol from '../../Shared/LoadingSymbol/LoadingSymbol';
 import classes from './PostList.module.css';
 import PageSelector from '../PageSelector/PageSelector';
 import Warning from '../../Shared/Warning/Warning';
+import PostSubscriber from '../../../Shared/SignalR/PostSubscriber';
 
 class PostList extends Component {
     constructor(props) {
@@ -37,6 +38,7 @@ class PostList extends Component {
         this.setPage();
         this.requestPageCount();
         this.requestData();
+        PostSubscriber.connection.on("UpdateReceived", this.updatePost);
     }
 
     componentWillUnmount = () => {
@@ -45,6 +47,7 @@ class PostList extends Component {
             this.dataCancelSource.cancel();
         if (this.pageDataCancelSource)
             this.pageDataCancelSource.cancel();
+        PostSubscriber.connection.off("UpdateReceived");
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -107,7 +110,7 @@ class PostList extends Component {
                     lastRequestUrl: this.props.location.pathname
                 });
                 this.dataCancelSource = null;
-                window.scroll(0,0);
+                window.scroll(0, 0);
             })
             .catch(error => {
                 if (axios.isCancel(error))
@@ -235,6 +238,16 @@ class PostList extends Component {
     setPage = () => {
         let page = !isNaN(+this.props.match.params.page) && +this.props.match.params.page || 1;
         this.setState({ currentPage: page });
+    }
+
+    updatePost = update => {
+        let posts = [...this.state.posts];
+        let post = posts.find(p => p.id === update.postId);
+        if (post) {
+            post.score = update.score;
+            post.commentCount = update.commentCount;
+            this.setState({ posts: posts });
+        }
     }
 
     render() {

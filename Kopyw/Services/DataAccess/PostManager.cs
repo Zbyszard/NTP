@@ -168,6 +168,18 @@ namespace Kopyw.Services.DataAccess
             var sorted = infos.OrderBy(pi => ids.IndexOf(pi.PostId)).ToList();
             return sorted;
         }
+        public async Task<PostInfo> GetUpdate(long id)
+        {
+            var info = await (from p in db.Posts
+                              where p.Id == id
+                              select new PostInfo
+                              {
+                                  PostId = p.Id,
+                                  CommentCount = p.Comments.Count,
+                                  Score = p.Votes.Count
+                              }).FirstOrDefaultAsync();
+            return info;
+        }
         public async Task<Post> Update(Post post)
         {
             var dbPost = await (from p in db.Posts

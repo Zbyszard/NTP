@@ -5,14 +5,17 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer4.Validation;
 using Kopyw.DTOs;
+using Kopyw.Hubs;
 using Kopyw.Models;
 using Kopyw.Services;
 using Kopyw.Services.DataAccess.Interfaces;
 using Kopyw.Services.DTOs.Interfaces;
+using Kopyw.Services.Notifiers.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Kopyw.Controllers
 {
@@ -23,13 +26,16 @@ namespace Kopyw.Controllers
         private readonly UserFinder userFinder;
         private readonly IPostDTOManager postDTOManager;
         private readonly IPostManager postManager;
+        private readonly IPostNotifier postNotifier;
         public PostController(UserFinder userFinder,
             IPostDTOManager postDTOManager,
-            IPostManager postManager)
+            IPostManager postManager,
+            IPostNotifier postNotifier)
         {
             this.userFinder = userFinder;
             this.postDTOManager = postDTOManager;
             this.postManager = postManager;
+            this.postNotifier = postNotifier;
         }
         [HttpGet]
         [Route("{id}")]
@@ -171,9 +177,10 @@ namespace Kopyw.Controllers
             var user = await userFinder.FindByClaimsPrincipal(User);
             newVote.UserId = user.Id;
             newVote = await postDTOManager.AddVote(newVote);
-            if (newVote != null)
-                return Ok();
-            return NotFound();
+            if (newVote == null)
+                return NotFound();
+            await postNotifier.SendUpdate(newVote.PostId);
+            return Ok();
         }
         [Route("vote/{id}")]
         [Authorize]
@@ -183,9 +190,10 @@ namespace Kopyw.Controllers
             var user = await userFinder.FindByClaimsPrincipal(User);
             var vote = new PostVoteDTO { PostId = id, UserId = user.Id };
             vote = await postDTOManager.DeleteVote(vote);
-            if (vote != null)
-                return Ok();
-            return NotFound();
+            if (vote == null)
+                return NotFound();
+            await postNotifier.SendUpdate(id);
+            return Ok();
         }
     }
 }

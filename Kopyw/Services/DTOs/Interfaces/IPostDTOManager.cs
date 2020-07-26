@@ -19,6 +19,7 @@ namespace Kopyw.Services.DTOs.Interfaces
        Task<List<PostDTO>> Search(string phrase, int count, int page, string sort, string sortOrder);
        int GetSearchPagesCount(string phrase, int postsPerPage);
        Task<List<PostInfoDTO>> GetInformation(List<long> ids, string loggedUserId);
+       Task<PostInfoDTO> GetUpdate(long id);
        Task<PostDTO> Update(PostDTO post);
        Task<PostVoteDTO> AddVote(PostVoteDTO newVoteDTO);
        Task<PostVoteDTO> DeleteVote(PostVoteDTO voteDTO);

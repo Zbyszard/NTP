@@ -11,15 +11,15 @@ import PostForm from '../../PostForm';
 import Button from '../../../Shared/Button/Button';
 import UserLink from '../../../Shared/UserLink/UserLink';
 import { GetPostApiConstants } from '../../../../Shared/ApiConstants/ApiConstants';
+import PostSubscriber from '../../../../Shared/SignalR/PostSubscriber';
 
 class Post extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showComments: false,
-            editMode: false
-        };
+
+    state = {
+        showComments: false,
+        editMode: false
     }
+
     render() {
         let plusClasses = [classes.plus];
         if (this.props.userVote)
@@ -85,6 +85,25 @@ class Post extends Component {
                 </div>
             </>
         );
+    }
+
+    componentDidMount = () => {
+        if (PostSubscriber.isConnected)
+            PostSubscriber.connection.invoke("Subscribe", this.props.id);
+    }
+
+    componentDidUpdate = (prevProps, prevState) => {
+        if (prevProps.id !== this.props.id) {
+            if (PostSubscriber.isConnected) {
+                PostSubscriber.connection.invoke("Unsubscribe", prevProps.id);
+                PostSubscriber.connection.invoke("Subscribe", this.props.id);
+            }
+        }
+    }
+
+    componentWillUnmount = () => {
+        if (PostSubscriber.isConnected)
+            PostSubscriber.connection.invoke("Unsubscribe", this.props.id);
     }
 
     getMenuItems = () => {

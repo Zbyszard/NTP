@@ -19,6 +19,9 @@ using Kopyw.Services;
 using AutoMapper;
 using Kopyw.DTOs;
 using Microsoft.CodeAnalysis.Options;
+using Kopyw.Hubs;
+using Kopyw.Services.Notifiers.Interfaces;
+using Kopyw.Services.Notifiers;
 
 namespace Kopyw
 {
@@ -59,6 +62,7 @@ namespace Kopyw
             services.AddScoped<IPostManager, PostManager>();
             services.AddScoped<ICommentManager, CommentManager>();
             services.AddScoped<IUserStatsManager, UserStatsManager>();
+            services.AddScoped<IPostNotifier, PostNotifier>();
 
 
             var mappingConfig = new MapperConfiguration(mc =>
@@ -77,7 +81,7 @@ namespace Kopyw
 
             services.AddControllersWithViews();
             services.AddRazorPages();
-
+            services.AddSignalR();
 
 
             // In production, the React files will be served from this directory
@@ -117,6 +121,7 @@ namespace Kopyw
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapHub<PostSubscriptionHub>("/posthub");
             });
 
             app.UseSpa(spa =>

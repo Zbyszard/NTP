@@ -3,6 +3,7 @@ import { GetPostApiConstants, GetPageCountApiConstants } from '../../Shared/ApiC
 import PostList from '../../components/Posts/PostList/PostList';
 import PageControllerContext from '../../Context/PageControllerContext';
 import AuthContext from '../../Context/AuthContext';
+import UserStats from '../../components/User/UserStats';
 
 class LoggedUserPage extends Component {
 
@@ -12,10 +13,13 @@ class LoggedUserPage extends Component {
                 {authContext =>
                     <PageControllerContext.Consumer>
                         {context =>
-                            <PostList
-                                showForm={true}
-                                getPostsUrl={`${GetPostApiConstants.byUser}/${authContext.userName}/${context.sort}/${context.sortOrder}/${context.postsPerPage}`}
-                                getPageCountUrl={`${GetPageCountApiConstants.byUser}/${authContext.userName}/${context.postsPerPage}`} />
+                            <>
+                                <UserStats userName={authContext.userName} />
+                                <PostList
+                                    showForm={true}
+                                    getPostsUrl={`${GetPostApiConstants.byUser}/${authContext.userName}/${context.sort}/${context.sortOrder}/${context.postsPerPage}`}
+                                    getPageCountUrl={`${GetPageCountApiConstants.byUser}/${authContext.userName}/${context.postsPerPage}`} />
+                            </>
                         }
                     </PageControllerContext.Consumer>
                 }
