@@ -11,10 +11,8 @@ import PostForm from '../../PostForm';
 import Button from '../../../Shared/Button/Button';
 import UserLink from '../../../Shared/UserLink/UserLink';
 import { GetPostApiConstants } from '../../../../Shared/ApiConstants/ApiConstants';
-import PostSubscriber from '../../../../Shared/SignalR/PostSubscriber';
 
 class Post extends Component {
-
     state = {
         showComments: false,
         editMode: false
@@ -88,22 +86,16 @@ class Post extends Component {
     }
 
     componentDidMount = () => {
-        if (PostSubscriber.isConnected)
-            PostSubscriber.connection.invoke("Subscribe", this.props.id);
+        this.props.subscribeCallback(0, this.props.id);
     }
 
     componentDidUpdate = (prevProps, prevState) => {
-        if (prevProps.id !== this.props.id) {
-            if (PostSubscriber.isConnected) {
-                PostSubscriber.connection.invoke("Unsubscribe", prevProps.id);
-                PostSubscriber.connection.invoke("Subscribe", this.props.id);
-            }
-        }
+        if(prevProps.id !== this.props.id)
+            this.props.subscribeCallback(prevProps.id, this.props.id);
     }
 
     componentWillUnmount = () => {
-        if (PostSubscriber.isConnected)
-            PostSubscriber.connection.invoke("Unsubscribe", this.props.id);
+        this.props.unsubscribeCallback(this.props.id);
     }
 
     getMenuItems = () => {
@@ -183,7 +175,9 @@ Post.propTypes = {
     userName: PropTypes.string,
     deleteVoteCallback: PropTypes.func,
     voteCallback: PropTypes.func,
-    followCallback: PropTypes.func
+    followCallback: PropTypes.func,
+    subscribeCallback: PropTypes.func,
+    unsubscribeCallback: PropTypes.func
 }
 
 export default Post;

@@ -3,6 +3,7 @@ import { withRouter } from 'react-router-dom';
 import AuthContext from '../../../Context/AuthContext';
 import AuthorizedRender from '../../api-authorization/AuthorizedRender';
 import { PostApiConstants } from '../../../Shared/ApiConstants/ApiConstants';
+import * as hubConstants from '../../../Shared/SignalR/HubConstants';
 import PropTypes from 'prop-types';
 import Post from './Post/Post';
 import PostForm from '../PostForm';
@@ -12,7 +13,7 @@ import LoadingSymbol from '../../Shared/LoadingSymbol/LoadingSymbol';
 import classes from './PostList.module.css';
 import PageSelector from '../PageSelector/PageSelector';
 import Warning from '../../Shared/Warning/Warning';
-import PostSubscriber from '../../../Shared/SignalR/PostSubscriber';
+import Subscriber from '../../../Shared/SignalR/Subscriber';
 
 class PostList extends Component {
     constructor(props) {
@@ -32,13 +33,19 @@ class PostList extends Component {
         this.pageDataCancelSource = null;
         this.justCaughtInfo = false;
         this.formBlockTimer = null;
+        this.subscriber = Subscriber.getSubscriber(hubConstants.postHubUrl);
     }
 
     componentDidMount = () => {
         this.setPage();
         this.requestPageCount();
         this.requestData();
-        PostSubscriber.connection.on("UpdateReceived", this.updatePost);
+        if (this.subscriber.isConnected)
+            this.subscriber.connection.on("UpdateReceived", this.updatePost);
+        else
+            this.subscriber.addOnReadyCallback(() => {
+                this.subscriber.connection.on("UpdateReceived", this.updatePost);
+            })
     }
 
     componentWillUnmount = () => {
@@ -47,7 +54,8 @@ class PostList extends Component {
             this.dataCancelSource.cancel();
         if (this.pageDataCancelSource)
             this.pageDataCancelSource.cancel();
-        PostSubscriber.connection.off("UpdateReceived");
+        if (this.subscriber.isConnected)
+            this.subscriber.connection.off("UpdateReceived");
     }
 
     componentDidUpdate = (prevProps, prevState) => {
@@ -62,6 +70,24 @@ class PostList extends Component {
             this.requestPostInfo();
         else if (this.justCaughtInfo)
             this.justCaughtInfo = false;
+    }
+
+    subscribeUpdates = (prevPostId, postId) => {
+        if (this.subscriber.isConnected) {
+            prevPostId && this.subscriber.connection.invoke("Unsubscribe", prevPostId);
+            this.subscriber.connection.invoke("Subscribe", postId);
+        }
+        else {
+            this.subscriber.addOnReadyCallback(() => {
+                prevPostId && this.subscriber.connection.invoke("Unsubscribe", prevPostId);
+                this.subscriber.connection.invoke("Subscribe", postId);
+            })
+        }
+    }
+
+    unsubscribeUpdates = postId => {
+        if (this.subscriber.isConnected)
+            this.subscriber.connection.invoke("Unsubscribe", postId);
     }
 
     postVote = postId => {
@@ -291,7 +317,9 @@ class PostList extends Component {
                             deleteCallback={this.showDeleteWarning}
                             voteCallback={this.postVote}
                             deleteVoteCallback={this.deletePostVote}
-                            followCallback={this.requestPostInfo} />
+                            followCallback={this.requestPostInfo}
+                            subscribeCallback={this.subscribeUpdates}
+                            unsubscribeCallback={this.unsubscribeUpdates} />
                     }
                 </AuthContext.Consumer>);
         }

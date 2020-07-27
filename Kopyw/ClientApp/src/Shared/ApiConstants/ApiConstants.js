@@ -23,6 +23,11 @@ export const PostApiConstants = {
     getInfo: "/post/info"
 }
 
+export const FollowApiConstants = {
+    add: "/follow/add",
+    delete: "/follow/delete"
+}
+
 export const UserApiConstants = {
     getStats: "/userStats"
 }

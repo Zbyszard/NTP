@@ -9,6 +9,7 @@ During development
 ## Technologies
 .NET Core (API)  
 Entity Framework  
+SignalR  
 React  
 
 ## Setup
