@@ -24,7 +24,7 @@ class Post extends Component {
             plusClasses.push(classes.active);
         const plusClassList = plusClasses.join(' ');
         const plus1 = this.props.showPlus ?
-            <button className={plusClassList}
+            <button className={plusClassList} onFocus={this.plusOnFocus}
                 onClick={this.plusClickHandler}>+1</button> :
             null;
         let menu = null;
@@ -96,6 +96,10 @@ class Post extends Component {
 
     componentWillUnmount = () => {
         this.props.unsubscribeCallback(this.props.id);
+    }
+
+    plusOnFocus = e => {
+        e.target.blur();
     }
 
     getMenuItems = () => {

@@ -122,6 +122,7 @@ namespace Kopyw
                     pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
                 endpoints.MapHub<PostSubscriptionHub>("/posthub");
+                endpoints.MapHub<MessageHub>("/messagehub");
             });
 
             app.UseSpa(spa =>

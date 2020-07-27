@@ -14,5 +14,7 @@ namespace Kopyw.Models
         public List<PostVote> PostVotes { get; set; }
         public List<Follow> FollowedBy { get; set; }
         public List<Follow> Follows { get; set; }
+        public List<ConversationUser> ConversationParticipations { get; set; }
+        public List<Message> Messages { get; set; }
     }
 }

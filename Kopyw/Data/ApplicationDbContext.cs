@@ -17,6 +17,9 @@ namespace Kopyw.Data
         public DbSet<Follow> Follows { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<PostVote> PostVotes { get; set; }
+        public DbSet<ConversationUser> ConversationUsers { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
+        public DbSet<Message> Messages { get; set; }
         public ApplicationDbContext( DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
@@ -58,6 +61,24 @@ namespace Kopyw.Data
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u => u.FollowedBy)
                 .WithOne(f => f.Author);
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u => u.ConversationParticipations);
+
+            modelBuilder.Entity<ConversationUser>()
+                .HasKey(cu => new { cu.UserId, cu.ConversationId });
+
+            modelBuilder.Entity<Conversation>()
+                .HasMany(c => c.Messages)
+                .WithOne(m => m.Conversation);
+            modelBuilder.Entity<Conversation>()
+                .HasMany(c => c.Participations);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany(u => u.Messages);
+            modelBuilder.Entity<Message>()
+                .Property(m => m.SendTime)
+                .HasDefaultValueSql("getdate()");
 
             modelBuilder.Entity<Post>()
                 .Property(p => p.PostTime)

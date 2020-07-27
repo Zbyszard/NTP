@@ -63,6 +63,17 @@ namespace Kopyw.DTOs
             CreateMap<UserStats, UserStatsDTO>()
                 .ForMember(d => d.UserName, o => o.MapFrom(s => s.User.UserName))
                 .ForMember(d => d.IsFollowed, o => o.MapFrom(s => s.LoggedUserFollow != null));
+
+            CreateMap<Conversation, ConversationDTO>()
+                .ForMember(d => d.Users, o => o.MapFrom(s => s.Participations.Select(p => p.User.UserName).ToList()));
+            CreateMap<ConversationDTO, Conversation>()
+                .ForMember(d => d.Participations, o => o.MapFrom(s =>
+                    s.Users.Select(str => new ConversationUser { User = new ApplicationUser { UserName = str } }).ToList()));
+
+            CreateMap<Message, MessageDTO>()
+                .ForMember(d => d.Sender, o => o.MapFrom(s => s.Sender.UserName));
+            CreateMap<MessageDTO, Message>()
+                .ForMember(d => d.Sender, o => o.MapFrom(s => new ApplicationUser { UserName = s.Sender }));
         }
     }
 }

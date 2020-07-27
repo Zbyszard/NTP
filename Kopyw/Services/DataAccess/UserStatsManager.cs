@@ -26,28 +26,11 @@ namespace Kopyw.Services.DataAccess
                                    User = u,
                                    LoggedUserFollow = u.FollowedBy.Where(f => f.ObserverId == loggedUserId).FirstOrDefault(),
                                    PostCount = u.Posts.Count(),
-                                   CommentCount = u.Comments.Count()
+                                   CommentCount = u.Comments.Count(),
+                                   PointsFromPosts = u.Posts.SelectMany(p => p.Votes).Count(),
+                                   PointsFromComments = u.Comments.SelectMany(c => c.Votes).Where(cv => cv.Value > 0).Count() -
+                                        u.Comments.SelectMany(c => c.Votes).Where(cv => cv.Value < 0).Count()
                                }).FirstOrDefaultAsync();
-
-            if (stats == null)
-                return null;
-
-            var postPoints = await (from pv in db.PostVotes
-                                    join p in db.Posts on pv.PostId equals p.Id
-                                    join u in db.Users on p.AuthorId equals u.Id
-                                    where u.UserName == userName
-                                    select pv).CountAsync();
-
-            var commentVotes = from cv in db.CommentVotes
-                               join c in db.Comments on cv.CommentId equals c.Id
-                               join u in db.Users on c.AuthorId equals u.Id
-                               where u.UserName == userName
-                               select cv;
-
-            var commentPoints = await commentVotes.Where(cv => cv.Value > 0).CountAsync()
-                - await commentVotes.Where(cv => cv.Value < 0).CountAsync();
-            stats.PointsFromPosts = postPoints;
-            stats.PointsFromComments = commentPoints;
             return stats;
         }
     }

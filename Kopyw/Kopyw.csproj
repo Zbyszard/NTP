@@ -51,6 +51,20 @@
     <Compile Remove="Data\Migrations\20200708155331_RenameCommentsToComment.Designer.cs" />
     <Compile Remove="Data\Migrations\20200714160757_CommentTextNullable.cs" />
     <Compile Remove="Data\Migrations\20200714160757_CommentTextNullable.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200727191640_Messages.cs" />
+    <Compile Remove="Data\Migrations\20200727191640_Messages.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200727192410_Messages.cs" />
+    <Compile Remove="Data\Migrations\20200727192410_Messages.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200727195455_Messages.cs" />
+    <Compile Remove="Data\Migrations\20200727195455_Messages.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200727200118_Messages.cs" />
+    <Compile Remove="Data\Migrations\20200727200118_Messages.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200727200230_Messages.cs" />
+    <Compile Remove="Data\Migrations\20200727200230_Messages.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200727200639_Messages.cs" />
+    <Compile Remove="Data\Migrations\20200727200639_Messages.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200727205610_MessageSendTime.cs" />
+    <Compile Remove="Data\Migrations\20200727205610_MessageSendTime.Designer.cs" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

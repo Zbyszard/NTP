@@ -62,7 +62,7 @@
     cursor: pointer;
 }
 
-.plus:active, .plus:hover {
+.plus:hover {
     background-color: rgb(170, 255, 140);
     color: black;
 }
