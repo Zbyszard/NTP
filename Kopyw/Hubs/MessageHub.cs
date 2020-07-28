@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Kopyw.Hubs
 {
-    public class MessageHub : Hub<IMessageClient>
+    public class MessageHub : Hub<IMessageHubClient>
     {
         public async Task Subscrbe(long conversationId)
         {

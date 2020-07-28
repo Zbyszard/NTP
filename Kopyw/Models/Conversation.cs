@@ -12,5 +12,6 @@ namespace Kopyw.Models
         public string Name { get; set; }
         public List<Message> Messages { get; set; }
         public List<ConversationUser> Participations { get; set; }
+        public bool IsGroup { get; set; }
     }
 }

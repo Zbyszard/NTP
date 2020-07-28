@@ -1,4 +1,5 @@
 ﻿using Kopyw.Hubs;
+using Kopyw.Hubs.ClientInterfaces;
 using Kopyw.Services.DTOs.Interfaces;
 using Kopyw.Services.Notifiers.Interfaces;
 using Microsoft.AspNetCore.SignalR;
@@ -12,9 +13,9 @@ namespace Kopyw.Services.Notifiers
     public class PostNotifier : IPostNotifier
     {
         private readonly IPostDTOManager postManager;
-        private readonly IHubContext<PostSubscriptionHub> hubContext;
+        private readonly IHubContext<PostSubscriptionHub, IPostSubscriptionHubClient> hubContext;
         public PostNotifier(IPostDTOManager postManager,
-            IHubContext<PostSubscriptionHub> hubContext)
+            IHubContext<PostSubscriptionHub, IPostSubscriptionHubClient> hubContext)
         {
             this.postManager = postManager;
             this.hubContext = hubContext;
@@ -24,7 +25,7 @@ namespace Kopyw.Services.Notifiers
             var update = await postManager.GetUpdate(postId);
             if (update == null)
                 return;
-            await hubContext.Clients.Group($"Post {postId}").SendAsync("UpdateReceived", update);
+            await hubContext.Clients.Group($"Post {postId}").UpdateReceived(update);
         }
     }
 }
