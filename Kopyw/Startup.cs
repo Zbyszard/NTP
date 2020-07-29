@@ -58,11 +58,14 @@ namespace Kopyw
             services.AddScoped<ICommentDTOManager, CommentDTOManager>();
             services.AddScoped<IFollowDTOManager, FollowDTOManager>();
             services.AddScoped<IUserStatsDTOManager, UserStatsDTOManager>();
+            services.AddScoped<IConversationDTOManager, ConversationDTOManager>();
             services.AddScoped<IFollowManager, FollowManager>();
             services.AddScoped<IPostManager, PostManager>();
             services.AddScoped<ICommentManager, CommentManager>();
             services.AddScoped<IUserStatsManager, UserStatsManager>();
             services.AddScoped<IPostNotifier, PostNotifier>();
+            services.AddScoped<IConversationManager, ConversationManager>();
+            services.AddScoped<IMessageNotifier, MessageNotifier>();
 
 
             var mappingConfig = new MapperConfiguration(mc =>

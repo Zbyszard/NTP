@@ -3,6 +3,11 @@
     margin-top: 50px;
     width: 100%;
     min-height: calc(100vh - 50px);
+    transition: transform 0.25s ease-in-out;
+}
+
+.toLeft {
+    transform: translateX(-100%);
 }
 
 @media screen and (min-width: 700px) {

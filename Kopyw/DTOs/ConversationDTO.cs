@@ -9,6 +9,7 @@ namespace Kopyw.DTOs
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public bool IsGroup { get; set; }
         public List<string> UserNames { get; set; }
     }
 }

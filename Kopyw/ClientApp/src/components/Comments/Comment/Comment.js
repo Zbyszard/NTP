@@ -144,7 +144,7 @@ Comment.propTypes = {
     userVote: PropTypes.number,
     showPlusMinus: PropTypes.bool,
     userAuthorized: PropTypes.bool.isRequired,
-    userName: PropTypes.string.isRequired,
+    userName: PropTypes.string,
     editCallback: PropTypes.func,
     deleteCallback: PropTypes.func
 }

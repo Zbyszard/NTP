@@ -1,75 +1,49 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-import classes from '../Menu.module.css';
-import '../../../Shared/Icons/css/fontello.css';
+import React, { useState, useContext } from 'react';
+import { withRouter } from 'react-router-dom';
+import MenuContext from '../MenuContext';
+import css from '../Menu.module.css';
 
-class Search extends Component {
-    constructor(props) {
-        super(props);
-        this.inputRef = React.createRef();
-        this.state = {
-            showSearch: false,
-            searchString: "",
-            iconSize: "1rem"
-        };
+const Search = props => {
+    const menuContext = useContext(MenuContext);
+    const [searchString, setSearchString] = useState("");
+
+    const inputChangeHandler = e => {
+        setSearchString(e.target.value);
+    };
+
+    const searchBlurHandler = () => {
+        if (searchString === "")
+            menuContext.disableSearch();
     }
 
-    componentDidMount() {
-        let inputHeight = `${this.inputRef.current.clientHeight * 0.8}px`;
-        this.setState({ iconSize: inputHeight });
-    }
-
-    inputChangeHandler = e => {
-        this.setState({ searchString: e.target.value });
-    }
-
-    enableSearch = () => {
-        this.setState({ showSearch: true });
-        this.inputRef.current.focus();
-    }
-    disableSearch = () => {
-        if (this.state.searchString === "")
-            this.setState({ showSearch: false });
-    }
-
-    search = e => {
+    const search = e => {
         e.preventDefault();
         let redirectUrl;
-        let str = this.state.searchString;
+        let str = searchString;
         if (!str.replace(/\s/g, '').length)
             redirectUrl = "/"
         else
             redirectUrl = `/search/${str}`;
-        this.props.history.push(redirectUrl);
-    }
+        props.history.push(redirectUrl);
+    };
 
-    render() {
-        let barClasses = [classes.searchBar];
-        let iconClasses = [classes.searchIcon];
-        if (this.state.showSearch)
-            barClasses.push(classes.active);
-        else
-            iconClasses.push(classes.active);
-        let barClassList = barClasses.join(' ');
-        let iconClassList = iconClasses.join(' ');
-        return (
-            <>
-                <form onSubmit={this.search} id="searchform" />
-                <input className={barClassList}
-                    form="searchform"
-                    value={this.state.searchString}
-                    onChange={this.inputChangeHandler}
-                    type="text"
-                    placeholder="Looking for..."
-                    ref={this.inputRef}
-                    onBlur={this.disableSearch} />
-                <div className={iconClassList}
-                    onClick={this.enableSearch}>
-                    <i style={{ fontSize: this.state.iconSize }} className="icon-search" />
-                </div>
-            </>
-        );
-    }
+    let barClasses = [css.searchBar];
+    if (menuContext.showSearch)
+        barClasses.push(css.active);
+    let barClassList = barClasses.join(' ');
+    return (
+        <>
+            <form onSubmit={search} id="searchform" />
+            <input className={barClassList}
+                form="searchform"
+                value={searchString}
+                onChange={inputChangeHandler}
+                type="text"
+                placeholder="Looking for..."
+                ref={menuContext.searchInputRef}
+                onBlur={searchBlurHandler} />
+        </>
+    );
 }
 
-export default Search;
+export default withRouter(Search);

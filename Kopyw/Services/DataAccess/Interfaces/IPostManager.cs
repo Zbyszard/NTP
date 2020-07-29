@@ -21,7 +21,7 @@ namespace Kopyw.Services.DataAccess.Interfaces
         Task<List<Post>> Search(string phrase, int count, int page, string sort, string sortOrder);
         int GetSearchPagesCount(string phrase, int postsPerPage);
         Task<Post> Update(Post post);
-        Task<bool?> Delete(long id, string loggedUserId);
+        Task<Post> Delete(long id, string loggedUserId);
         Task<PostVote> AddVote(PostVote newVote);
         Task<PostVote> DeleteVote(PostVote vote);
     }

@@ -92,6 +92,13 @@ namespace Kopyw.Services.DTOs
         {
             return postManager.GetFollowedPagesCount(loggedUserId, postsPerPage);
         }
+        public async Task<PostDTO> Delete(long id, string loggeduserId)
+        {
+            var deleted = await postManager.Delete(id, loggeduserId);
+            if (deleted == null)
+                return null;
+            return mapper.Map<PostDTO>(deleted);
+        }
         public async Task<List<PostInfoDTO>> GetInformation(List<long> ids, string loggedUserId)
         {
             var infoList = await postManager.GetInformation(ids, loggedUserId);

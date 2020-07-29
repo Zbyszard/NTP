@@ -4,7 +4,6 @@ import authService from './components/api-authorization/AuthorizeService'
 import AuthContext from './Context/AuthContext';
 import './App.css';
 import PageController from './PostController/PageController';
-import axios from 'axios';
 
 export default class App extends Component {
   static displayName = App.name;
@@ -23,10 +22,6 @@ export default class App extends Component {
           userName: user && user.name
         }
       }));
-  }
-
-  componentDidMount = () => {
-    axios.get("/test/checkauth").then(r => console.log(r));
   }
 
   render() {

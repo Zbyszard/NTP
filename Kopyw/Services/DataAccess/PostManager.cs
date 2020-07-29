@@ -19,18 +19,22 @@ namespace Kopyw.Services.DataAccess
         public PostManager(ApplicationDbContext dbContext)
         {
             db = dbContext;
-        }          
+        }
         public async Task<Post> Add(Post newPost)
         {
-
             db.Add(newPost);
-            if (await db.SaveChangesAsync() == 1)
+            try
+            {
+                await db.SaveChangesAsync();
                 return newPost;
-            else
+            }
+            catch (DbUpdateException)
+            {
                 return null;
+            }
         }
 
-        public async Task<bool?> Delete(long id, string loggedUserId)
+        public async Task<Post> Delete(long id, string loggedUserId)
         {
             var post = await (from p in db.Posts
                               where p.Id == id
@@ -38,11 +42,17 @@ namespace Kopyw.Services.DataAccess
             if (post == null)
                 return null;
             if (post.AuthorId != loggedUserId)
-                return false;
+                return null;
             db.Entry(post).State = EntityState.Deleted;
-            await db.SaveChangesAsync();
-
-            return true;
+            try
+            {
+                await db.SaveChangesAsync();
+                return post;
+            }
+            catch (DbUpdateException)
+            {
+                return null;
+            }
         }
 
         private IQueryable<Post> PostQuery()
@@ -56,7 +66,7 @@ namespace Kopyw.Services.DataAccess
         {
             sort ??= "";
             sortOrder ??= "";
-            if(sort == "time")
+            if (sort == "time")
             {
                 if (sortOrder == "desc")
                     return query.OrderByDescending(p => p.PostTime);
