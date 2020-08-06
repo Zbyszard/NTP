@@ -22,6 +22,10 @@ using Microsoft.CodeAnalysis.Options;
 using Kopyw.Hubs;
 using Kopyw.Services.Notifiers.Interfaces;
 using Kopyw.Services.Notifiers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Kopyw.Middleware;
 
 namespace Kopyw
 {
@@ -115,6 +119,7 @@ namespace Kopyw
 
             app.UseRouting();
 
+            app.UseMiddleware<WebSocketsQueryToken>();
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();

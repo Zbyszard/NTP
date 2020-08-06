@@ -7,7 +7,6 @@ namespace Kopyw.DTOs
 {
     public class MessageDTO
     {
-        public long Id { get; set; }
         public long ConversationId { get; set; }
         public string Sender { get; set; }
         public DateTime SendTime { get; set; }

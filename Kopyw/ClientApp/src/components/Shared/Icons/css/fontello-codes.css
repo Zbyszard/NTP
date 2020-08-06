@@ -1,3 +1,7 @@
 
 .icon-search:before { content: '\e800'; } /* '' */
 .icon-comment:before { content: '\e801'; } /* '' */
+.icon-left-big:before { content: '\e802'; } /* '' */
+.icon-right-big:before { content: '\e803'; } /* '' */
+.icon-up-big:before { content: '\e804'; } /* '' */
+.icon-down-big:before { content: '\e805'; } /* '' */

@@ -44,6 +44,10 @@
     align-items: center;
 }
 
+.actionSection > *:last-child {
+    margin-left: auto;
+}
+
 .score {
     font-size: 1.5rem;
 }
@@ -70,18 +74,4 @@
 .active {
     background-color: rgb(120, 255, 70);
     color: black;
-}
-
-.commentCount {
-    margin-left: auto;
-    background-color: transparent;
-    border: none;
-    font-family: inherit;
-    font-size: inherit;
-    color: inherit;
-    cursor: pointer;
-}
-
-.commentCount:hover, .commentCount:active {
-    color: rgb(170, 170, 170);
 }

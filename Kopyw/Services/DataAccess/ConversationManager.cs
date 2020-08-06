@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 
 namespace Kopyw.Services.DataAccess
@@ -50,25 +51,35 @@ namespace Kopyw.Services.DataAccess
         {
             var query = from c in db.Conversations
                         join cu in db.ConversationUsers on c.Id equals cu.ConversationId
-                        where cu.UserId == userId
+                        where cu.UserId == userId && c.Messages.Count() > 0
                         select c;
-            var groupedQuery = from c in query
-                               join m in db.Messages on c.Id equals m.ConversationId
-                               into conversationMessages
-                               select new { conversation = c, messages = conversationMessages };
-
             if (olderThan != null)
-                groupedQuery = groupedQuery.Where(g => g.messages.Max(m => m.SendTime < olderThan));
-
-            var sorted = groupedQuery.OrderByDescending(g => g.messages.Max(m => m.SendTime));
-
-            var limited = sorted.Take(count).Select(g => g.conversation);
-
-            var conversations = await limited
+                query = from c in query
+                        where c.Messages.Max(m => m.SendTime < olderThan)
+                        select c;
+            var conversations = await query.OrderByDescending(c => c.Messages.Max(m => m.SendTime))
                 .Include(c => c.Participations)
-                .ThenInclude(cu => cu.User).ToListAsync();
-
+                .ThenInclude(cu => cu.User)
+                .ToListAsync();
+            var cIds = conversations.Select(c => c.Id);
+            var lastMessages = await (from c in db.Conversations
+                                      where cIds.Contains(c.Id)
+                                      select c.Messages.Where(m => m.SendTime == c.Messages.Max(m => m.SendTime)).First()).ToListAsync();
+            conversations = conversations.Join(lastMessages, c => c.Id, m => m.ConversationId,
+                (c, m) =>
+                {
+                    c.Messages = new List<Message> { m };
+                    return c;
+                }).ToList();
             return conversations;
+        }
+
+        public async Task<Conversation> GetConversation(long id)
+        {
+            return await db.Conversations
+                .Include(c => c.Participations)
+                .ThenInclude(cu => cu.User)
+                .SingleOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Message> AddMessage(Message message)
@@ -98,7 +109,8 @@ namespace Kopyw.Services.DataAccess
             var query = db.Messages.Where(m => m.ConversationId == conversationId);
             if (olderThan != null)
                 query = query.Where(m => m.SendTime < olderThan);
-            var messages = await query.OrderBy(m => m.SendTime).Take(count).ToListAsync();
+            var messages = await query.OrderByDescending(m => m.SendTime).Take(count).ToListAsync();
+            messages = messages.OrderBy(m => m.SendTime).ToList();
             return messages;
         }
     }

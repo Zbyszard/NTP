@@ -29,7 +29,7 @@ namespace Kopyw.Services
         }
         public async Task<List<string>> FindIdsByNames(List<string> names)
         {
-            return await db.Users.Where(u => names.Contains(u.UserName)).Select(u => u.UserName).ToListAsync();
+            return await db.Users.Where(u => names.Contains(u.UserName)).Select(u => u.Id).ToListAsync();
         }
         public async Task<List<ApplicationUser>> FindUsersByNames(List<string> names)
         {

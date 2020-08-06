@@ -1,37 +1,43 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import NavMenu from './Menus/NavMenu';
 import PageContainer from './PageContainer';
-import LayoutContext from './LayoutContext';
+import LayoutContext from '../../Context/LayoutContext';
+import css from './Layout.module.css';
+import AuthorizedRender from '../api-authorization/AuthorizedRender';
+import ConversationController from '../../ConversationController/ConversationController';
 
-class Layout extends Component {
+const Layout = props => {
 
-  state = {
-    messageViewEnabled: false
-  }
+  const [messageViewEnabled, setMessageViewEnabled] = useState(false);
 
-  setMessageViewEnabled = value => {
-    this.setState({ messageViewEnabled: value });
-  }
+  useEffect(() => {
+    setMessageViewEnabled(false);
+  }, [props.location.pathname]);
 
-  componentDidUpdate = (prevProps, prevState) => {
-    if (prevProps.location.pathname !== this.props.location.pathname)
-      this.setMessageViewEnabled(false);
-  }
+  useEffect(() => {
+    const body = document.getElementsByTagName("body")[0];
+    if (messageViewEnabled)
+      body.className = css.noOverflow;
+    else
+      body.className = "";
+  }, [messageViewEnabled]);
 
-  render() {
-    return (
-      <LayoutContext.Provider value={{
-        messageViewEnabled: this.state.messageViewEnabled,
-        setMessageViewEnabled: this.setMessageViewEnabled
-      }}>
-        <NavMenu />
-        <PageContainer mobileHidden={this.state.messageViewEnabled}>
-          {this.props.children}
-        </PageContainer>
-      </LayoutContext.Provider>
-    );
-  }
+  return (
+    <LayoutContext.Provider value={{
+      messageViewEnabled: messageViewEnabled,
+      setMessageViewEnabled: setMessageViewEnabled
+    }}>
+      <NavMenu />
+      <PageContainer mobileHidden={messageViewEnabled}>
+        {props.children}
+      </PageContainer>
+      <AuthorizedRender>
+        <ConversationController/>
+      </AuthorizedRender>
+    </LayoutContext.Provider>
+  );
+
 }
 
 export default withRouter(Layout);

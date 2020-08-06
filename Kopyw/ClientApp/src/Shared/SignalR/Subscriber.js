@@ -1,6 +1,7 @@
 import { HubConnectionBuilder } from '@microsoft/signalr';
+import authService from '../../components/api-authorization/AuthorizeService';
 
-const instances = {}
+const instances = {};
 
 class Subscriber {
     isConnected = false;
@@ -11,11 +12,16 @@ class Subscriber {
             return instances[hubUrl];
         let instance = new Subscriber();
         instance.connection = new HubConnectionBuilder()
-            .withUrl(hubUrl)
+            .withUrl(hubUrl, { accessTokenFactory: async () => await authService.getAccessToken() })
             .withAutomaticReconnect()
             .build();
         instance.connection.start()
-            .then(() => instance.onConnected());
+            .then(() => instance.onConnected())
+            .catch(err => {
+                //TODO: refresh token
+                console.error(err);
+                throw err;
+            });
         instance.connection.onreconnecting(() => instance.isConnected = false);
         instance.connection.onreconnected(() => instance.onConnected());
         instance.connection.onclose(() => instance.isConnected = false);

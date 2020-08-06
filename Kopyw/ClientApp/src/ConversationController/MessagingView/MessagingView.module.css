@@ -1,0 +1,83 @@
+.messageTopBar {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    background-color: rgb(45, 45, 45);
+}
+
+.messageTopBar * {
+    font-size: 1rem;
+}
+
+.messageTopBar > *:not(:first-child) {
+    margin-right: 5px;
+}
+
+.messageTopBar > *:nth-child(2) {
+    margin-left: auto;
+    max-width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.outerContainer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    max-height: calc(100% - 40px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.visibleMessages {
+    overflow-y: auto;
+}
+
+.messageContainer {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: sticky;
+    bottom: 0;
+    box-sizing: border-box;
+    background-color: rgb(30, 30, 30);
+}
+
+.input {
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 10px;
+    margin-right: 0;
+    width: 90%;
+    min-height: 38px;
+    max-height: 146px;
+    border-radius: 20px;
+    background-color: rgb(45, 45, 45);
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: inherit;
+    border: none;
+    resize: none;
+    overflow-y: scroll;
+}
+
+.input::placeholder {
+    color: rgba(255, 255, 240, 0.8);
+}
+
+.send {
+    font-size: 20px;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+}

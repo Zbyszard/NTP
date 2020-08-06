@@ -1,4 +1,6 @@
 .pageContainer {
+    position: absolute;
+    z-index: -1;
     box-sizing: border-box;
     margin-top: 50px;
     width: 100%;

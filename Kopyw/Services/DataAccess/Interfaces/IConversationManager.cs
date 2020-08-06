@@ -10,6 +10,7 @@ namespace Kopyw.Services.DataAccess.Interfaces
     {
         Task<Conversation> AddConversation(Conversation conversation);
         Task<List<Conversation>> GetConversations(string userId, int count, DateTime? olderThan);
+        Task<Conversation> GetConversation(long id);
         Task<Message> AddMessage(Message message);
         Task<List<Message>> GetMessages(long conversationId, string userId, int count, DateTime? olderThan);
     }

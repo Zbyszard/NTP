@@ -11,6 +11,7 @@ namespace Kopyw.Services.DTOs.Interfaces
     {
         Task<ConversationDTO> AddConversation(ConversationDTO conversation, ApplicationUser invokingUser);
         Task<List<ConversationDTO>> GetConversations(string userId, int count, DateTime? olderThan);
+        Task<ConversationDTO> GetConversation(long id);
         Task<MessageDTO> AddMessage(MessageDTO message, ApplicationUser sender);
         Task<List<MessageDTO>> GetMessages(long conversationId, string userId, int count, DateTime? olderThan);
     }

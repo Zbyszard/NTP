@@ -28,6 +28,13 @@ export const FollowApiConstants = {
     delete: "/follow/delete"
 }
 
+export const ConversationApiConstants = {
+    getConversations: "/conversation/range",
+    getMessages: "/conversation/messages",
+    createConversation: "/conversation/create",
+    sendMessage: "/conversation/message"
+}
+
 export const UserApiConstants = {
     getStats: "/userStats"
 }

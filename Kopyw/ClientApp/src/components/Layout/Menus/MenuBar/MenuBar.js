@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import HamburgerIcon from "../HamburgerIcon/HamburgerIcon";
 import SearchBar from "./Search";
 import MenuContext from '../MenuContext';
-import LayoutContext from '../../LayoutContext';
+import LayoutContext from '../../../../Context/LayoutContext';
 import css from '../Menu.module.css';
 import AuthorizedRender from '../../../api-authorization/AuthorizedRender';
 import '../../../Shared/Icons/css/fontello.css';
@@ -26,21 +26,27 @@ const MenuBar = props => {
     if (!menuContext.showSearch)
         iconContainerClasses.push(css.active);
     let iconContainerClassList = iconContainerClasses.join(' ');
+    let messageIcon =
+        <AuthorizedRender>
+            <div className={css.messageIconContaienr}
+                onClick={messageIconClickHandler}>
+                {!layoutContext.messageViewEnabled ?
+                    <>
+                        <div className={css.newMessages}>1</div>
+                        <i className="icon-comment" />
+                    </> :
+                    <i className="icon-left-big" />}
+            </div>
+        </AuthorizedRender>;
     return (
         <div className={css.topBar}>
-            <HamburgerIcon
-                containerClass={css.menuIcon} isActive={false}
+            <HamburgerIcon isActive={false}
+                containerClass={css.menuIcon}
                 clickHandler={props.menuIconClickHandler} />
             <SearchBar />
             <div className={iconContainerClassList} style={{ fontSize: iconSize }}>
                 <i className="icon-search" onClick={menuContext.searchIconClick} />
-                <AuthorizedRender>
-                    <div className={css.messageIconContaienr}
-                        onClick={messageIconClickHandler}>
-                        <div className={css.newMessages}>1</div>
-                        <i className="icon-comment" />
-                    </div>
-                </AuthorizedRender>
+                {messageIcon}
             </div>
             <ul className={css.menuList}>
                 {props.children}

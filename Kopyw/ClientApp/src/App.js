@@ -4,8 +4,9 @@ import authService from './components/api-authorization/AuthorizeService'
 import AuthContext from './Context/AuthContext';
 import './App.css';
 import PageController from './PostController/PageController';
+import { withRouter } from 'react-router-dom';
 
-export default class App extends Component {
+class App extends Component {
   static displayName = App.name;
   constructor(props) {
     super(props);
@@ -34,3 +35,5 @@ export default class App extends Component {
     );
   }
 }
+
+export default withRouter(App);

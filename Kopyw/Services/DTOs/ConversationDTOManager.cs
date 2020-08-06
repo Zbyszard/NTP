@@ -7,6 +7,7 @@ using Kopyw.Services.DTOs.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Kopyw.Services.DTOs
@@ -44,6 +45,12 @@ namespace Kopyw.Services.DTOs
         {
             var conversations = await conversationManager.GetConversations(userId, count, olderThan);
             return mapper.Map<List<ConversationDTO>>(conversations);
+        }
+
+        public async Task<ConversationDTO> GetConversation(long id)
+        {
+            var conv = await conversationManager.GetConversation(id);
+            return mapper.Map<ConversationDTO>(conv);
         }
 
         public async Task<MessageDTO> AddMessage(MessageDTO message, ApplicationUser sender)

@@ -1,0 +1,35 @@
+.message {
+    box-sizing: border-box;
+    padding: 5px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    word-break: break-word;
+    max-width: 80%;
+    border-radius: 10px;
+}
+
+.message:last-child {
+    margin-bottom: 5px;
+}
+
+.toLeft {
+    background-color: ivory;
+    color: black;
+    margin-right: auto;
+    margin-left: 5px;
+}
+
+.toRight {
+    background-color: rgb(40, 40, 40);
+    color: inherit;
+    margin-left: auto;
+    margin-right: 5px;
+}
+
+.toLeft + .toLeft,
+.toRight + .toRight {
+    margin-top: 2px;
+}

@@ -1,0 +1,19 @@
+.wrapper {
+    cursor: pointer;
+    padding: 5px;
+}
+
+.wrapper * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.date {
+    color: rgb(160,160,160);
+    font-size: 0.7rem;
+}
+
+.wrapper:hover, .wrapper:focus {
+    background-color: rgb(40, 40, 40);
+}
