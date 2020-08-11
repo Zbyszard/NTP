@@ -52,7 +52,6 @@ namespace Kopyw.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ConversationDTO>>> GetConversations(int count, DateTime? olderThan = null)
         {
-            olderThan = olderThan?.ToLocalTime();
             var user = await userFinder.FindByClaimsPrincipal(User);
             var conversations = await conversationManager.GetConversations(user.Id, count, olderThan);
             if (conversations.Count == 0)
@@ -86,7 +85,6 @@ namespace Kopyw.Controllers
         [HttpGet]
         public async Task<ActionResult<List<MessageDTO>>> GetMessages(long conversationId, int count, DateTime? olderThan = null)
         {
-            olderThan = olderThan?.ToLocalTime();
             var user = await userFinder.FindByClaimsPrincipal(User);
             var messages = await conversationManager.GetMessages(conversationId, user.Id, count, olderThan);
             if (messages.Count == 0)

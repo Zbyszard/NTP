@@ -122,7 +122,7 @@ class ConversationController extends Component {
 
     prepareConversation = conv => {
         conv.messages = conv.messages || [];
-        conv.messages.forEach(m => m.sendTime = new Date(m.sendTime));
+        conv.messages.forEach(m => m.sendTime = new Date(`${m.sendTime}Z`));
         conv.inputValue = "";
         conv.loadedAny = false;
     }
@@ -161,7 +161,7 @@ class ConversationController extends Component {
     }
 
     appendMessages = (conversationId, messages) => {
-        messages.forEach(m => m.sendTime = new Date(m.sendTime));
+        messages.forEach(m => m.sendTime = new Date(`${m.sendTime}Z`));
         this.setState(state => {
             let convs = [...state.conversations];
             let index = convs.findIndex(c => c.id === conversationId);
@@ -222,7 +222,7 @@ class ConversationController extends Component {
     }
 
     receivedMessage = message => {
-        message.sendTime = new Date(message.sendTime);
+        message.sendTime = new Date(`${message.sendTime}Z`);
         let unknownMessage = this.state.conversations.findIndex(c => c.id === message.conversationId) === -1;
         if (unknownMessage) {
             this.requestConversation(message.conversationId, false);
