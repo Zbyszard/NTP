@@ -36,6 +36,7 @@ namespace Kopyw.Services.DataAccess
                     return null;
             }
             db.Entry(conversation).State = EntityState.Added;
+            db.ConversationUsers.AddRange(conversation.Participations);
             try
             {
                 await db.SaveChangesAsync();
@@ -76,10 +77,39 @@ namespace Kopyw.Services.DataAccess
 
         public async Task<Conversation> GetConversation(long id)
         {
-            return await db.Conversations
-                .Include(c => c.Participations)
-                .ThenInclude(cu => cu.User)
-                .SingleOrDefaultAsync(c => c.Id == id);
+            var conv = await (from c in db.Conversations
+                              select new Conversation
+                              {
+                                  Id = c.Id,
+                                  IsGroup = c.IsGroup,
+                                  Name = c.Name,
+                                  Participations = db.ConversationUsers
+                                  .Where(cu => cu.ConversationId == id)
+                                  .Include(cu => cu.User).ToList(),
+                                  Messages = c.Messages.OrderByDescending(m => m.SendTime).Take(1).ToList()
+                              })
+                              .SingleOrDefaultAsync(c => c.Id == id);
+            return conv;
+        }
+
+        public async Task<List<Conversation>> SearchConversations(string searchString, string loggedUserName)
+        {
+            var userConvs = from c in db.Conversations
+                            where c.Participations.Any(cu => cu.User.UserName == loggedUserName)
+                            select c;
+            var convs = await (from c in userConvs
+                               where
+                               c.IsGroup && (
+                               c.Name != null && c.Name.ToLower().Contains(searchString.ToLower()) ||
+                               c.Name == null && c.Participations.Any(cu => cu.User.UserName.ToLower().Contains(searchString.ToLower()))) ||
+                               !c.IsGroup &&
+                               c.Participations.Where(cu => cu.User.UserName != loggedUserName)
+                               .Any(cu => cu.User.UserName.ToLower().Contains(searchString.ToLower()))
+                               select c)
+                               .Include(c => c.Participations)
+                               .ThenInclude(cu => cu.User)
+                               .Take(30).ToListAsync();
+            return convs;
         }
 
         public async Task<Message> AddMessage(Message message)

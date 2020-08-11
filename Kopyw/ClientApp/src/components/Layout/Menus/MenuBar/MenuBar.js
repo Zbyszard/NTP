@@ -26,16 +26,24 @@ const MenuBar = props => {
     if (!menuContext.showSearch)
         iconContainerClasses.push(css.active);
     let iconContainerClassList = iconContainerClasses.join(' ');
-    let messageIcon =
+    let messageIconCore =
+        <>
+            {/* <div className={css.newMessages}>1</div> */}
+            <i className="icon-comment" />
+        </>;
+    let messageIconStd =
         <AuthorizedRender>
-            <div className={css.messageIconContaienr}
+            <div className={css.messageIconContainer}
+                onClick={messageIconClickHandler}>
+                {messageIconCore}
+            </div>
+        </AuthorizedRender>;
+    let messageIconMobile =
+        <AuthorizedRender>
+            <div className={css.messageIconMobileContainer}
                 onClick={messageIconClickHandler}>
                 {!layoutContext.messageViewEnabled ?
-                    <>
-                        <div className={css.newMessages}>1</div>
-                        <i className="icon-comment" />
-                    </> :
-                    <i className="icon-left-big" />}
+                    messageIconCore : <i className="icon-left-big" />}
             </div>
         </AuthorizedRender>;
     return (
@@ -45,8 +53,11 @@ const MenuBar = props => {
                 clickHandler={props.menuIconClickHandler} />
             <SearchBar />
             <div className={iconContainerClassList} style={{ fontSize: iconSize }}>
-                <i className="icon-search" onClick={menuContext.searchIconClick} />
-                {messageIcon}
+                <div className={css.searchIconContainer}>
+                    <i className="icon-search" onClick={menuContext.searchIconClick} />
+                </div>
+                {messageIconStd}
+                {messageIconMobile}
             </div>
             <ul className={css.menuList}>
                 {props.children}

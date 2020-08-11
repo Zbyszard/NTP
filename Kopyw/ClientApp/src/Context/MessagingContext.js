@@ -5,11 +5,14 @@ const MessagingContext = React.createContext({
     loadingConversationIds: [],
     activeConversationId: 0,
     areConversationsLoading: false,
+    searchResults: [],
     enterConversation: convId => { },
     exitConversation: () => { },
     requestMessages: (convId, olderThan) => { },
     setConversationInput: (convId, value) => { },
-    sendMessage: messageObj => { }
+    sendMessage: messageObj => { },
+    searchConversations: string => { },
+    createConversation: conversationObject => { }
 });
 
 export default MessagingContext;

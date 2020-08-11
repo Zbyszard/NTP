@@ -1,6 +1,68 @@
-.conversationList {
+.outerContainer {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+.searchContainer {
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    padding: 0 5px 5px 5px;
+    background-color: rgb(35, 35, 35);
+}
+
+.searchContainer input {
+    display: inline-block;
+    box-sizing: border-box;
+    margin-top: 5px;
+    padding: 8px 15px;
+    width: 100%;
+    border: none;
+    font-size: 1rem;
+    color: ivory;
+    border-radius: 20px;
+    background-color: rgb(50, 50, 50);
+}
+
+.resultContainer {
+    flex-grow: 1;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transform: translateY(100%);
+    margin: 0;
+    max-height: 45vh;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: rgb(35, 35, 35);
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 0 20px 20px;
+}
+
+.result {
+    cursor: pointer;
+    padding: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+}
+
+.result:hover {
+    background-color: rgb(60, 60, 60);
+}
+
+ol.conversationList {
+    padding: 0;
+    margin: 0;
+    margin-top: 5px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    overflow-y: auto;
 }

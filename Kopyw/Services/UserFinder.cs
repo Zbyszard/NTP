@@ -36,5 +36,13 @@ namespace Kopyw.Services
             var users = await db.Users.Where(u => names.Contains(u.UserName)).ToListAsync();
             return users;
         }
+        public async Task<List<string>> SearchUsernames(string str)
+        {
+            var names = await (from u in db.Users
+                               where u.UserName.ToLower().Contains(str.ToLower())
+                               orderby u.UserName
+                               select u.UserName).Take(50).ToListAsync();
+            return names;
+        }
     }
 }

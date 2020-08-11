@@ -9,9 +9,6 @@ const Conversation = props => {
 
     const authContext = useContext(AuthContext);
     const messagingContext = useContext(MessagingContext);
-    const userNames = [...props.users];
-    userNames.splice(userNames.findIndex(n => n === authContext.userName), 1);
-    const displayName = props.name || userNames.join(", ");
     const displaySender = props.lastMessage.sender === authContext.userName ? "You" : props.lastMessage.sender;
 
     const clickHandler = () => {
@@ -19,9 +16,9 @@ const Conversation = props => {
     }
 
     return (
-        <div className={css.wrapper} onClick={clickHandler}>
+        <li className={css.wrapper} onClick={clickHandler}>
             <div className={css.name}>
-                {displayName}
+                {props.name}
             </div>
             <div className={css.date}>
                 {formatDate(props.lastMessage.sendTime)}
@@ -29,16 +26,14 @@ const Conversation = props => {
             <div className={css.text}>
                 {`${displaySender}: ${props.lastMessage.text}`}
             </div>
-        </div>
+        </li>
     );
 }
 
 Conversation.propTypes = {
     id: PropTypes.number.isRequired,
     name: PropTypes.string,
-    isGroup: PropTypes.bool,
-    lastMessage: PropTypes.object,
-    users: PropTypes.array
+    lastMessage: PropTypes.object
 }
 
 export default Conversation;

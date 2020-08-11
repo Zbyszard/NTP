@@ -56,8 +56,11 @@
     align-items: center;
 }
 
-.messageIconContaienr {
+.messageIconContainer {
+    display: none;
 }
+
+.messageIconMobileContainer {}
 
 .newMessages {
     position: absolute;
@@ -166,7 +169,7 @@ li a:hover, li a:focus, li a:active {
     }
     .topBar .menuList {
         height: 100%;
-        margin: 0 10px;
+        margin: 0 0 10px 0;
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
@@ -184,6 +187,16 @@ li a:hover, li a:focus, li a:active {
         max-width: 400px;
     }
     .iconContainer {
+        margin-right: 0;
+    }
+    .searchIconContainer {
+        display: none;
+    }
+    .messageIconContainer {
+        display: inline-block;
+        margin-left: 10px;
+    }
+    .messageIconMobileContainer {
         display: none;
     }
 }

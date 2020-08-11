@@ -20,8 +20,11 @@ class ConversationController extends Component {
             loadedAllConversations: false,
             areConversationsLoading: false,
             conversationCountForRequest: 20,
-            messageCountForRequest: 20
+            messageCountForRequest: 20,
+            searchResults: []
         };
+        this.searchCancelSource = null;
+        this.searchTimeout = null;
     }
 
     componentDidMount = () => {
@@ -34,7 +37,16 @@ class ConversationController extends Component {
             })
     }
 
-    requestConversations = () => {
+    componentDidUpdate = (prevProps, prevState) => {
+        if (prevState.conversations.length !== this.state.conversations.length) {
+            this.setState(state => {
+                let convs = this.sortConversations([...state.conversations]);
+                return { conversations: convs };
+            })
+        }
+    }
+
+    requestConversations = olderThan => {
         this.setState({ areConversationsLoading: true });
         let url = `${ConversationApiConstants.getConversations}/${this.state.conversationCountForRequest}`;
         axios.get(url)
@@ -49,23 +61,70 @@ class ConversationController extends Component {
                         break;
                 }
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err))
+            .finally(() => {
+                this.setState({ areConversationsLoading: false });
+            });
+    }
+
+    requestConversation = (id, openWhenReady) => {
+        let url = `${ConversationApiConstants.getConversation}/${id}`;
+        axios.get(url)
+            .then(response => {
+                if (response.status === 200) {
+                    let conv = response.data;
+                    this.prepareConversation(conv);
+                    this.setState(state => {
+                        let convs = [conv, ...state.conversations];
+                        convs = this.sortConversations(convs);
+                        return {
+                            conversations: convs,
+                            activeConversationId: openWhenReady ? conv.id : state.activeConversationId
+                        };
+                    })
+                }
+            })
+            .catch(err => console.error(err))
+            .finally(() => {
+                this.setState({ areConversationsLoading: false });
+            });
+    }
+
+    createConversation = convObject => {
+        let url = `${ConversationApiConstants.createConversation}`;
+        axios.post(url, convObject)
+            .then(response => {
+                if (response.status === 201) {
+                    let newConv = response.data;
+                    this.prepareConversation(newConv);
+                    this.setState(state => {
+                        return {
+                            conversations: [newConv, ...state.conversations],
+                            activeConversationId: newConv.id
+                        };
+                    })
+                }
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }
 
     appendConversations = conversations => {
-        conversations.forEach(c => {
-            c.messages = c.messages || [];
-            c.messages.forEach(m => m.sendTime = new Date(m.sendTime));
-            c.inputValue = "";
-            c.loadedAny = false;
-        });
+        conversations.forEach(c => this.prepareConversation(c));
         let convs = conversations.concat([...this.state.conversations]);
         let loadedAll = conversations.length < this.state.conversationCountForRequest;
         this.setState({
             conversations: convs,
-            areConversationsLoading: false,
             loadedAllConversations: loadedAll
         });
+    }
+
+    prepareConversation = conv => {
+        conv.messages = conv.messages || [];
+        conv.messages.forEach(m => m.sendTime = new Date(m.sendTime));
+        conv.inputValue = "";
+        conv.loadedAny = false;
     }
 
     requestMessages = (conversationId, olderThan) => {
@@ -88,9 +147,17 @@ class ConversationController extends Component {
                         this.setConversationReachedEnd(conversationId);
                         break;
                 }
-            }
-            )
-            .catch(err => console.error(err));
+            })
+            .catch(err => console.error(err))
+            .finally(() => {
+                this.setState(state => {
+                    let loading = [...state.loadingConversationIds];
+                    let index = loading.findIndex(l => l === conversationId);
+                    if (index !== -1)
+                        loading.splice(index, 1);
+                    return { loadingConversationIds: loading };
+                })
+            });
     }
 
     appendMessages = (conversationId, messages) => {
@@ -115,14 +182,21 @@ class ConversationController extends Component {
         this.setState(state => {
             let convs = [...state.conversations];
             let found = convs.find(c => c.id === conversationId);
-            if (found)
+            if (found) {
                 found.reachedEnd = true;
+                found.loadedAny = true;
+            }
             return { conversations: convs };
         })
     }
 
     setActiveConversation = id => {
-        this.setState({ activeConversationId: id });
+        let isLoaded = this.state.conversations.findIndex(c => c.id === id) !== -1;
+        if (isLoaded) {
+            this.setState({ activeConversationId: id });
+            return;
+        }
+        this.requestConversation(id, true);
     }
 
     setInputValue = (conversationId, value) => {
@@ -149,6 +223,11 @@ class ConversationController extends Component {
 
     receivedMessage = message => {
         message.sendTime = new Date(message.sendTime);
+        let unknownMessage = this.state.conversations.findIndex(c => c.id === message.conversationId) === -1;
+        if (unknownMessage) {
+            this.requestConversation(message.conversationId, false);
+            return;
+        }
         this.setState(state => {
             let convs = [...state.conversations];
             let conv = convs.find(c => c.id === message.conversationId);
@@ -160,12 +239,48 @@ class ConversationController extends Component {
     }
 
     sortConversations = convs => {
+        const getSendTimes =
+            conversation => conversation.messages.map(m => m.sendTime);
         convs = convs.sort((c1, c2) => {
-            let val1 = Math.max.apply(null, c1.messages.map(m => m.sendTime));
-            let val2 = Math.max.apply(null, c2.messages.map(m => m.sendTime));
+            let val1 = Math.max.apply(null, getSendTimes(c1));
+            let val2 = Math.max.apply(null, getSendTimes(c2));
             return val2 - val1;
         });
         return convs;
+    }
+
+    searchConversations = searchStr => {
+        clearTimeout(this.searchTimeout);
+
+        if (this.searchCancelSource) {
+            this.searchCancelSource.cancel();
+            this.searchCancelSource = null;
+        }
+
+        if (!searchStr) {
+            this.setState({ searchResults: [] });
+            return;
+        }
+
+        this.searchTimeout = setTimeout(() => {
+            let url = `${ConversationApiConstants.search}/${searchStr}`;
+            if (this.searchCancelSource)
+                this.searchCancelSource.cancel();
+            this.searchCancelSource = axios.CancelToken.source();
+            axios.get(url, { cancelToken: this.searchCancelSource.token })
+                .then(response => {
+                    if (response.status === 200) {
+                        this.setState({ searchResults: response.data });
+                    }
+                    this.searchCancelSource = null;
+                })
+                .catch(err => {
+                    if (axios.isCancel(err))
+                        return;
+                    console.error(err)
+                });
+        }, 400);
+
     }
 
     render = () => {
@@ -190,7 +305,9 @@ class ConversationController extends Component {
                 exitConversation: this.exitConversation,
                 requestMessages: this.requestMessages,
                 setConversationInput: this.setInputValue,
-                sendMessage: this.sendMessage
+                sendMessage: this.sendMessage,
+                searchConversations: this.searchConversations,
+                createConversation: this.createConversation
             }}>
                 <aside>
                     <div className={wrapperClasList}>

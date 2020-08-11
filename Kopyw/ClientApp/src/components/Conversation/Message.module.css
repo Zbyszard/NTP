@@ -1,6 +1,6 @@
 .message {
     box-sizing: border-box;
-    padding: 5px;
+    padding: 8px;
     margin-top: 5px;
     display: flex;
     align-items: center;
@@ -8,7 +8,7 @@
     font-size: 0.9rem;
     word-break: break-word;
     max-width: 80%;
-    border-radius: 10px;
+    border-radius: 20px;
 }
 
 .message:last-child {

@@ -37,6 +37,9 @@ namespace Kopyw.Services.DTOs
                 IsGroup = conversation.IsGroup,
                 Participations = users.Select(u => new ConversationUser { User = u }).ToList()
             };
+            foreach (var convUser in dbConversation.Participations)
+                convUser.Conversation = dbConversation;
+            
             var added = await conversationManager.AddConversation(dbConversation);
             return mapper.Map<ConversationDTO>(added);
         }
@@ -53,6 +56,11 @@ namespace Kopyw.Services.DTOs
             return mapper.Map<ConversationDTO>(conv);
         }
 
+        public async Task<List<ConversationDTO>> SearchConversations(string searchString, string loggedUserName)
+        {
+            var convs = await conversationManager.SearchConversations(searchString, loggedUserName);
+            return mapper.Map<List<ConversationDTO>>(convs);
+        }
         public async Task<MessageDTO> AddMessage(MessageDTO message, ApplicationUser sender)
         {
             var dbMessage = mapper.Map<Message>(message);

@@ -3,7 +3,7 @@ export const GetPostApiConstants = {
     new: "/post/time/desc",
     top: "/post/score/desc",
     byUser: "/post/user",
-    searched: "/post/search",
+    search: "/post/search",
     observed: "/post/observed"
 }
 
@@ -30,9 +30,11 @@ export const FollowApiConstants = {
 
 export const ConversationApiConstants = {
     getConversations: "/conversation/range",
+    getConversation: "/conversation",
     getMessages: "/conversation/messages",
     createConversation: "/conversation/create",
-    sendMessage: "/conversation/message"
+    sendMessage: "/conversation/message",
+    search: "/conversation/search"
 }
 
 export const UserApiConstants = {

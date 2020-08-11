@@ -10,6 +10,7 @@ import UserLink from '../../components/Shared/UserLink/UserLink';
 import ContextMenu from '../../components/Shared/ContextMenu/ContextMenu';
 import css from './MessagingView.module.css';
 import '../../components/Shared/Icons/css/fontello.css';
+import getConversationDisplayName from '../../Shared/Functions/getConversationDisplayName';
 
 const MessagingView = props => {
     let loading = null;
@@ -24,18 +25,19 @@ const MessagingView = props => {
 
     const scrollHandler = () => {
         const container = scrollableContainerRef.current;
-        if(container.scrollHeight - container.scrollTop === container.clientHeight ||
+        if (container.scrollHeight - container.scrollTop === container.clientHeight ||
             container.scrollHeight === container.clientHeight)
             setScrolledDown(true);
         else
             setScrolledDown(false);
-        //setLastScrollTop(scrollableContainerRef.current.scrollTop);
         if (!props.conversation.reachedEnd && scrollableContainerRef.current.scrollTop === 0 &&
             !messagingContext.loadingConversationIds.includes(props.conversationId))
             messagingContext.requestMessages(props.conversationId, getOldestMessageDate());
     }
 
     const getOldestMessageDate = () => {
+        if (props.conversation.messages.length === 0)
+            return undefined;
         return new Date(Math.min.apply(null, props.conversation.messages.map(m => m.sendTime)));
     }
 
@@ -47,7 +49,7 @@ const MessagingView = props => {
             e.target.style.height = height;
         else
             setInputHeight(e.target.scrollHeight);
-        if(scrolledDown)
+        if (scrolledDown)
             scrollableContainerRef.current.scrollTop = scrollableContainerRef.current.scrollHeight;
     }
 
@@ -59,9 +61,12 @@ const MessagingView = props => {
     }
 
     const sendMessage = () => {
+        const text = props.conversation.inputValue;
+        if (text.trim() === "")
+            return;
         const msg = {
             conversationId: props.conversationId,
-            text: props.conversation.inputValue
+            text: text
         };
         messagingContext.sendMessage(msg);
         messagingContext.setConversationInput(props.conversationId, "");
@@ -91,7 +96,7 @@ const MessagingView = props => {
 
     useLayoutEffect(() => {
         const container = scrollableContainerRef.current;
-        if(scrolledDown) {
+        if (scrolledDown) {
             scrollDown();
         }
     }, [inputHeight, props.conversation.messages.length]);
@@ -112,25 +117,19 @@ const MessagingView = props => {
         );
 
     const inputHeightpx = inputHeight + "px";
-    let convName = null;
-    if (props.conversation.isGroup) {
-        if (props.conversation.name)
-            convName = props.conversation.name;
-        else
-            convName = props.conversation.userNames.join(", ");
-    }
-    else {
-        const user = props.conversation.userNames.find(u => u !== authContext.userName);
-        convName = <UserLink user={user} />;
-    }
+    let convDisplayName = getConversationDisplayName(props.conversation, authContext.userName);
+    if (!props.conversation.isGroup)
+        convDisplayName = <UserLink user={convDisplayName} />;
     return (
         <>
             <div className={css.messageTopBar}>
                 <Button onClick={messagingContext.exitConversation}>
                     Back
                 </Button>
-                {convName}
-                <ContextMenu>{[]}</ContextMenu>
+                <span className={css.toRight}>
+                    {convDisplayName}
+                </span>
+                {/* <ContextMenu>{[]}</ContextMenu> */}
             </div>
             <div className={css.outerContainer} >
                 <div className={css.visibleMessages}

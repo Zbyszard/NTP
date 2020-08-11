@@ -13,3 +13,16 @@
 .active {
     transform: none;
 }
+
+@media screen and (min-width: 700px) {
+    .controllerWrapper {
+        border-left: 1px solid black;
+        max-width: 400px;
+    }
+}
+
+@media screen and (min-width: 1600px) {
+    .controllerWrapper {
+        transform: none;
+    }
+}
