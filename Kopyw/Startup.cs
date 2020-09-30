@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Kopyw.Middleware;
+using Kopyw.Services.Converters;
 
 namespace Kopyw
 {
@@ -86,7 +87,11 @@ namespace Kopyw
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddJsonOptions(conf =>
+                {
+                    conf.JsonSerializerOptions.Converters.Add(new DateTimeUtcConverter());
+                });
             services.AddRazorPages();
             services.AddSignalR();
 
