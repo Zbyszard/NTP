@@ -30,10 +30,10 @@ class ConversationController extends Component {
     componentDidMount = () => {
         this.requestConversations();
         if (this.subscriber.isConnected)
-            this.subscriber.connection.on("ReceiveMessage", this.receivedMessage);
+            this.subscriber.connection.on(hubConstants.messageReceived, this.messageReceived);
         else
             this.subscriber.addOnReadyCallback(() => {
-                this.subscriber.connection.on("ReceiveMessage", this.receivedMessage);
+                this.subscriber.connection.on(hubConstants.messageReceived, this.messageReceived);
             })
     }
 
@@ -51,6 +51,7 @@ class ConversationController extends Component {
         let url = `${ConversationApiConstants.getConversations}/${this.state.conversationCountForRequest}`;
         axios.get(url)
             .then(response => {
+                // eslint-disable-next-line default-case
                 switch (response.status) {
                     case 200:
                         let data = response.data;
@@ -138,6 +139,7 @@ class ConversationController extends Component {
             url = `${url}/${olderThan.toJSON()}`;
         axios.get(url)
             .then(response => {
+                // eslint-disable-next-line default-case
                 switch (response.status) {
                     case 200:
                         let data = response.data;
@@ -221,7 +223,7 @@ class ConversationController extends Component {
             });
     }
 
-    receivedMessage = message => {
+    messageReceived = message => {
         message.sendTime = new Date(message.sendTime);
         let unknownMessage = this.state.conversations.findIndex(c => c.id === message.conversationId) === -1;
         if (unknownMessage) {

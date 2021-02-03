@@ -22,11 +22,12 @@ using Microsoft.CodeAnalysis.Options;
 using Kopyw.Hubs;
 using Kopyw.Services.Notifiers.Interfaces;
 using Kopyw.Services.Notifiers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Kopyw.Middleware;
 using Kopyw.Services.Converters;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 
 namespace Kopyw
 {
@@ -81,11 +82,21 @@ namespace Kopyw
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
-            services.AddIdentityServer()
+            services.AddIdentityServer(options =>
+            {
+                options.IssuerUri = "https://kopyw.azurewebsites.net";
+            })
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
+            /*services.Configure<JwtBearerOptions>(
+                IdentityServerJwtConstants.IdentityServerJwtBearerScheme,
+                options =>
+                {
+                    options.Authority = "https://kopyw.azurewebsites.net";
+                });*/
 
             services.AddControllersWithViews()
                 .AddJsonOptions(conf =>
@@ -122,9 +133,8 @@ namespace Kopyw
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 
-            app.UseRouting();
-
             app.UseMiddleware<WebSocketsQueryToken>();
+            app.UseRouting();
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();

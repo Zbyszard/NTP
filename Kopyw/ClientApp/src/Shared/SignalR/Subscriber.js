@@ -1,5 +1,6 @@
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import authService from '../../components/api-authorization/AuthorizeService';
+import { LoginActions } from '../../components/api-authorization/ApiAuthorizationConstants';
 
 const instances = {};
 
@@ -15,18 +16,30 @@ class Subscriber {
             .withUrl(hubUrl, { accessTokenFactory: async () => await authService.getAccessToken() })
             .withAutomaticReconnect()
             .build();
-        instance.connection.start()
-            .then(() => instance.onConnected())
-            .catch(err => {
-                //TODO: refresh token
+
+        instance.startConnection()
+            .catch(async err => {
+                if (err.message === "Unauthorized") {
+                    let state = { returnUrl: window.location };
+                    let status = await authService.signIn(state);
+                    if (status === LoginActions.LoginFailed)
+                        window.location.pathname = "/authentication/login";
+                    else
+                        return this.getSubscriber(hubUrl);
+                }
                 console.error(err);
-                throw err;
             });
         instance.connection.onreconnecting(() => instance.isConnected = false);
         instance.connection.onreconnected(() => instance.onConnected());
         instance.connection.onclose(() => instance.isConnected = false);
         instances[hubUrl] = instance;
         return instance;
+    }
+
+    startConnection = async () => {
+        this.connection.start()
+            .then(() => this.onConnected())
+            .catch(err => Promise.reject(err));
     }
 
     onConnected = () => {

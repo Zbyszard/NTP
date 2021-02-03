@@ -22,6 +22,7 @@ const MessagingView = props => {
     const baseInputHeight = 38;
     const [inputHeight, setInputHeight] = useState(38);
     const [scrolledDown, setScrolledDown] = useState(true);
+    const [highlightedMessageIndex, setHighlightedMessageIndex] = useState(-1);
 
     const scrollHandler = () => {
         const container = scrollableContainerRef.current;
@@ -79,6 +80,16 @@ const MessagingView = props => {
         setScrolledDown(true);
     }
 
+    const messageClickHandler = sendTime => {
+        let clickedIndex = messagingContext.conversations
+            .find(conv => conv.id === props.conversationId).messages
+            .findIndex(msg => msg.sendTime - sendTime === 0);
+        if (highlightedMessageIndex === clickedIndex)
+            setHighlightedMessageIndex(-1);
+        else
+            setHighlightedMessageIndex(clickedIndex);
+    }
+
     useEffect(() => {
         inputRef.current.focus();
         let pos = props.conversation.inputValue.length;
@@ -108,10 +119,12 @@ const MessagingView = props => {
         content = <Communicate>This conversation is empty</Communicate>;
     }
     else
-        content = props.conversation.messages.map(m =>
+        content = props.conversation.messages.map((m, index) =>
             <Message key={m.sendTime.getTime()}
                 sender={m.sender}
-                sendTime={new Date(m.sendTime)}>
+                sendTime={new Date(m.sendTime)}
+                showTime={highlightedMessageIndex === index}
+                clickCallback={messageClickHandler}>
                 {m.text}
             </Message>
         );
@@ -131,7 +144,7 @@ const MessagingView = props => {
                 </span>
                 {/* <ContextMenu>{[]}</ContextMenu> */}
             </div>
-            <div className={css.outerContainer} >
+            <div className={css.outerContainer}>
                 <div className={css.visibleMessages}
                     ref={scrollableContainerRef}>
                     <div className={css.messageContainer}>

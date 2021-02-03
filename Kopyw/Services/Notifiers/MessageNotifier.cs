@@ -28,7 +28,7 @@ namespace Kopyw.Services.Notifiers
         {
             var conv = await conversationManager.GetConversation(message.ConversationId);
             var ids = await userFinder.FindIdsByNames(conv.UserNames);
-            await hubContext.Clients.Users(ids).ReceiveMessage(message);
+            await hubContext.Clients.Users(ids).MessageReceived(message);
         }
     }
 }

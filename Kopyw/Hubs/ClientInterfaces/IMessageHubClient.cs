@@ -8,6 +8,6 @@ namespace Kopyw.Hubs.ClientInterfaces
 {
     public interface IMessageHubClient
     {
-        Task ReceiveMessage(MessageDTO message);
+        Task MessageReceived (MessageDTO message);
     }
 }
