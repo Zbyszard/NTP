@@ -30,7 +30,8 @@ namespace Kopyw.Services.DTOs
             if (invokingUser == null)
                 return null;
             var users = await userFinder.FindUsersByNames(conversation.UserNames);
-            users.Add(invokingUser);
+            if(!users.Any(u => u.Id == invokingUser.Id))
+                users.Add(invokingUser);
             var dbConversation = new Conversation
             {
                 IsGroup = conversation.IsGroup,

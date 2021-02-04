@@ -4,6 +4,23 @@
     flex-direction: row;
     position: relative;
     align-items: center;
+    transition: transform ease-in-out 0.25s;
+}
+
+.toLeft {
+    flex-direction: row;
+    margin-right: auto;
+    transform: translateX(-60.2px);
+}
+
+.toRight {
+    flex-direction: row-reverse;
+    margin-left: auto;
+    transform: translateX(60.2px);
+}
+
+.showTime {
+    transform: none;
 }
 
 .message {
@@ -18,13 +35,45 @@
     max-width: 80%;
     border-radius: 20px;
     white-space: pre-wrap;
+    transition: background-color ease-in-out 0.15s;
+}
+
+.toLeft .message {
+    margin-right: auto;
+    margin-left: 5px;
+    background-color: ivory;
+    color: black;
+}
+
+.toRight .message {
+    margin-left: auto;
+    margin-right: 5px;
+    background-color: rgb(50, 50, 50);
+    color: inherit;
+}
+
+.toLeft .message:hover,
+.toLeft .message:focus {
+    background-color: rgb(170, 170, 160);
+}
+
+.toRight .message:hover,
+.toRight .message:focus {
+    background-color:  rgb(40, 40, 40);
 }
 
 .message:last-child {
     margin-bottom: 5px;
 }
 
-.toLeft {
+.time {
+    color: rgb(160, 160, 160);
+    font-size: x-small;
+    text-align: center;
+    margin: 0 5px 0;
+}
+
+/*.toLeft {
     background-color: ivory;
     color: black;
     margin-right: auto;
@@ -36,26 +85,9 @@
     color: inherit;
     margin-left: auto;
     margin-right: 5px;
-}
-
-.messageRow .toLeft+.messageRow .toLeft, .messageRow .toRight+.messageRow .toRight {
-    margin-top: 2px;
-}
-
-.toLeft, .toRight {
-    transition: transform 0.15s ease-in-out;
-}
-
-.translateRight {
-    /*transform: translateX(50px);*/
-}
-
-.translateLeft {
-    /*transform: translateX(-50px);*/
-}
+}*/
 
 .time {
-    /* position: absolute; */
     white-space: pre-wrap;
     right: 0;
     text-align: center;

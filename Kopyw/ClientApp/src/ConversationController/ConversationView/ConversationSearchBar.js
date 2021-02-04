@@ -51,13 +51,14 @@ const ConversationSearchBar = props => {
         }
     }, [])
 
-    let loggedUserName = authContext.userName;
     let searchResults = null;
     if (showResults && messagingContext.searchResults.length > 0)
         searchResults =
             <div className={css.resultContainer}>
                 {messagingContext.searchResults.map(r => {
-                    let callback = r.id !== 0 ? () => enterConversation(r.id) : () => createConversation(r);
+                    let callback = r.id !== 0 ?
+                        () => enterConversation(r.id) :
+                        () => createConversation(r);
                     let name = getConversationDisplayName(r, authContext.userName);
                     return <SearchResult class={css.result} key={r.userNames}
                         clickCallback={callback}

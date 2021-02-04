@@ -33,12 +33,15 @@ namespace Kopyw
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Environment = env;
         }
 
         public IConfiguration Configuration { get; }
+
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -82,21 +85,22 @@ namespace Kopyw
             IMapper mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
-            services.AddIdentityServer(options =>
+            if (Environment.IsProduction())
             {
-                options.IssuerUri = "https://kopyw.azurewebsites.net";
-            })
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                services.AddIdentityServer(options =>
+                {
+                    options.IssuerUri = "https://kopyw.azurewebsites.net";
+                })
+                    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+            }
+            else
+            {
+                services.AddIdentityServer()
+                    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+            }
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
-
-            /*services.Configure<JwtBearerOptions>(
-                IdentityServerJwtConstants.IdentityServerJwtBearerScheme,
-                options =>
-                {
-                    options.Authority = "https://kopyw.azurewebsites.net";
-                });*/
 
             services.AddControllersWithViews()
                 .AddJsonOptions(conf =>

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import AuthContext from '../../Context/AuthContext';
 import css from './Message.module.css';
@@ -6,34 +6,37 @@ import formatDate from '../../Shared/Functions/formatDate';
 
 const Message = props => {
     const authContext = useContext(AuthContext);
-    const msgClasses = [css.message];
+    const rowRef = useRef();
+    const timeRef = useRef();
+    const [rowClasses, setRowClasses] = useState([css.messageRow]);
+    const senderIsLoggedUserRef = useRef(props.sender === authContext.userName);
+
+    useEffect(() => {
+        if (props.showTime)
+            setRowClasses([css.messageRow, css.showTime]);
+        else
+            setRowClasses([css.messageRow]);
+    }, [props.showTime]);
 
     const clickHandler = () => {
         props.clickCallback(props.sendTime);
     }
 
-    if (props.sender === authContext.userName) {
-        msgClasses.push(css.toRight);
-        if (props.showTime)
-            msgClasses.push(css.translateLeft);
+    if (senderIsLoggedUserRef.current) {
+        rowClasses.push(css.toRight);
     }
     else {
-        msgClasses.push(css.toLeft);
-        if (props.showTime)
-            msgClasses.push(css.translateRight);
+        rowClasses.push(css.toLeft);
     }
-    const msgClassList = msgClasses.join(' ');
-    const time = props.showTime ?
-        <div className={css.time}>
-            {formatDate(props.sendTime).replace(/\s/, '\n')}
-        </div> :
-        null;
+    const rowClassList = rowClasses.join(' ');
     return (
-        <div className={css.messageRow}>
-            <div className={msgClassList} onClick={clickHandler}>
+        <div className={rowClassList} ref={rowRef}>
+            <div className={css.time} ref={timeRef}>
+                {formatDate(new Date(props.sendTime)).replace(/\s/, '\n')}
+            </div>
+            <div className={css.message} onClick={clickHandler}>
                 {props.children}
             </div>
-            {time}
         </div>
     );
 }
@@ -41,7 +44,7 @@ const Message = props => {
 Message.propTypes = {
     sender: PropTypes.string,
     sendTime: PropTypes.instanceOf(Date),
-    showTime: PropTypes.bool,
+    showTime: PropTypes.bool.isRequired,
     clickCallback: PropTypes.func
 }
 

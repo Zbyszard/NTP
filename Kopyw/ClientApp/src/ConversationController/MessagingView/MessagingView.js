@@ -22,7 +22,7 @@ const MessagingView = props => {
     const baseInputHeight = 38;
     const [inputHeight, setInputHeight] = useState(38);
     const [scrolledDown, setScrolledDown] = useState(true);
-    const [highlightedMessageIndex, setHighlightedMessageIndex] = useState(-1);
+    const [highlitedMessageDate, setHighlightedMsgDate] = useState(null);
 
     const scrollHandler = () => {
         const container = scrollableContainerRef.current;
@@ -34,6 +34,13 @@ const MessagingView = props => {
         if (!props.conversation.reachedEnd && scrollableContainerRef.current.scrollTop === 0 &&
             !messagingContext.loadingConversationIds.includes(props.conversationId))
             messagingContext.requestMessages(props.conversationId, getOldestMessageDate());
+    }
+
+    const higlightMessage = msgDate => {
+        if (msgDate === highlitedMessageDate)
+            setHighlightedMsgDate(null);
+        else
+            setHighlightedMsgDate(msgDate);
     }
 
     const getOldestMessageDate = () => {
@@ -80,16 +87,6 @@ const MessagingView = props => {
         setScrolledDown(true);
     }
 
-    const messageClickHandler = sendTime => {
-        let clickedIndex = messagingContext.conversations
-            .find(conv => conv.id === props.conversationId).messages
-            .findIndex(msg => msg.sendTime - sendTime === 0);
-        if (highlightedMessageIndex === clickedIndex)
-            setHighlightedMessageIndex(-1);
-        else
-            setHighlightedMessageIndex(clickedIndex);
-    }
-
     useEffect(() => {
         inputRef.current.focus();
         let pos = props.conversation.inputValue.length;
@@ -122,9 +119,9 @@ const MessagingView = props => {
         content = props.conversation.messages.map((m, index) =>
             <Message key={m.sendTime.getTime()}
                 sender={m.sender}
-                sendTime={new Date(m.sendTime)}
-                showTime={highlightedMessageIndex === index}
-                clickCallback={messageClickHandler}>
+                sendTime={m.sendTime}
+                showTime={m.sendTime === highlitedMessageDate}
+                clickCallback={higlightMessage}>
                 {m.text}
             </Message>
         );
