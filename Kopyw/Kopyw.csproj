@@ -69,6 +69,22 @@
     <Compile Remove="Data\Migrations\20200727200639_Messages.Designer.cs" />
     <Compile Remove="Data\Migrations\20200727205610_MessageSendTime.cs" />
     <Compile Remove="Data\Migrations\20200727205610_MessageSendTime.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210214222729_AddImageInfo.cs" />
+    <Compile Remove="Data\Migrations\20210214222729_AddImageInfo.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210214222901_AddImageInfo.cs" />
+    <Compile Remove="Data\Migrations\20210214222901_AddImageInfo.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210214223109_AddImageInfo.cs" />
+    <Compile Remove="Data\Migrations\20210214223109_AddImageInfo.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210215143436_AddImageInfo.cs" />
+    <Compile Remove="Data\Migrations\20210215143436_AddImageInfo.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210216183135_AddImageRelations.cs" />
+    <Compile Remove="Data\Migrations\20210216183135_AddImageRelations.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210216183439_AddImageRelations.cs" />
+    <Compile Remove="Data\Migrations\20210216183439_AddImageRelations.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ImageProcessor\Kopyw.ImageProcessing.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

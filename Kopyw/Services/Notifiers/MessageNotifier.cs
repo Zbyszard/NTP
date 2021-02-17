@@ -15,10 +15,10 @@ namespace Kopyw.Services.Notifiers
     {
         private readonly IHubContext<MessageHub, IMessageHubClient> hubContext;
         private readonly IConversationDTOManager conversationManager;
-        private readonly UserFinder userFinder;
+        private readonly IUserFinder userFinder;
         public MessageNotifier(IHubContext<MessageHub, IMessageHubClient> hubContext,
             IConversationDTOManager conversationManager,
-            UserFinder userFinder)
+            IUserFinder userFinder)
         {
             this.hubContext = hubContext;
             this.conversationManager = conversationManager;

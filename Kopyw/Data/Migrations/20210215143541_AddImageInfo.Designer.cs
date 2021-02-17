@@ -4,14 +4,16 @@ using Kopyw.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Kopyw.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210215143541_AddImageInfo")]
+    partial class AddImageInfo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -296,9 +298,6 @@ namespace Kopyw.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<long?>("MessageImageId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("MiniaturePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -307,18 +306,7 @@ namespace Kopyw.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("PostImageId")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("MessageImageId")
-                        .IsUnique()
-                        .HasFilter("[MessageImageId] IS NOT NULL");
-
-                    b.HasIndex("PostImageId")
-                        .IsUnique()
-                        .HasFilter("[PostImageId] IS NOT NULL");
 
                     b.ToTable("Images");
                 });
@@ -354,27 +342,6 @@ namespace Kopyw.Data.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("Kopyw.Models.MessageImage", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ImageId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("MessageId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MessageId");
-
-                    b.ToTable("MessageImages");
-                });
-
             modelBuilder.Entity("Kopyw.Models.Post", b =>
                 {
                     b.Property<long>("Id")
@@ -406,27 +373,6 @@ namespace Kopyw.Data.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("Kopyw.Models.PostImage", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("ImageId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("PostId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("PostImages");
                 });
 
             modelBuilder.Entity("Kopyw.Models.PostVote", b =>
@@ -638,17 +584,6 @@ namespace Kopyw.Data.Migrations
                         .HasForeignKey("ObserverId");
                 });
 
-            modelBuilder.Entity("Kopyw.Models.ImageInfo", b =>
-                {
-                    b.HasOne("Kopyw.Models.MessageImage", "MessageImage")
-                        .WithOne("Image")
-                        .HasForeignKey("Kopyw.Models.ImageInfo", "MessageImageId");
-
-                    b.HasOne("Kopyw.Models.PostImage", "PostImage")
-                        .WithOne("Image")
-                        .HasForeignKey("Kopyw.Models.ImageInfo", "PostImageId");
-                });
-
             modelBuilder.Entity("Kopyw.Models.Message", b =>
                 {
                     b.HasOne("Kopyw.Models.Conversation", "Conversation")
@@ -662,29 +597,11 @@ namespace Kopyw.Data.Migrations
                         .HasForeignKey("SenderId");
                 });
 
-            modelBuilder.Entity("Kopyw.Models.MessageImage", b =>
-                {
-                    b.HasOne("Kopyw.Models.Message", "Message")
-                        .WithMany("Images")
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Kopyw.Models.Post", b =>
                 {
                     b.HasOne("Kopyw.Models.ApplicationUser", "Author")
                         .WithMany("Posts")
                         .HasForeignKey("AuthorId");
-                });
-
-            modelBuilder.Entity("Kopyw.Models.PostImage", b =>
-                {
-                    b.HasOne("Kopyw.Models.Post", "Post")
-                        .WithMany("Images")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Kopyw.Models.PostVote", b =>

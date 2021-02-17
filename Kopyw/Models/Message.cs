@@ -18,5 +18,6 @@ namespace Kopyw.Models
         public string Text { get; set; }
         [Required]
         public DateTime SendTime { get; set; }
+        public List<MessageImage> Images { get; set; }
     }
 }

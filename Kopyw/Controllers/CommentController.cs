@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Kopyw.DTOs;
 using Kopyw.Models;
@@ -17,10 +18,10 @@ namespace Kopyw.Controllers
     [ApiController]
     public class CommentController : ControllerBase
     {
-        private readonly UserFinder userFinder;
+        private readonly IUserFinder userFinder;
         private readonly ICommentDTOManager commentDTOManager;
         private readonly IPostNotifier postNotifier;
-        public CommentController(UserFinder userFinder, 
+        public CommentController(IUserFinder userFinder, 
             ICommentDTOManager commentDTOManager,
             IPostNotifier postNotifier)
         {

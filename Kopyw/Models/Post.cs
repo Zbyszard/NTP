@@ -21,5 +21,6 @@ namespace Kopyw.Models
         public List<Comment> Comments { get; set; }
         public List<PostVote> Votes { get; set; }
         public ApplicationUser Author { get; set; }
+        public List<PostImage> Images { get; set; }
     }
 }

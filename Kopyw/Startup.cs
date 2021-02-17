@@ -11,17 +11,10 @@ using Kopyw.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Kopyw.Services.DTOs.Interfaces;
-using Kopyw.Services.DTOs;
-using Kopyw.Services.DataAccess;
-using Kopyw.Services.DataAccess.Interfaces;
-using Kopyw.Services;
 using AutoMapper;
 using Kopyw.DTOs;
 using Microsoft.CodeAnalysis.Options;
 using Kopyw.Hubs;
-using Kopyw.Services.Notifiers.Interfaces;
-using Kopyw.Services.Notifiers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Kopyw.Middleware;
@@ -62,20 +55,8 @@ namespace Kopyw
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddScoped<UserFinder, UserFinder>();
-            services.AddScoped<IPostDTOManager, PostDTOManager>();
-            services.AddScoped<ICommentDTOManager, CommentDTOManager>();
-            services.AddScoped<IFollowDTOManager, FollowDTOManager>();
-            services.AddScoped<IUserStatsDTOManager, UserStatsDTOManager>();
-            services.AddScoped<IConversationDTOManager, ConversationDTOManager>();
-            services.AddScoped<IFollowManager, FollowManager>();
-            services.AddScoped<IPostManager, PostManager>();
-            services.AddScoped<ICommentManager, CommentManager>();
-            services.AddScoped<IUserStatsManager, UserStatsManager>();
-            services.AddScoped<IPostNotifier, PostNotifier>();
-            services.AddScoped<IConversationManager, ConversationManager>();
-            services.AddScoped<IMessageNotifier, MessageNotifier>();
-
+            services.ConfigureAppOptions(Configuration);
+            services.ConfigureDI();
 
             var mappingConfig = new MapperConfiguration(mc =>
             {

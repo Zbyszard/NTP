@@ -19,10 +19,10 @@ namespace Kopyw.Controllers
     {
         private readonly IConversationDTOManager conversationManager;
         private readonly IMessageNotifier messageNotifier;
-        private readonly UserFinder userFinder;
+        private readonly IUserFinder userFinder;
         public ConversationController(IConversationDTOManager conversationDTOManager,
             IMessageNotifier messageNotifier,
-            UserFinder userFinder)
+            IUserFinder userFinder)
         {
             conversationManager = conversationDTOManager;
             this.messageNotifier = messageNotifier;

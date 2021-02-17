@@ -17,9 +17,9 @@ namespace Kopyw.Controllers
     public class FollowController : ControllerBase
     {
         private readonly IFollowDTOManager followDTOManager;
-        private readonly UserFinder userFinder;
+        private readonly IUserFinder userFinder;
         public FollowController(IFollowDTOManager followDTOManager,
-            UserFinder userFinder)
+            IUserFinder userFinder)
         {
             this.followDTOManager = followDTOManager;
             this.userFinder = userFinder;

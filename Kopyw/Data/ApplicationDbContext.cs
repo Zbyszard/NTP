@@ -20,6 +20,9 @@ namespace Kopyw.Data
         public DbSet<ConversationUser> ConversationUsers { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<ImageInfo> Images { get; set; }
+        public DbSet<MessageImage> MessageImages { get; set; }
+        public DbSet<PostImage> PostImages { get; set; }
         public ApplicationDbContext( DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
@@ -52,7 +55,7 @@ namespace Kopyw.Data
                 .HasForeignKey(pv => pv.UserId);
             modelBuilder.Entity<PostVote>()
                 .HasOne(pv => pv.Post)
-                .WithMany(pv => pv.Votes)
+                .WithMany(p => p.Votes)
                 .HasForeignKey(pv => pv.PostId);
 
             modelBuilder.Entity<ApplicationUser>()
@@ -73,13 +76,31 @@ namespace Kopyw.Data
             modelBuilder.Entity<Conversation>()
                 .HasMany(c => c.Participations);
 
+            modelBuilder.Entity<ImageInfo>()
+                .Property(i => i.IsPrivate)
+                .HasDefaultValue(false);
+            modelBuilder.Entity<ImageInfo>()
+                .HasOne(i => i.MessageImage)
+                .WithOne(mi => mi.Image)
+                .HasForeignKey<ImageInfo>(i => i.MessageImageId);
+            modelBuilder.Entity<ImageInfo>()
+                .HasOne(i => i.PostImage)
+                .WithOne(pi => pi.Image)
+                .HasForeignKey<ImageInfo>(i => i.PostImageId);
+
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Sender)
                 .WithMany(u => u.Messages);
             modelBuilder.Entity<Message>()
+                .HasMany(m => m.Images)
+                .WithOne(i => i.Message);
+            modelBuilder.Entity<Message>()
                 .Property(m => m.SendTime)
                 .HasDefaultValueSql("getdate()");
 
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.Images)
+                .WithOne(i => i.Post);
             modelBuilder.Entity<Post>()
                 .Property(p => p.PostTime)
                 .HasDefaultValueSql("getdate()");

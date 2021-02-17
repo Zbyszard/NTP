@@ -17,9 +17,9 @@ namespace Kopyw.Controllers
     [ApiController]
     public class TestController : ControllerBase
     {
-        private readonly UserFinder userFinder;
+        private readonly IUserFinder userFinder;
         private readonly UserManager<ApplicationUser> userManager;
-        public TestController(UserFinder userFinder, UserManager<ApplicationUser> userManager)
+        public TestController(IUserFinder userFinder, UserManager<ApplicationUser> userManager)
         {
             this.userFinder = userFinder;
             this.userManager = userManager;

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Kopyw.Services
 {
-    public class UserFinder
+    public class UserFinder : IUserFinder
     {
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> userManager;

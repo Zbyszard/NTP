@@ -15,9 +15,9 @@ namespace Kopyw.Controllers
     [ApiController]
     public class UserStatsController : ControllerBase
     {
-        private readonly UserFinder userFinder;
+        private readonly IUserFinder userFinder;
         private readonly IUserStatsDTOManager statsManager;
-        public UserStatsController(UserFinder userFinder,
+        public UserStatsController(IUserFinder userFinder,
             IUserStatsDTOManager statsManager)
         {
             this.statsManager = statsManager;

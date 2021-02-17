@@ -15,11 +15,11 @@ namespace Kopyw.Services.DTOs
     {
         private readonly IConversationManager conversationManager;
         private readonly IMapper mapper;
-        private readonly UserFinder userFinder;
+        private readonly IUserFinder userFinder;
         
         public ConversationDTOManager(IConversationManager conversationManager,
             IMapper mapper,
-            UserFinder userFinder)
+            IUserFinder userFinder)
         {
             this.conversationManager = conversationManager;
             this.mapper = mapper;

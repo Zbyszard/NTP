@@ -18,10 +18,10 @@ namespace Kopyw.Controllers
     [ApiController]
     public class PostController : ControllerBase
     {
-        private readonly UserFinder userFinder;
+        private readonly IUserFinder userFinder;
         private readonly IPostDTOManager postManager;
         private readonly IPostNotifier postNotifier;
-        public PostController(UserFinder userFinder,
+        public PostController(IUserFinder userFinder,
             IPostDTOManager postDTOManager,
             IPostNotifier postNotifier)
         {
