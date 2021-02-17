@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Kopyw.DTOs;
-using Kopyw.Services;
-using Kopyw.Services.DTOs.Interfaces;
-using Kopyw.Services.Notifiers.Interfaces;
+using Kopyw.Core.DTO;
+using Kopyw.Core.Notifications;
+using Kopyw.Core.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kopyw.Controllers

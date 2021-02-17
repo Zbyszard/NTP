@@ -41,50 +41,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Migrations\20200609212502_AddPostsComments.cs" />
-    <Compile Remove="Data\Migrations\20200609212502_AddPostsComments.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200610182404_AddModels.cs" />
-    <Compile Remove="Data\Migrations\20200610182404_AddModels.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200610183733_AddModels.cs" />
-    <Compile Remove="Data\Migrations\20200610183733_AddModels.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200610183928_AddModels.cs" />
-    <Compile Remove="Data\Migrations\20200610183928_AddModels.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200610191313_AddModelsa.cs" />
-    <Compile Remove="Data\Migrations\20200610191313_AddModelsa.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200708155331_RenameCommentsToComment.cs" />
-    <Compile Remove="Data\Migrations\20200708155331_RenameCommentsToComment.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200714160757_CommentTextNullable.cs" />
-    <Compile Remove="Data\Migrations\20200714160757_CommentTextNullable.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200727191640_Messages.cs" />
-    <Compile Remove="Data\Migrations\20200727191640_Messages.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200727192410_Messages.cs" />
-    <Compile Remove="Data\Migrations\20200727192410_Messages.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200727195455_Messages.cs" />
-    <Compile Remove="Data\Migrations\20200727195455_Messages.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200727200118_Messages.cs" />
-    <Compile Remove="Data\Migrations\20200727200118_Messages.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200727200230_Messages.cs" />
-    <Compile Remove="Data\Migrations\20200727200230_Messages.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200727200639_Messages.cs" />
-    <Compile Remove="Data\Migrations\20200727200639_Messages.Designer.cs" />
-    <Compile Remove="Data\Migrations\20200727205610_MessageSendTime.cs" />
-    <Compile Remove="Data\Migrations\20200727205610_MessageSendTime.Designer.cs" />
-    <Compile Remove="Data\Migrations\20210214222729_AddImageInfo.cs" />
-    <Compile Remove="Data\Migrations\20210214222729_AddImageInfo.Designer.cs" />
-    <Compile Remove="Data\Migrations\20210214222901_AddImageInfo.cs" />
-    <Compile Remove="Data\Migrations\20210214222901_AddImageInfo.Designer.cs" />
-    <Compile Remove="Data\Migrations\20210214223109_AddImageInfo.cs" />
-    <Compile Remove="Data\Migrations\20210214223109_AddImageInfo.Designer.cs" />
-    <Compile Remove="Data\Migrations\20210215143436_AddImageInfo.cs" />
-    <Compile Remove="Data\Migrations\20210215143436_AddImageInfo.Designer.cs" />
-    <Compile Remove="Data\Migrations\20210216183135_AddImageRelations.cs" />
-    <Compile Remove="Data\Migrations\20210216183135_AddImageRelations.Designer.cs" />
-    <Compile Remove="Data\Migrations\20210216183439_AddImageRelations.cs" />
-    <Compile Remove="Data\Migrations\20210216183439_AddImageRelations.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ImageProcessor\Kopyw.ImageProcessing.csproj" />
+    <ProjectReference Include="..\Kopyw.Infrastructure\Kopyw.Infrastructure.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

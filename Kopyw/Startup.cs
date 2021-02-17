@@ -1,26 +1,18 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
-using Kopyw.Data;
-using Kopyw.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
-using Kopyw.DTOs;
-using Microsoft.CodeAnalysis.Options;
-using Kopyw.Hubs;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Kopyw.Middleware;
-using Kopyw.Services.Converters;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Kopyw.Infrastructure.DataAccess;
+using Kopyw.Core.Models;
+using Kopyw.Configuration.Services;
+using Kopyw.Configuration.Converters;
+using Kopyw.Configuration.Middleware;
+using Kopyw.Infrastructure.Hubs;
 
 namespace Kopyw
 {
@@ -55,16 +47,9 @@ namespace Kopyw
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.ConfigureAppOptions(Configuration);
-            services.ConfigureDI();
-
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingProfile());
-            });
-
-            IMapper mapper = mappingConfig.CreateMapper();
-            services.AddSingleton(mapper);
+            services.AddAppOptions(Configuration);
+            services.AddAppServices();
+            services.AddAutoMapper();
 
             if (Environment.IsProduction())
             {

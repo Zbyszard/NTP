@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using IdentityServer4.Validation;
-using Kopyw.DTOs;
-using Kopyw.Services;
-using Kopyw.Services.DTOs.Interfaces;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using Kopyw.Core.DTO;
+using Kopyw.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kopyw.Controllers

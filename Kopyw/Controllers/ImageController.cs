@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Kopyw.Models;
-using Kopyw.Services.DataAccess.Interfaces;
-using Kopyw.Services.FileProcessing.Interfaces;
+﻿using System.Threading.Tasks;
+using Kopyw.Core.Repositiories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
 
 namespace Kopyw.Controllers
 {
